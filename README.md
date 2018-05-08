@@ -1,6 +1,6 @@
 # IDIPLAB_CV ![License](https://img.shields.io/aur/license/yaourt.svg?style=plastic)
 
-IDIPLAB机器视觉工具包
+IDIPLAB机器视觉工具包。
 
 gfgfgfgfgfgfgfgfg
 
