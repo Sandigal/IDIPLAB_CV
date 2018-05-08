@@ -2,7 +2,7 @@
 """
 Created on Mon Apr  9 20:14:41 2018
 
-@author: Sandiagle
+@author: Sandiagal
 """
 import numpy as np
 from scipy import misc
@@ -10,7 +10,7 @@ from scipy import misc
 def noise(image):
     height, width = image.shape[:2]
 
-    for i in range(int(0.0001*height*width)):
+    for i in range(int(0.0005*height*width)):
         x = np.random.randint(0, height)
         y = np.random.randint(0, width)
         image[x, y, :] = 255

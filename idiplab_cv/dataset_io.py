@@ -11,8 +11,9 @@ import os
 import numpy as np
 import time
 from sklearn.utils import shuffle
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split as tts
 from sklearn.model_selection import StratifiedKFold
+from keras.utils import to_categorical
 
 # %%
 
@@ -22,9 +23,9 @@ def get_split_index(labels, n_splits, now_splits):
     skf = StratifiedKFold(n_splits=n_splits)
     for train_index, test_index in skf.split(np.zeros(len(labels)), labels):
         #        print("TRAIN:", train_index, "TEST:", test_index)
-        i = i+1
         if i == now_splits:
             return train_index, test_index
+        i = i+1
 
 
 def load_all_data(path_orig, incl_agmt=False):
@@ -67,7 +68,7 @@ def load_all_data(path_orig, incl_agmt=False):
       >>> imgs_orig, imgs_name_orig, labels_orig, imgs_agmt, imgs_name_agmt, labels_agmt, classes = load_all_data('../data/', incl_agmt)
     """
 
-    print("--->开始读取")
+    print("--->Start reading")
     start = time.clock()
 
     imgs_orig = []
@@ -113,15 +114,19 @@ def load_all_data(path_orig, incl_agmt=False):
         break
 
     end = time.clock()
-    print("读取耗时:", end-start, "s")
-    print("样本尺寸:", imgs_orig[0].shape)
-    print("原样本数:", len(labels_orig), " 增强样本数:", len(labels_agmt),)
-    print("类别:", classes)
+    print("Cost time:", end-start, "s")
+    print("Image shape:", imgs_orig[0].shape)
+    print("Read ", len(labels_orig), " samples with ", len(
+        labels_agmt), "augmentated in those classes:")
+    tmp=""
+    for key in classes:
+        tmp+="'"+str(key)+"': "+str(labels_orig.count(str(key)))+" "
+    print(tmp)
     print("")
-    return imgs_orig, imgs_name_orig, labels_orig, imgs_agmt, imgs_name_agmt, labels_agmt, classes
+    return imgs_orig, imgs_agmt, labels_orig, labels_agmt, classes, imgs_name_orig, imgs_name_agmt
 
 
-def data_split(imgs_orig, labels_orig, imgs_agmt, labels_agmt, n_splits, now_splits, incl_agmt=False):
+def train_test_split(imgs_orig, labels_orig, imgs_agmt, labels_agmt, n_splits=3, now_splits=0, incl_agmt=False):
     """
     处理交叉检验中数据集分割问题
     将原始数据中每类数据按照同一百分比分割为n_splits份
@@ -156,10 +161,10 @@ def data_split(imgs_orig, labels_orig, imgs_agmt, labels_agmt, n_splits, now_spl
 
     Examples
     --------
-       >>> imgs_train, imgs_test, labels_train, labels_test = io.data_split(imgs_orig, labels_orig, imgs_agmt, labels_agmt, n_splits, now_splits, incl_agmt)
+       >>> imgs_train, imgs_test, labels_train, labels_test = io.train_test_split(imgs_orig, labels_orig, imgs_agmt, labels_agmt, n_splits, now_splits, incl_agmt)
     """
 
-    print("--->开始分割")
+    print("--->Start spliting")
     start = time.clock()
 
     train_index, test_index = get_split_index(
@@ -177,9 +182,26 @@ def data_split(imgs_orig, labels_orig, imgs_agmt, labels_agmt, n_splits, now_spl
             [a+b for a in train_index*agmt_times for b in range(agmt_times)]], axis=0)
 
     end = time.clock()
-    print("分割耗时:", end-start, "s")
-    print("中共", n_splits, "份 第", now_splits, "份")
-    print("训练集数:", len(labels_train), " 测试集数:", len(labels_test),)
+    print("Cost time:", end-start, "s")
+    print("Read the ", now_splits, "th part in ", n_splits, " parts")
+    print("Train set size", len(labels_train),
+          " with Test set size:", len(labels_test))
     print("")
 
     return imgs_train, imgs_test, labels_train, labels_test
+
+
+def test_valid_split(imgs_test, labels_test, test_size=0.2, random_state=0):
+    imgs_valid, imgs_test, labels_valid, labels_test = tts(
+        imgs_test, labels_test, test_size=test_size, random_state=random_state)
+    return imgs_valid, imgs_test, labels_valid, labels_test
+
+
+def label_str2index(labels, classes):
+    labels = np.vectorize(classes.get)(labels)
+    return labels
+
+
+def reverse_dict(dic):
+    dic2 = dict(zip(dic.values(), dic.keys()))
+    return dic2
