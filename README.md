@@ -35,13 +35,13 @@ IDIPLAB_CV仅兼容python3。
   ```python
   工程名/
   	datasets/
-  		数据集
-  		...
-  	idiplab_cv/
-          相关函数
-          ...
-  	工程主函数
+      数据集
       ...
+  	idiplab_cv/
+      相关函数
+      ...
+    工程主函数
+    ...
   ```
 
 
