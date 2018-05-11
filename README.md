@@ -18,7 +18,7 @@ IDIPLAB_CV仅兼容python3。
 
 - 首先需要下载工具包。可以直接使用`git`命令获取全部工程文件，也可以通过[releases](https://github.com/Sandigal/IDIPLAB_CV/releases)下载代码。
 
-  ```python
+  ```powershell
   git clone https://github.com/Sandigal/IDIPLAB_CV.git
   ```
 
@@ -32,7 +32,7 @@ IDIPLAB_CV仅兼容python3。
 
 - 这时您的目录结构应该如下图所示。
 
-  ```python
+  ```powershell
   工程名/
   	datasets/
 			数据集
@@ -59,22 +59,22 @@ IDIPLAB_CV仅兼容python3。
 
 * [tensorflow](https://www.tensorflow.org/): 详细信息请阅读[官方安装指南](https://www.tensorflow.org/install/)。
 
-  ```python
+  ```powershell
   pip install --upgrade tensorflow
   ```
 
 
 * [Keras](https://keras.io/): 详细信息请阅读[官方安装指南](https://keras.io/#installation)。
 
-  ```python
+  ```powershell
   pip install keras -U --pre
   ```
 
 
 * **可选依赖**:
   -  [CUDA](http://www.r-tutor.com/gpu-computing/cuda-installation/cuda7.5-ubuntu) 和 [cuDNN](http://askubuntu.com/questions/767269/how-can-i-install-cudnn-on-ubuntu-16-04) (通过GPU加速运算)
-  - HDF5 和 [h5py](http://docs.h5py.org/en/latest/build.html) (将Keras保存到本地)
-  - [graphviz](https://graphviz.gitlab.io/download/) 和 [pydot](https://github.com/erocarrera/pydot) ( 使用[visualization utilities](https://keras.io/visualization/)进行模型可视化)
+  -  HDF5 和 [h5py](http://docs.h5py.org/en/latest/build.html) (将Keras保存到本地)cmd
+  -  [graphviz](https://graphviz.gitlab.io/download/) 和 [pydot](https://github.com/erocarrera/pydot) ( 使用[visualization utilities](https://keras.io/visualization/)进行模型可视化)
 
 
 
