@@ -9,10 +9,10 @@ Created on Sun Apr  1 11:53:24 2018
 
 from keras.models import Sequential, Model
 from keras.layers import Conv2D, MaxPooling2D, GlobalAveragePooling2D
-from keras.layers import Activation, Dropout, Flatten, Dense, BatchNormalization
+from keras.layers import Activation, Dropout, Flatten, Dense, BatchNormalization, Reshape
 from keras import regularizers
 from keras.applications import mobilenet
-from keras.layers.advanced_activations import LeakyReLU
+
 
 def YannLeCun(input_shape):
     """
@@ -64,46 +64,73 @@ def YannLeCun(input_shape):
 
     return model
 
-def mobilenet2(input_shape):
+
+def mobilenetGAP(input_shape, classes, dropout=None):
+    #    base_model = mobilenet.MobileNet(
+    #        input_shape=input_shape, dropout=dropout, include_top=False, weights="imagenet", pooling="avg")
+    #    output = base_model.output
+
+#    base_conv = mobilenet.MobileNet(
+#        input_shape=(224, 224, 3), dropout=dropout, include_top=False, weights="imagenet", pooling="avg")
     base_model = mobilenet.MobileNet(
-        input_shape=input_shape, dropout=0.1, include_top=False, weights='imagenet', pooling='max')
-
+        input_shape=input_shape, dropout=dropout, include_top=False, weights=None, pooling="avg")
+#    for new_layer, layer in zip(base_model.layers[0:], base_conv.layers[0:]):
+#        new_layer.set_weights(layer.get_weights())
     output = base_model.output
-    output = Dense(units=256, activation='relu',
-                    kernel_regularizer=regularizers.l2(0.1))(output)
-    output = BatchNormalization()(output)
-    output = Dropout(0.5)(output)
 
-    output = Dense(units=128, activation='relu',
-                    kernel_regularizer=regularizers.l2(0.1))(output)
-    output = BatchNormalization()(output)
-    output = Dropout(0.5)(output)
-
-    predictions = Dense(units=16, activation='softmax',
-                    kernel_regularizer=regularizers.l2(0.1))(output)
-
-    model = Model(inputs=base_model.input, outputs=predictions)
+    output = Reshape((1, 1, 1024), name='reshape_1')(output)
+#    output = Dropout(dropout, name='dropout')(output)
+    output = Conv2D(filters=classes, kernel_size=(1, 1),
+                    kernel_regularizer=regularizers.l2(1),
+                    padding='same', name='conv_preds')(output)
+#    output = Dense(units=classes,
+#                    kernel_regularizer=regularizers.l2(1),
+#                     name='last_preds')(output)
+    output = BatchNormalization(name='bn')(output)
+    output = Activation('softmax', name='softmax')(output)
+#    output = Reshape((classes,), name='reshape')(output)
+    output = GlobalAveragePooling2D(name='reshape')(output)
+    model = Model(inputs=base_model.input, outputs=output)
     return model
 
-def mobilenetFC(input_shape, classes):
-    base_model = mobilenet.MobileNet(alpha=0.5,
-        input_shape=input_shape, dropout=0.1, include_top=False, weights='imagenet', pooling=None)
 
-    output = base_model.output
-    output = MaxPooling2D(pool_size=(7, 7))(output)
-    output = Conv2D(filters=256, kernel_size=(1, 1),
-                     strides=1, activation='relu', kernel_regularizer=regularizers.l2(0.1))(output)
-    output = BatchNormalization()(output)
-    output = Dropout(0.5)(output)
+def FC1(input_shape, classes):
+    model = Sequential(input_shape=input_shape)
+    model.add(MaxPooling2D(pool_size=(7, 7)))
+    model.add(Conv2D(filters=256, kernel_size=(1, 1),
+                     strides=1, activation='relu', kernel_regularizer=regularizers.l2(0.1)))
+#    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
 
-    output = Conv2D(filters=128, kernel_size=(1, 1),
-                     strides=1, activation='relu', kernel_regularizer=regularizers.l2(0.1))(output)
-    output = BatchNormalization()(output)
-    output = Dropout(0.5)(output)
+    model.add(Conv2D(filters=128, kernel_size=(1, 1),
+                     strides=1, activation='relu', kernel_regularizer=regularizers.l2(0.1)))
+#    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
 
-
-    predictions = Conv2D(filters=classes, kernel_size=(1, 1),
-                     strides=1, activation='softmax', kernel_regularizer=regularizers.l2(0.1))(output)
-    predictions=GlobalAveragePooling2D()(predictions)
-    model = Model(inputs=base_model.input, outputs=predictions)
+    model.add(Conv2D(filters=classes, kernel_size=(1, 1),
+                     strides=1, activation='softmax', kernel_regularizer=regularizers.l2(0.1)))
+    model.add(GlobalAveragePooling2D())
     return model
+
+#%%
+
+input_shape = (None, None, 3)  # 32的倍数
+lenn = 3
+model = mobilenetGAP(input_shape, lenn)
+model.compile(optimizer="adam", loss='categorical_crossentropy',
+              metrics=['accuracy'])
+# plot_model(model, to_file='5.4.png', show_shapes=True)
+model.summary()
+
+
+from PIL import Image
+import numpy as np
+import os
+from keras.utils import to_categorical
+
+imgs = np.array([np.array(Image.open("../data/dataset 672x448/crop/P3/" + fname))
+                 for fname in os.listdir("../data/dataset 672x448/crop/P3/")])
+lable = [0, 0, 1, 1, 2, 2]
+lable = to_categorical(lable, lenn)
+model.fit(imgs, lable)
+preResult = model.predict(imgs)
