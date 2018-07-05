@@ -2,7 +2,10 @@
 
 ## 总览
 
-<img src="https://raw.githubusercontent.com/wiki/Sandiagal/IDIPLAB_CV/流程图.png" width="80%" >
+.. figure:: images/数据预处理/流程图.png
+    :alt: Heavy augmentations
+
+    Example augmentations of a single input image.
 
 
 
