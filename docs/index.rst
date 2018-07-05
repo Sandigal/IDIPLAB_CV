@@ -17,6 +17,7 @@ processes for improved performance.
    :caption: Contents:
 
    source/installation
+   source/数据预处理.rst
    source/examples_basics
    source/examples_keypoints
    source/examples_bounding_boxes
