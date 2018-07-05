@@ -1,0 +1,1135 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Overview of Augmenters &mdash; imgaug 0.2.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="imgaug" href="modules.html" />
+    <link rel="prev" title="Blending/Overlaying images" href="alpha.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> imgaug
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_basics.html">Examples: Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_keypoints.html">Examples: Keypoints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_bounding_boxes.html">Examples: Bounding Boxes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parameters.html">Stochastic Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alpha.html">Blending/Overlaying images</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview of Augmenters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#sequential">Sequential</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#someof">SomeOf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oneof">OneOf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sometimes">Sometimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#withcolorspace">WithColorspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#withchannels">WithChannels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#noop">Noop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lambda">Lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#assertlambda">AssertLambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#assertshape">AssertShape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scale">Scale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cropandpad">CropAndPad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pad">Pad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#crop">Crop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fliplr">Fliplr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flipud">Flipud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#superpixels">Superpixels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#changecolorspace">ChangeColorspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#grayscale">Grayscale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gaussianblur">GaussianBlur</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#averageblur">AverageBlur</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#medianblur">MedianBlur</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#convolve">Convolve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sharpen">Sharpen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#emboss">Emboss</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edgedetect">EdgeDetect</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#directededgedetect">DirectedEdgeDetect</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#add">Add</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#addelementwise">AddElementwise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#additivegaussiannoise">AdditiveGaussianNoise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multiply">Multiply</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multiplyelementwise">MultiplyElementwise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dropout">Dropout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coarsedropout">CoarseDropout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#invert">Invert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contrastnormalization">ContrastNormalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#affine">Affine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#piecewiseaffine">PiecewiseAffine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#elastictransformation">ElasticTransformation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">imgaug</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">imgaug</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Overview of Augmenters</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/augmenters.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="overview-of-augmenters">
+<h1>Overview of Augmenters<a class="headerlink" href="#overview-of-augmenters" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="sequential">
+<h2>Sequential<a class="headerlink" href="#sequential" title="Permalink to this headline">¶</a></h2>
+<p>List augmenter that may contain other augmenters to apply in sequence
+or random order.</p>
+<p>Apply in predefined order:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="n">translate_px</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">40</span><span class="p">}),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">AdditiveGaussianNoise</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.1</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Sequential" src="../_images/sequential.jpg" />
+</div>
+<p>Apply in random order (note that the order is sampled once per batch and then
+the same for all images within the batch):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+      <span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="n">translate_px</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">40</span><span class="p">}),</span>
+      <span class="n">iaa</span><span class="o">.</span><span class="n">AdditiveGaussianNoise</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.1</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span>
+<span class="p">],</span> <span class="n">random_order</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Sequential with random order" src="../_images/sequential_random_order.jpg" />
+</div>
+</div>
+<div class="section" id="someof">
+<h2>SomeOf<a class="headerlink" href="#someof" title="Permalink to this headline">¶</a></h2>
+<p>List augmenter that applies only some of its children to images.</p>
+<p>Apply two of four given augmenters:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">SomeOf</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="n">rotate</span><span class="o">=</span><span class="mi">45</span><span class="p">),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">AdditiveGaussianNoise</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.2</span><span class="o">*</span><span class="mi">255</span><span class="p">),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">per_channel</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Sharpen</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="SomeOf" src="../_images/someof.jpg" />
+</div>
+<p>Apply 0 to &lt;max&gt; given augmenters (where &lt;max&gt; is automatically replaced with
+the number of children):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">SomeOf</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">[</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="n">rotate</span><span class="o">=</span><span class="mi">45</span><span class="p">),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">AdditiveGaussianNoise</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.2</span><span class="o">*</span><span class="mi">255</span><span class="p">),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">per_channel</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Sharpen</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="SomeOf 0 to None" src="../_images/someof_0_to_none.jpg" />
+</div>
+<p>Pick two of four given augmenters and apply them in random order:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">SomeOf</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="n">rotate</span><span class="o">=</span><span class="mi">45</span><span class="p">),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">AdditiveGaussianNoise</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.2</span><span class="o">*</span><span class="mi">255</span><span class="p">),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">per_channel</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Sharpen</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="p">],</span> <span class="n">random_order</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="SomeOf random order" src="../_images/someof_random_order.jpg" />
+</div>
+</div>
+<div class="section" id="oneof">
+<h2>OneOf<a class="headerlink" href="#oneof" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that always executes exactly one of its children.</p>
+<p>Apply one of four augmenters to each image:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">OneOf</span><span class="p">([</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="n">rotate</span><span class="o">=</span><span class="mi">45</span><span class="p">),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">AdditiveGaussianNoise</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.2</span><span class="o">*</span><span class="mi">255</span><span class="p">),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">per_channel</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Sharpen</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="OneOf" src="../_images/oneof.jpg" />
+</div>
+</div>
+<div class="section" id="sometimes">
+<h2>Sometimes<a class="headerlink" href="#sometimes" title="Permalink to this headline">¶</a></h2>
+<p>Augment only p percent of all images with one or more augmenters.</p>
+<p>Apply gaussian blur to about 50% of all images:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Sometimes</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">iaa</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Sometimes" src="../_images/sometimes.jpg" />
+</div>
+<p>Apply gaussian blur to about 50% of all images. Apply a mixture of affine
+rotations and sharpening to the other 50%.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Sometimes</span><span class="p">(</span>
+      <span class="mf">0.5</span><span class="p">,</span>
+      <span class="n">iaa</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="mf">2.0</span><span class="p">),</span>
+      <span class="n">iaa</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span><span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="n">rotate</span><span class="o">=</span><span class="mi">45</span><span class="p">),</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Sharpen</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)])</span>
+  <span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Sometimes if else" src="../_images/sometimes_if_else.jpg" />
+</div>
+</div>
+<div class="section" id="withcolorspace">
+<h2>WithColorspace<a class="headerlink" href="#withcolorspace" title="Permalink to this headline">¶</a></h2>
+<p>Apply child augmenters within a specific colorspace.</p>
+<p>Convert images to HSV, then increase each pixels H-value by 10 to 50:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">WithColorspace</span><span class="p">(</span>
+    <span class="n">to_colorspace</span><span class="o">=</span><span class="s2">&quot;HSV&quot;</span><span class="p">,</span>
+    <span class="n">from_colorspace</span><span class="o">=</span><span class="s2">&quot;RGB&quot;</span><span class="p">,</span>
+    <span class="n">children</span><span class="o">=</span><span class="n">iaa</span><span class="o">.</span><span class="n">WithChannels</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Add</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">)))</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="WithColorspace" src="../_images/withcolorspace.jpg" />
+</div>
+</div>
+<div class="section" id="withchannels">
+<h2>WithChannels<a class="headerlink" href="#withchannels" title="Permalink to this headline">¶</a></h2>
+<p>Apply child augmenters to specific channels.</p>
+<p>Increase each pixel’s R-value (redness) by 10 to 100:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">WithChannels</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Add</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="WithChannels" src="../_images/withchannels.jpg" />
+</div>
+<p>Rotate each image’s red channel by 0 to 45 degrees:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">WithChannels</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="n">rotate</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">45</span><span class="p">)))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="WithChannels + Affine" src="../_images/withchannels_affine.jpg" />
+</div>
+</div>
+<div class="section" id="noop">
+<h2>Noop<a class="headerlink" href="#noop" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that never changes input images (“no operation”).</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Noop</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Noop" src="../_images/noop.jpg" />
+</div>
+</div>
+<div class="section" id="lambda">
+<h2>Lambda<a class="headerlink" href="#lambda" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that calls a lambda function for each batch of input image.</p>
+<p>Replace in every image each fourth row with black pixels:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">img_func</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">images</span><span class="p">:</span>
+        <span class="n">img</span><span class="p">[::</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">images</span>
+
+<span class="k">def</span> <span class="nf">keypoint_func</span><span class="p">(</span><span class="n">keypoints_on_images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">keypoints_on_images</span>
+
+<span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="n">img_func</span><span class="p">,</span> <span class="n">keypoint_func</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Lambda" src="../_images/lambda.jpg" />
+</div>
+</div>
+<div class="section" id="assertlambda">
+<h2>AssertLambda<a class="headerlink" href="#assertlambda" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that runs an assert on each batch of input images
+using a lambda function as condition.</p>
+<p>TODO examples</p>
+</div>
+<div class="section" id="assertshape">
+<h2>AssertShape<a class="headerlink" href="#assertshape" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter to make assumptions about the shape of input image(s)
+and keypoints.</p>
+<p>Check if each image in a batch has shape 32x32x3, otherwise raise an
+exception:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">seq</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">AssertShape</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Fliplr</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span> <span class="c1"># only executed if shape matches</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<p>Check if each image in a batch has a height in the range 32&lt;=x&lt;64,
+a width of exactly 64 and either 1 or 3 channels:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">seq</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">AssertShape</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span> <span class="mi">32</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Fliplr</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="scale">
+<h2>Scale<a class="headerlink" href="#scale" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that scales/resizes images to specified heights and widths.</p>
+<p>Scale each image to height=32 and width=64:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Scale</span><span class="p">({</span><span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">64</span><span class="p">})</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Scale to 32x64" src="../_images/scale_32x64.jpg" />
+</div>
+<p>Scale each image to height=32 and keep the aspect ratio for width the same:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Scale</span><span class="p">({</span><span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="s2">&quot;keep-aspect-ratio&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Scale to 32xKAR" src="../_images/scale_32xkar.jpg" />
+</div>
+<p>Scale each image to something between 50 and 100% of its original size:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Scale</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Scale to 50 to 100 percent" src="../_images/scale_50_to_100_percent.jpg" />
+</div>
+<p>Scale each image’s height to 50-75% of its original size and width to
+either 16px or 32px or 64px:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Scale</span><span class="p">({</span><span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">),</span> <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">]})</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Scale with uniform distribution and choice" src="../_images/scale_h_uniform_w_choice.jpg" />
+</div>
+</div>
+<div class="section" id="cropandpad">
+<h2>CropAndPad<a class="headerlink" href="#cropandpad" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that crops/pads images by defined amounts in pixels or
+percent (relative to input image size).</p>
+<p>NOTE: This augmenter automatically resizes images back to their original size
+after it has augmented them. To deactivate this, add the
+parameter <code class="docutils literal"><span class="pre">keep_size=False</span></code>.</p>
+<p>Crop or pad each side by up to 10 percent relative to its original size
+(negative values result in cropping, positive in padding):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">CropAndPad</span><span class="p">(</span><span class="n">percent</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Crop/Pad by -10 to 10 percent" src="../_images/cropandpad_percent.jpg" />
+</div>
+<p>Pad each side by 0 to 20 percent. This adds new pixels to the sides. These
+pixels will either be filled with a constant value (mode=constant) or filled
+with the value on the closest edge (mode=edge). If a constant value is used,
+it will be a random value between 0 and 128 (sampled per image).</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">CropAndPad</span><span class="p">(</span>
+    <span class="n">percent</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span>
+    <span class="n">pad_mode</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="s2">&quot;edge&quot;</span><span class="p">],</span>
+    <span class="n">pad_cval</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Pad by up to 20 percent" src="../_images/cropandpad_mode_cval.jpg" />
+</div>
+<p>Pad the top side of each image by 0 to 30 pixels, the right side by 0-10px,
+bottom side by 0-30px and left side by 0-10px. Use any of the available modes
+to fill new pixels and if the mode is <cite>constant</cite> then use a constant value
+between 0 and 128.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">CropAndPad</span><span class="p">(</span>
+    <span class="n">px</span><span class="o">=</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)),</span>
+    <span class="n">pad_mode</span><span class="o">=</span><span class="n">ia</span><span class="o">.</span><span class="n">ALL</span><span class="p">,</span>
+    <span class="n">pad_cval</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Distributions per side" src="../_images/cropandpad_pad_complex.jpg" />
+</div>
+<p>Crop/pad each side by up to 10px. The value will be sampled once per image
+and used for all sides (i.e. all sides gain/lose the same number of
+rows/colums).</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">CropAndPad</span><span class="p">(</span>
+    <span class="n">px</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+    <span class="n">sample_independently</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Same value for all sides" src="../_images/cropandpad_correlated.jpg" />
+</div>
+</div>
+<div class="section" id="pad">
+<h2>Pad<a class="headerlink" href="#pad" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that pads images, i.e. adds columns/rows to them.</p>
+<p>This is a proxy for <cite>CropAndPad</cite>. It only accepts positive
+pixel/percent values.</p>
+</div>
+<div class="section" id="crop">
+<h2>Crop<a class="headerlink" href="#crop" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that crops/cuts away pixels at the sides of the image.</p>
+<p>This is a proxy for <cite>CropAndPad</cite>. It only accepts positive
+pixel/percent values and transfers them as negative values to <cite>CropAndPad</cite>.</p>
+</div>
+<div class="section" id="fliplr">
+<h2>Fliplr<a class="headerlink" href="#fliplr" title="Permalink to this headline">¶</a></h2>
+<p>Flip/mirror input images horizontally.</p>
+<p>Flip 50% of all images horizontally:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Fliplr</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Horizontal flip" src="../_images/fliplr.jpg" />
+</div>
+</div>
+<div class="section" id="flipud">
+<h2>Flipud<a class="headerlink" href="#flipud" title="Permalink to this headline">¶</a></h2>
+<p>Flip/mirror input images vertically.</p>
+<p>Flip 50% of all images vertically:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Flipud</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Vertical flip" src="../_images/flipud.jpg" />
+</div>
+</div>
+<div class="section" id="superpixels">
+<h2>Superpixels<a class="headerlink" href="#superpixels" title="Permalink to this headline">¶</a></h2>
+<p>Completely or partially transform images to their superpixel representation.</p>
+<p>Generate about 64 superpixels per image. Replace each one with a probability
+of 50% by its average pixel color.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Superpixels</span><span class="p">(</span><span class="n">p_replace</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">n_segments</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Superpixels" src="../_images/superpixels_50_64.jpg" />
+</div>
+<p>Generate 16 to 128 superpixels per image. Replace each superpixel with a
+probability between 10 and 100% (sampled once per image) by its average pixel
+color.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Superpixels</span><span class="p">(</span><span class="n">p_replace</span><span class="o">=</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">n_segments</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Superpixels random" src="../_images/superpixels.jpg" />
+</div>
+<p>Effect of setting <code class="docutils literal"><span class="pre">n_segments</span></code> to a fixed value of 64 and then
+increasing <code class="docutils literal"><span class="pre">p_replace</span></code> from 0.0 and 1.0:</p>
+<div class="figure">
+<img alt="Superpixels varying p" src="../_images/superpixels_vary_p.jpg" />
+</div>
+<p>Effect of setting <code class="docutils literal"><span class="pre">p_replace</span></code> to a fixed value of 1.0 and then
+increasing <code class="docutils literal"><span class="pre">n_segments</span></code> from 1*16 to 9*16=144:</p>
+<div class="figure">
+<img alt="Superpixels varying n" src="../_images/superpixels_vary_n.jpg" />
+</div>
+</div>
+<div class="section" id="changecolorspace">
+<h2>ChangeColorspace<a class="headerlink" href="#changecolorspace" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter to change the colorspace of images.</p>
+<p>The following example shows how to change the colorspace from RGB to HSV,
+then add 50-100 to the first channel, then convert back to RGB.
+This increases the hue value of each image.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">ChangeColorspace</span><span class="p">(</span><span class="n">from_colorspace</span><span class="o">=</span><span class="s2">&quot;RGB&quot;</span><span class="p">,</span> <span class="n">to_colorspace</span><span class="o">=</span><span class="s2">&quot;HSV&quot;</span><span class="p">),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">WithChannels</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Add</span><span class="p">((</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">))),</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">ChangeColorspace</span><span class="p">(</span><span class="n">from_colorspace</span><span class="o">=</span><span class="s2">&quot;HSV&quot;</span><span class="p">,</span> <span class="n">to_colorspace</span><span class="o">=</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Change colorspace" src="../_images/changecolorspace.jpg" />
+</div>
+</div>
+<div class="section" id="grayscale">
+<h2>Grayscale<a class="headerlink" href="#grayscale" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter to convert images to their grayscale versions.</p>
+<p>Change images to grayscale and overlay them with the original image by varying
+strengths, effectively removing 0 to 100% of the color:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Grayscale</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Grayscale" src="../_images/grayscale.jpg" />
+</div>
+<p>Visualization of increasing <code class="docutils literal"><span class="pre">alpha</span></code> from 0.0 to 1.0 in 8 steps:</p>
+<div class="figure">
+<img alt="Grayscale vary alpha" src="../_images/grayscale_vary_alpha.jpg" />
+</div>
+</div>
+<div class="section" id="gaussianblur">
+<h2>GaussianBlur<a class="headerlink" href="#gaussianblur" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter to blur images using gaussian kernels.</p>
+<p>Blur each image with a gaussian kernel with a sigma of <code class="docutils literal"><span class="pre">3.0</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="GaussianBlur" src="../_images/gaussianblur.jpg" />
+</div>
+</div>
+<div class="section" id="averageblur">
+<h2>AverageBlur<a class="headerlink" href="#averageblur" title="Permalink to this headline">¶</a></h2>
+<p>Blur an image by computing simple means over neighbourhoods.</p>
+<p>Blur each image using a mean over neihbourhoods that have a random size
+between 2x2 and 11x11:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">AverageBlur</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="AverageBlur" src="../_images/averageblur.jpg" />
+</div>
+<p>Blur each image using a mean over neihbourhoods that have random sizes,
+which can vary between 5 and 11 in height and 1 and 3 in width:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">AverageBlur</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="AverageBlur varying height/width" src="../_images/averageblur_mixed.jpg" />
+</div>
+</div>
+<div class="section" id="medianblur">
+<h2>MedianBlur<a class="headerlink" href="#medianblur" title="Permalink to this headline">¶</a></h2>
+<p>Blur an image by computing median values over neighbourhoods.</p>
+<p>Blur each image using a median over neihbourhoods that have a random size
+between 3x3 and 11x11:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">MedianBlur</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="MedianBlur" src="../_images/medianblur.jpg" />
+</div>
+</div>
+<div class="section" id="convolve">
+<h2>Convolve<a class="headerlink" href="#convolve" title="Permalink to this headline">¶</a></h2>
+<p>Apply a Convolution to input images.</p>
+<p>Convolve each image with a 3x3 kernel:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                   <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                   <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Convolve</span><span class="p">(</span><span class="n">matrix</span><span class="o">=</span><span class="n">matrix</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Convolve" src="../_images/convolve.jpg" />
+</div>
+<p>Convolve each image with a 3x3 kernel, which is chosen dynamically per
+image:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">gen_matrix</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">nb_channels</span><span class="p">,</span> <span class="n">random_state</span><span class="p">):</span>
+      <span class="n">matrix_A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                           <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+     <span class="n">matrix_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+      <span class="k">if</span> <span class="n">random_state</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+          <span class="k">return</span> <span class="p">[</span><span class="n">matrix_A</span><span class="p">]</span> <span class="o">*</span> <span class="n">nb_channels</span>
+      <span class="k">else</span><span class="p">:</span>
+          <span class="k">return</span> <span class="p">[</span><span class="n">matrix_B</span><span class="p">]</span> <span class="o">*</span> <span class="n">nb_channels</span>
+<span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Convolve</span><span class="p">(</span><span class="n">matrix</span><span class="o">=</span><span class="n">gen_matrix</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Convolve per callable" src="../_images/convolve_callable.jpg" />
+</div>
+</div>
+<div class="section" id="sharpen">
+<h2>Sharpen<a class="headerlink" href="#sharpen" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that sharpens images and overlays the result with the original
+image.</p>
+<p>Sharpen an image, then overlay the results with the original using an alpha
+between 0.0 and 1.0:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Sharpen</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">lightness</span><span class="o">=</span><span class="p">(</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Sharpen" src="../_images/sharpen.jpg" />
+</div>
+<p>Effects of keeping <code class="docutils literal"><span class="pre">lightness</span></code> fixed at 1.0 and then varying <code class="docutils literal"><span class="pre">alpha</span></code> between
+0.0 and 1.0 in 8 steps:</p>
+<div class="figure">
+<img alt="Sharpen varying alpha" src="../_images/sharpen_vary_alpha.jpg" />
+</div>
+<p>Effects of keeping <code class="docutils literal"><span class="pre">alpha</span></code> fixed at 1.0 and then varying <code class="docutils literal"><span class="pre">lightness</span></code> between
+0.75 and 1.5 in 8 steps:</p>
+<div class="figure">
+<img alt="Sharpen varying lightness" src="../_images/sharpen_vary_lightness.jpg" />
+</div>
+</div>
+<div class="section" id="emboss">
+<h2>Emboss<a class="headerlink" href="#emboss" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that embosses images and overlays the result with the original
+image.</p>
+<p>Emboss an image, then overlay the results with the original using an alpha
+between 0.0 and 1.0:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Emboss</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">strength</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Emboss" src="../_images/emboss.jpg" />
+</div>
+<p>Effects of keeping <code class="docutils literal"><span class="pre">strength</span></code> fixed at 1.0 and then varying <code class="docutils literal"><span class="pre">alpha</span></code> between
+0.0 and 1.0 in 8 steps:</p>
+<div class="figure">
+<img alt="Emboss varying alpha" src="../_images/emboss_vary_alpha.jpg" />
+</div>
+<p>Effects of keeping <code class="docutils literal"><span class="pre">alpha</span></code> fixed at 1.0 and then varying <code class="docutils literal"><span class="pre">strength</span></code> between
+0.5 and 1.5 in 8 steps:</p>
+<div class="figure">
+<img alt="Emboss varying strength" src="../_images/emboss_vary_strength.jpg" />
+</div>
+</div>
+<div class="section" id="edgedetect">
+<h2>EdgeDetect<a class="headerlink" href="#edgedetect" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that detects all edges in images, marks them in
+a black and white image and then overlays the result with the original
+image.</p>
+<p>Detect edges in images, turning them into black and white images and then overlay
+these with the original images using random alphas between 0.0 and 1.0:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">EdgeDetect</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Effect of increasing <code class="docutils literal"><span class="pre">alpha</span></code> from 0.0 to 1.0 in 8 steps:</p>
+<div class="figure">
+<img alt="EdgeDetect vary alpha" src="../_images/edgedetect_vary_alpha.jpg" />
+</div>
+</div>
+<div class="section" id="directededgedetect">
+<h2>DirectedEdgeDetect<a class="headerlink" href="#directededgedetect" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that detects edges that have certain directions and marks them
+in a black and white image and then overlays the result with the original
+image.</p>
+<p>Detect edges having random directions (0 to 360 degrees) in images,
+turning the images into black and white versions and then overlay
+these with the original images using random alphas between 0.0 and 1.0:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">DirectedEdgeDetect</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Effect of fixing <code class="docutils literal"><span class="pre">direction</span></code> to 0.0 and then increasing <code class="docutils literal"><span class="pre">alpha</span></code> from 0.0
+to 1.0 in 8 steps:</p>
+<div class="figure">
+<img alt="DirectedEdgeDetect vary alpha" src="../_images/directededgedetect_vary_alpha.jpg" />
+</div>
+<p>Effect of fixing <code class="docutils literal"><span class="pre">alpha</span></code> to 1.0 and then increasing <code class="docutils literal"><span class="pre">direction</span></code> from 0.0
+to 1.0 (0 to 360 degrees) in 8 steps:</p>
+<div class="figure">
+<img alt="DirectedEdgeDetect vary direction" src="../_images/directededgedetect_vary_direction.jpg" />
+</div>
+</div>
+<div class="section" id="add">
+<h2>Add<a class="headerlink" href="#add" title="Permalink to this headline">¶</a></h2>
+<p>Add a value to all pixels in an image.</p>
+<p>Add random values between -40 and 40 to images, with each value being sampled
+once per image and then being the same for all pixels:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Add</span><span class="p">((</span><span class="o">-</span><span class="mi">40</span><span class="p">,</span> <span class="mi">40</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Add" src="../_images/add.jpg" />
+</div>
+<p>Add random values between -40 and 40 to images. In 50% of all images the
+values differ per channel (3 sampled value). In the other 50% of all images
+the value is the same for all channels:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Add</span><span class="p">((</span><span class="o">-</span><span class="mi">40</span><span class="p">,</span> <span class="mi">40</span><span class="p">),</span> <span class="n">per_channel</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Add per channel" src="../_images/add_per_channel.jpg" />
+</div>
+</div>
+<div class="section" id="addelementwise">
+<h2>AddElementwise<a class="headerlink" href="#addelementwise" title="Permalink to this headline">¶</a></h2>
+<p>Add values to the pixels of images with possibly different values
+for neighbouring pixels.</p>
+<p>Add random values between -40 and 40 to images, with each value being sampled
+per pixel:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">AddElementwise</span><span class="p">((</span><span class="o">-</span><span class="mi">40</span><span class="p">,</span> <span class="mi">40</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="AddElementwise" src="../_images/addelementwise.jpg" />
+</div>
+<p>Add random values between -40 and 40 to images. In 50% of all images the
+values differ per channel (3 sampled values per pixel).
+In the other 50% of all images the value is the same for all channels per pixel:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">AddElementwise</span><span class="p">((</span><span class="o">-</span><span class="mi">40</span><span class="p">,</span> <span class="mi">40</span><span class="p">),</span> <span class="n">per_channel</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="AddElementwise per channel" src="../_images/addelementwise_per_channel.jpg" />
+</div>
+</div>
+<div class="section" id="additivegaussiannoise">
+<h2>AdditiveGaussianNoise<a class="headerlink" href="#additivegaussiannoise" title="Permalink to this headline">¶</a></h2>
+<p>Add gaussian noise (aka white noise) to images.</p>
+<p>Add gaussian noise to an image, sampled once per pixel from a normal
+distribution <code class="docutils literal"><span class="pre">N(0,</span> <span class="pre">s)</span></code>, where <code class="docutils literal"><span class="pre">s</span></code> is sampled per image and varies between
+0 and 0.05*255:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">AdditiveGaussianNoise</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.05</span><span class="o">*</span><span class="mi">255</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="AdditiveGaussianNoise" src="../_images/additivegaussiannoise.jpg" />
+</div>
+<p>Add gaussian noise to an image, sampled once per pixel from a normal
+distribution <code class="docutils literal"><span class="pre">N(0,</span> <span class="pre">0.05*255)</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">AdditiveGaussianNoise</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.05</span><span class="o">*</span><span class="mi">255</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="AdditiveGaussianNoise large" src="../_images/additivegaussiannoise_large.jpg" />
+</div>
+<p>Add gaussian noise to an image, sampled once per pixel from a normal
+distribution <code class="docutils literal"><span class="pre">N(0,</span> <span class="pre">0.05*255)</span></code> for 50% of all images and sampled three times
+(channel-wise) for the other 50% from the same normal distribution:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">AdditiveGaussianNoise</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.05</span><span class="o">*</span><span class="mi">255</span><span class="p">,</span> <span class="n">per_channel</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="AdditiveGaussianNoise per channel" src="../_images/additivegaussiannoise_per_channel.jpg" />
+</div>
+</div>
+<div class="section" id="multiply">
+<h2>Multiply<a class="headerlink" href="#multiply" title="Permalink to this headline">¶</a></h2>
+<p>Multiply all pixels in an image with a specific value, thereby making the
+image darker or brighter.</p>
+<p>Multiply each image with a random value between 0.5 and 1.5:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Multiply</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Multiply" src="../_images/multiply.jpg" />
+</div>
+<p>Multiply 50% of all images with a random value between 0.5 and 1.5
+and multiply the remaining 50% channel-wise, i.e. sample one multiplier
+independently per channel:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Multiply</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="n">per_channel</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Multiply per channel" src="../_images/multiply_per_channel.jpg" />
+</div>
+</div>
+<div class="section" id="multiplyelementwise">
+<h2>MultiplyElementwise<a class="headerlink" href="#multiplyelementwise" title="Permalink to this headline">¶</a></h2>
+<p>Multiply values of pixels with possibly different values for neighbouring
+pixels, making each pixel darker or brighter.</p>
+<p>Multiply each pixel with a random value between 0.5 and 1.5:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">MultiplyElementwise</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="MultiplyElementwise" src="../_images/multiplyelementwise.jpg" />
+</div>
+<p>Multiply in 50% of all images each pixel with random values between 0.5 and 1.5
+and multiply in the remaining 50% of all images the pixels channel-wise, i.e.
+sample one multiplier independently per channel and pixel:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">MultiplyElementwise</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="n">per_channel</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="MultiplyElementwise per channel" src="../_images/multiplyelementwise_per_channel.jpg" />
+</div>
+</div>
+<div class="section" id="dropout">
+<h2>Dropout<a class="headerlink" href="#dropout" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that sets a certain fraction of pixels in images to zero.</p>
+<p>Sample per image a value p from the range 0&lt;=p&lt;=0.2 and then drop p percent
+of all pixels in the image (i.e. convert them to black pixels):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Dropout" src="../_images/dropout.jpg" />
+</div>
+<p>Sample per image a value p from the range 0&lt;=p&lt;=0.2 and then drop p percent
+of all pixels in the image (i.e. convert them to black pixels), but
+do this independently per channel in 50% of all images:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="n">per_channel</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Dropout per channel" src="../_images/dropout_per_channel.jpg" />
+</div>
+</div>
+<div class="section" id="coarsedropout">
+<h2>CoarseDropout<a class="headerlink" href="#coarsedropout" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that sets rectangular areas within images to zero.</p>
+<p>Drop 2% of all pixels by converting them to black pixels, but do
+that on a lower-resolution version of the image that has 50% of the original
+size, leading to 2x2 squares being dropped:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">CoarseDropout</span><span class="p">(</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">size_percent</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="CoarseDropout" src="../_images/coarsedropout.jpg" />
+</div>
+<p>Drop 0 to 5% of all pixels by converting them to black pixels, but do
+that on a lower-resolution version of the image that has 5% to 50% of the
+original size, leading to large rectangular areas being dropped:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">CoarseDropout</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span> <span class="n">size_percent</span><span class="o">=</span><span class="p">(</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="CoarseDropout p and size uniform" src="../_images/coarsedropout_both_uniform.jpg" />
+</div>
+<p>Drop 2% of all pixels by converting them to black pixels, but do
+that on a lower-resolution version of the image that has 50% of the original
+size, leading to 2x2 squares being dropped. Also do this in 50% of all
+images channel-wise, so that only the information of some channels in set
+to 0 while others remain untouched:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">CoarseDropout</span><span class="p">(</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">size_percent</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">per_channel</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="CoarseDropout per channel" src="../_images/coarsedropout_per_channel.jpg" />
+</div>
+</div>
+<div class="section" id="invert">
+<h2>Invert<a class="headerlink" href="#invert" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that inverts all values in images, i.e. sets a pixel from value
+<code class="docutils literal"><span class="pre">v</span></code> to <code class="docutils literal"><span class="pre">255-v</span></code>.</p>
+<p>Invert in 50% of all images all pixels:</p>
+<blockquote>
+<div>aug = iaa.Invert(0.5)</div></blockquote>
+<div class="figure">
+<img alt="Invert" src="../_images/invert.jpg" />
+</div>
+<p>For 50% of all images, invert all pixels in these images with 25% probability
+(per image). In the remaining 50% of all images, invert 25% of all channels:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Invert</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">per_channel</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Invert per channel" src="../_images/invert_per_channel.jpg" />
+</div>
+</div>
+<div class="section" id="contrastnormalization">
+<h2>ContrastNormalization<a class="headerlink" href="#contrastnormalization" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that changes the contrast of images.</p>
+<p>Normalize contrast by a factor of 0.5 to 1.5, sampled randomly per image:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">ContrastNormalization</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="ContrastNormalization" src="../_images/contrastnormalization.jpg" />
+</div>
+<p>Normalize contrast by a factor of 0.5 to 1.5, sampled randomly per image
+and for 50% of all images also independently per channel:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">ContrastNormalization</span><span class="p">((</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="n">per_channel</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="ContrastNormalization per channel" src="../_images/contrastnormalization_per_channel.jpg" />
+</div>
+</div>
+<div class="section" id="affine">
+<h2>Affine<a class="headerlink" href="#affine" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter to apply affine transformations to images.</p>
+<p>Scale images to a value of 50 to 150% of their original size:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Affine scale" src="../_images/affine_scale.jpg" />
+</div>
+<p>Scale images to a value of 50 to 150% of their original size,
+but do this independently per axis (i.e. sample two values per image):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)})</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Affine scale independently" src="../_images/affine_scale_independently.jpg" />
+</div>
+<p>Translate images by -20 to +20% on x- and y-axis independently:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="n">translate_percent</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)})</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Affine translate percent" src="../_images/affine_translate_percent.jpg" />
+</div>
+<p>Translate images by -20 to 20 pixels on x- and y-axis independently:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="n">translate_px</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">)})</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Affine translate pixel" src="../_images/affine_translate_px.jpg" />
+</div>
+<p>Rotate images by -45 to 45 degrees:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="n">rotate</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">45</span><span class="p">,</span> <span class="mi">45</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Affine rotate" src="../_images/affine_rotate.jpg" />
+</div>
+<p>Shear images by -16 to 16 degrees:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="n">shear</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Affine shear" src="../_images/affine_shear.jpg" />
+</div>
+<p>When applying affine transformations, new pixels are often generated, e.g. when
+translating to the left, pixels are generated on the right. Various modes
+exist to set how these pixels are ought to be filled. Below code shows an
+example that uses all modes, sampled randomly per image. If the mode is
+<cite>constant</cite> (fill all with one constant value), then a random brightness
+between 0 and 255 is used:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="n">translate_percent</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.20</span><span class="p">},</span> <span class="n">mode</span><span class="o">=</span><span class="n">ia</span><span class="o">.</span><span class="n">ALL</span><span class="p">,</span> <span class="n">cval</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="Affine fill modes" src="../_images/affine_fill.jpg" />
+</div>
+</div>
+<div class="section" id="piecewiseaffine">
+<h2>PiecewiseAffine<a class="headerlink" href="#piecewiseaffine" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter that places a regular grid of points on an image and randomly
+moves the neighbourhood of these point around via affine transformations.
+This leads to local distortions.</p>
+<p>Distort images locally by moving points around, each with a distance v (percent
+relative to image size), where v is sampled per point from <code class="docutils literal"><span class="pre">N(0,</span> <span class="pre">z)</span></code>
+<code class="docutils literal"><span class="pre">z</span></code> is sampled per image from the range 0.01 to 0.05:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">PiecewiseAffine</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="PiecewiseAffine" src="../_images/piecewiseaffine.jpg" />
+</div>
+<div class="figure">
+<img alt="PiecewiseAffine" src="../_images/piecewiseaffine_checkerboard.jpg" />
+</div>
+<p>Effect of increasing <code class="docutils literal"><span class="pre">scale</span></code> from 0.01 to 0.3 in 8 steps:</p>
+<div class="figure">
+<img alt="PiecewiseAffine varying scales" src="../_images/piecewiseaffine_vary_scales.jpg" />
+</div>
+<p>PiecewiseAffine works by placing a regular grid of points on the image
+and moving them around. By default this grid consists of 4x4 points.
+The below image shows the effect of increasing that value from 2x2 to 16x16
+in 8 steps:</p>
+<div class="figure">
+<img alt="PiecewiseAffine varying grid" src="../_images/piecewiseaffine_vary_grid.jpg" />
+</div>
+</div>
+<div class="section" id="elastictransformation">
+<h2>ElasticTransformation<a class="headerlink" href="#elastictransformation" title="Permalink to this headline">¶</a></h2>
+<p>Augmenter to transform images by moving pixels locally around using
+displacement fields.</p>
+<p>Distort images locally by moving individual pixels around following
+a distortions field with strength 0.25. The strength of the movement is
+sampled per pixel from the range 0 to 5.0:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">aug</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">ElasticTransformation</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">),</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<img alt="ElasticTransformation" src="../_images/elastictransformations.jpg" />
+</div>
+<p>Effect of keeping sigma fixed at 0.25 and increasing alpha from 0 to 5.0
+in 8 steps:</p>
+<div class="figure">
+<img alt="ElasticTransformation varying alpha" src="../_images/elastictransformations_vary_alpha.jpg" />
+</div>
+<p>Effect of keeping alpha fixed at 2.5 and increasing sigma from 0.01 to 1.0
+in 8 steps:</p>
+<div class="figure">
+<img alt="ElasticTransformation varying sigma" src="../_images/elastictransformations_vary_sigmas.jpg" />
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="modules.html" class="btn btn-neutral float-right" title="imgaug" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="alpha.html" class="btn btn-neutral" title="Blending/Overlaying images" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Alexander Jung.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.2.6',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

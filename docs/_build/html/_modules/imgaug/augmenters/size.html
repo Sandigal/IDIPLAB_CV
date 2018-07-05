@@ -1,0 +1,1299 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>imgaug.augmenters.size &mdash; imgaug 0.2.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> imgaug
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/examples_basics.html">Examples: Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/examples_keypoints.html">Examples: Keypoints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/examples_bounding_boxes.html">Examples: Bounding Boxes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/parameters.html">Stochastic Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/alpha.html">Blending/Overlaying images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/augmenters.html">Overview of Augmenters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/modules.html">imgaug</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">imgaug</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>imgaug.augmenters.size</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for imgaug.augmenters.size</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Augmenters that somehow change the size of the images.</span>
+
+<span class="sd">Do not import directly from this file, as the categorization is not final.</span>
+<span class="sd">Use instead</span>
+<span class="sd">    `from imgaug import augmenters as iaa`</span>
+<span class="sd">and then e.g. ::</span>
+
+<span class="sd">    seq = iaa.Sequential([</span>
+<span class="sd">        iaa.Scale({&quot;height&quot;: 32, &quot;width&quot;: 64})</span>
+<span class="sd">        iaa.Crop((0, 20))</span>
+<span class="sd">    ])</span>
+
+<span class="sd">List of augmenters:</span>
+<span class="sd">    * Scale</span>
+<span class="sd">    * CropAndPad</span>
+<span class="sd">    * Crop</span>
+<span class="sd">    * Pad</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">imgaug</span> <span class="k">as</span> <span class="n">ia</span>
+<span class="c1"># TODO replace these imports with iap.XYZ</span>
+<span class="kn">from</span> <span class="nn">..parameters</span> <span class="k">import</span> <span class="n">StochasticParameter</span><span class="p">,</span> <span class="n">Deterministic</span><span class="p">,</span> <span class="n">Choice</span><span class="p">,</span> <span class="n">DiscreteUniform</span><span class="p">,</span> <span class="n">Uniform</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">parameters</span> <span class="k">as</span> <span class="n">iap</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">six.moves</span> <span class="k">as</span> <span class="nn">sm</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">meta</span>
+<span class="kn">from</span> <span class="nn">.meta</span> <span class="k">import</span> <span class="n">Augmenter</span>
+
+<span class="c1"># TODO rename to Resize to avoid confusion with Affine&#39;s scale</span>
+<div class="viewcode-block" id="Scale"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.size.Scale">[docs]</a><span class="k">class</span> <span class="nc">Scale</span><span class="p">(</span><span class="n">Augmenter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Augmenter that scales/resizes images to specified heights and widths.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    size : string &quot;keep&quot; or int or float or tuple of two ints/floats or list of ints/floats or StochasticParameter or dictionary</span>
+<span class="sd">        The new size of the</span>
+<span class="sd">        images.</span>
+<span class="sd">            * If this has the string value &#39;keep&#39;, the original height and</span>
+<span class="sd">              width values will be kept (image is not scaled).</span>
+<span class="sd">            * If this is an integer, this value will always be used as the new</span>
+<span class="sd">              height and width of the images.</span>
+<span class="sd">            * If this is a float v, then per image the image&#39;s height H and</span>
+<span class="sd">              width W will be changed to H*v and W*v.</span>
+<span class="sd">            * If this is a tuple, it is expected to have two entries (a, b).</span>
+<span class="sd">              If at least one of these are floats, a value will be sampled from</span>
+<span class="sd">              range [a, b] and used as the float value to resize the image</span>
+<span class="sd">              (see above). If both are integers, a value will be sampled from</span>
+<span class="sd">              the discrete range [a .. b] and used as the integer value</span>
+<span class="sd">              to resize the image (see above).</span>
+<span class="sd">            * If this is a list, a random value from the list will be picked</span>
+<span class="sd">              to resize the image. All values in the list must be integers or</span>
+<span class="sd">              floats (no mixture is possible).</span>
+<span class="sd">            * If this is a StochasticParameter, then this parameter will first</span>
+<span class="sd">              be queried once per image. The resulting value will be used</span>
+<span class="sd">              for both height and width.</span>
+<span class="sd">            * If this is a dictionary, it may contain the keys &quot;height&quot; and</span>
+<span class="sd">              &quot;width&quot;. Each key may have the same datatypes as above and</span>
+<span class="sd">              describes the scaling on x and y-axis. Both axis are sampled</span>
+<span class="sd">              independently. Additionally, one of the keys may have the value</span>
+<span class="sd">              &quot;keep-aspect-ratio&quot;, which means that the respective side of the</span>
+<span class="sd">              image will be resized so that the original aspect ratio is kept.</span>
+<span class="sd">              This is useful when only resizing one image size by a pixel</span>
+<span class="sd">              value (e.g. resize images to a height of 64 pixels and resize</span>
+<span class="sd">              the width so that the overall aspect ratio is maintained).</span>
+
+<span class="sd">    interpolation : ia.ALL or int or string or list of ints/strings or StochasticParameter, optional(default=&quot;cubic&quot;)</span>
+<span class="sd">        Interpolation to</span>
+<span class="sd">        use.</span>
+<span class="sd">            * If ia.ALL, then a random interpolation from `nearest`, `linear`,</span>
+<span class="sd">              `area` or `cubic` will be picked (per image).</span>
+<span class="sd">            * If int, then this interpolation will always be used.</span>
+<span class="sd">              Expected to be any of the following:</span>
+<span class="sd">              `cv2.INTER_NEAREST`, `cv2.INTER_LINEAR`, `cv2.INTER_AREA`,</span>
+<span class="sd">              `cv2.INTER_CUBIC`</span>
+<span class="sd">            * If string, then this interpolation will always be used.</span>
+<span class="sd">              Expected to be any of the following:</span>
+<span class="sd">              &quot;nearest&quot;, &quot;linear&quot;, &quot;area&quot;, &quot;cubic&quot;</span>
+<span class="sd">            * If list of ints/strings, then a random one of the values will be</span>
+<span class="sd">              picked per image as the interpolation.</span>
+<span class="sd">              If a StochasticParameter, then this parameter will be queried per</span>
+<span class="sd">              image and is expected to return an integer or string.</span>
+
+<span class="sd">    name : string, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    deterministic : bool, optional(default=False)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    random_state : int or np.random.RandomState or None, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Scale(32)</span>
+
+<span class="sd">    scales all images to 32x32 pixels.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Scale(0.5)</span>
+
+<span class="sd">    scales all images to 50 percent of their original size.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Scale((16, 22))</span>
+
+<span class="sd">    scales all images to a random height and width within the</span>
+<span class="sd">    discrete range 16&lt;=x&lt;=22.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Scale((0.5, 0.75))</span>
+
+<span class="sd">    scales all image&#39;s height and width to H*v and W*v, where v is randomly</span>
+<span class="sd">    sampled from the range 0.5&lt;=x&lt;=0.75.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Scale([16, 32, 64])</span>
+
+<span class="sd">    scales all images either to 16x16, 32x32 or 64x64 pixels.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Scale({&quot;height&quot;: 32})</span>
+
+<span class="sd">    scales all images to a height of 32 pixels and keeps the original</span>
+<span class="sd">    width.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Scale({&quot;height&quot;: 32, &quot;width&quot;: 48})</span>
+
+<span class="sd">    scales all images to a height of 32 pixels and a width of 48.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Scale({&quot;height&quot;: 32, &quot;width&quot;: &quot;keep-aspect-ratio&quot;})</span>
+
+<span class="sd">    scales all images to a height of 32 pixels and resizes the x-axis</span>
+<span class="sd">    (width) so that the aspect ratio is maintained.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Scale({&quot;height&quot;: (0.5, 0.75), &quot;width&quot;: [16, 32, 64]})</span>
+
+<span class="sd">    scales all images to a height of H*v, where H is the original height</span>
+<span class="sd">    and v is a random value sampled from the range 0.5&lt;=x&lt;=0.75.</span>
+<span class="sd">    The width/x-axis of each image is resized to either 16 or 32 or</span>
+<span class="sd">    64 pixels.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Scale(32, interpolation=[&quot;linear&quot;, &quot;cubic&quot;])</span>
+
+<span class="sd">    scales all images to 32x32 pixels. Randomly uses either &quot;linear&quot;</span>
+<span class="sd">    or &quot;cubic&quot; interpolation.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scale</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">allow_dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="s2">&quot;keep&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Deterministic</span><span class="p">(</span><span class="s2">&quot;keep&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_integer</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">val</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">Deterministic</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_float</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">val</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">Deterministic</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">allow_dict</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">Deterministic</span><span class="p">(</span><span class="s2">&quot;keep&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">all</span><span class="p">([</span><span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">keys</span><span class="p">()]))</span>
+                    <span class="k">if</span> <span class="s2">&quot;height&quot;</span> <span class="ow">in</span> <span class="n">val</span> <span class="ow">and</span> <span class="s2">&quot;width&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+                        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;keep-aspect-ratio&quot;</span> <span class="ow">or</span> <span class="n">val</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;keep-aspect-ratio&quot;</span><span class="p">)</span>
+
+                    <span class="n">size_tuple</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">val</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;keep-aspect-ratio&quot;</span> <span class="ow">or</span> <span class="n">val</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;keep&quot;</span><span class="p">:</span>
+                                <span class="n">entry</span> <span class="o">=</span> <span class="n">Deterministic</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">entry</span> <span class="o">=</span> <span class="n">handle</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="kc">False</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">entry</span> <span class="o">=</span> <span class="n">Deterministic</span><span class="p">(</span><span class="s2">&quot;keep&quot;</span><span class="p">)</span>
+                        <span class="n">size_tuple</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">size_tuple</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_float</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_float</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="k">return</span> <span class="n">Uniform</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">DiscreteUniform</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">Deterministic</span><span class="p">(</span><span class="s2">&quot;keep&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">all_int</span> <span class="o">=</span> <span class="nb">all</span><span class="p">([</span><span class="n">ia</span><span class="o">.</span><span class="n">is_single_integer</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val</span><span class="p">])</span>
+                    <span class="n">all_float</span> <span class="o">=</span> <span class="nb">all</span><span class="p">([</span><span class="n">ia</span><span class="o">.</span><span class="n">is_single_float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val</span><span class="p">])</span>
+                    <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">all_int</span> <span class="ow">or</span> <span class="n">all_float</span><span class="p">)</span>
+                    <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">all</span><span class="p">([</span><span class="n">v</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val</span><span class="p">]))</span>
+                    <span class="k">return</span> <span class="n">Choice</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">val</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s2">&quot;Expected number, tuple of two numbers, list of numbers, dictionary of &quot;</span>
+                    <span class="s2">&quot;form {&#39;height&#39;: number/tuple/list/&#39;keep-aspect-ratio&#39;/&#39;keep&#39;, &quot;</span>
+                    <span class="s2">&quot;&#39;width&#39;: &lt;analogous&gt;}, or StochasticParameter, got </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">),)</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">handle</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">interpolation</span> <span class="o">==</span> <span class="n">ia</span><span class="o">.</span><span class="n">ALL</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interpolation</span> <span class="o">=</span> <span class="n">Choice</span><span class="p">([</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;area&quot;</span><span class="p">,</span> <span class="s2">&quot;cubic&quot;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_integer</span><span class="p">(</span><span class="n">interpolation</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interpolation</span> <span class="o">=</span> <span class="n">Deterministic</span><span class="p">(</span><span class="n">interpolation</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_string</span><span class="p">(</span><span class="n">interpolation</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interpolation</span> <span class="o">=</span> <span class="n">Deterministic</span><span class="p">(</span><span class="n">interpolation</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_iterable</span><span class="p">(</span><span class="n">interpolation</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interpolation</span> <span class="o">=</span> <span class="n">Choice</span><span class="p">(</span><span class="n">interpolation</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">interpolation</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interpolation</span> <span class="o">=</span> <span class="n">interpolation</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected int or string or iterable or StochasticParameter, got </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">interpolation</span><span class="p">),))</span>
+
+    <span class="k">def</span> <span class="nf">_augment_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">nb_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+        <span class="n">samples_h</span><span class="p">,</span> <span class="n">samples_w</span><span class="p">,</span> <span class="n">samples_ip</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_draw_samples</span><span class="p">(</span><span class="n">nb_images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">do_sample_ip</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sm</span><span class="o">.</span><span class="n">xrange</span><span class="p">(</span><span class="n">nb_images</span><span class="p">):</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="s2">&quot;Scale() can currently only process images of dtype uint8 (got </span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="p">,))</span>
+            <span class="n">sample_h</span><span class="p">,</span> <span class="n">sample_w</span><span class="p">,</span> <span class="n">sample_ip</span> <span class="o">=</span> <span class="n">samples_h</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">samples_w</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">samples_ip</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_height_width</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">sample_h</span><span class="p">,</span> <span class="n">sample_w</span><span class="p">)</span>
+            <span class="n">image_rs</span> <span class="o">=</span> <span class="n">ia</span><span class="o">.</span><span class="n">imresize_single_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">sample_ip</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image_rs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">all_same_size</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">all_same_size</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_augment_keypoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keypoints_on_images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">nb_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">keypoints_on_images</span><span class="p">)</span>
+        <span class="n">samples_h</span><span class="p">,</span> <span class="n">samples_w</span><span class="p">,</span> <span class="n">_samples_ip</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_draw_samples</span><span class="p">(</span><span class="n">nb_images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">do_sample_ip</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sm</span><span class="o">.</span><span class="n">xrange</span><span class="p">(</span><span class="n">nb_images</span><span class="p">):</span>
+            <span class="n">keypoints_on_image</span> <span class="o">=</span> <span class="n">keypoints_on_images</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">sample_h</span><span class="p">,</span> <span class="n">sample_w</span> <span class="o">=</span> <span class="n">samples_h</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">samples_w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_height_width</span><span class="p">(</span><span class="n">keypoints_on_image</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">sample_h</span><span class="p">,</span> <span class="n">sample_w</span><span class="p">)</span>
+            <span class="n">new_shape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">keypoints_on_image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">new_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span>
+            <span class="n">new_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span>
+            <span class="n">keypoints_on_image_rs</span> <span class="o">=</span> <span class="n">keypoints_on_image</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">new_shape</span><span class="p">))</span>
+
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">keypoints_on_image_rs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_draw_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nb_images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">do_sample_ip</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="n">random_state</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="o">**</span><span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">samples_h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">draw_samples</span><span class="p">(</span><span class="n">nb_images</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">ia</span><span class="o">.</span><span class="n">new_random_state</span><span class="p">(</span><span class="n">seed</span> <span class="o">+</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="n">samples_w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">draw_samples</span><span class="p">(</span><span class="n">nb_images</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">ia</span><span class="o">.</span><span class="n">new_random_state</span><span class="p">(</span><span class="n">seed</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">samples_h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">draw_samples</span><span class="p">(</span><span class="n">nb_images</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">ia</span><span class="o">.</span><span class="n">new_random_state</span><span class="p">(</span><span class="n">seed</span> <span class="o">+</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="n">samples_w</span> <span class="o">=</span> <span class="n">samples_h</span>
+        <span class="k">if</span> <span class="n">do_sample_ip</span><span class="p">:</span>
+            <span class="n">samples_ip</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolation</span><span class="o">.</span><span class="n">draw_samples</span><span class="p">(</span><span class="n">nb_images</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">ia</span><span class="o">.</span><span class="n">new_random_state</span><span class="p">(</span><span class="n">seed</span> <span class="o">+</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">samples_ip</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">samples_h</span><span class="p">,</span> <span class="n">samples_w</span><span class="p">,</span> <span class="n">samples_ip</span>
+
+    <span class="k">def</span> <span class="nf">_compute_height_width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_shape</span><span class="p">,</span> <span class="n">sample_h</span><span class="p">,</span> <span class="n">sample_w</span><span class="p">):</span>
+        <span class="n">imh</span><span class="p">,</span> <span class="n">imw</span> <span class="o">=</span> <span class="n">image_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">sample_h</span><span class="p">,</span> <span class="n">sample_w</span>
+
+        <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_float</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="n">h</span><span class="p">)</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">imh</span> <span class="o">*</span> <span class="n">h</span><span class="p">))</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">h</span> <span class="k">if</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">h</span> <span class="o">==</span> <span class="s2">&quot;keep&quot;</span><span class="p">:</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">imh</span>
+        <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_float</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="n">w</span><span class="p">)</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">imw</span> <span class="o">*</span> <span class="n">w</span><span class="p">))</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="k">if</span> <span class="n">w</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">w</span> <span class="o">==</span> <span class="s2">&quot;keep&quot;</span><span class="p">:</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">imw</span>
+
+        <span class="c1"># at least the checks for keep-aspect-ratio must come after</span>
+        <span class="c1"># the float checks, as they are dependent on the results</span>
+        <span class="c1"># this is also why these are not written as elifs</span>
+        <span class="k">if</span> <span class="n">h</span> <span class="o">==</span> <span class="s2">&quot;keep-aspect-ratio&quot;</span><span class="p">:</span>
+            <span class="n">h_per_w_orig</span> <span class="o">=</span> <span class="n">imh</span> <span class="o">/</span> <span class="n">imw</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">h_per_w_orig</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">w</span> <span class="o">==</span> <span class="s2">&quot;keep-aspect-ratio&quot;</span><span class="p">:</span>
+            <span class="n">w_per_h_orig</span> <span class="o">=</span> <span class="n">imw</span> <span class="o">/</span> <span class="n">imh</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">w_per_h_orig</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span>
+
+<div class="viewcode-block" id="Scale.get_parameters"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.size.Scale.get_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolation</span><span class="p">]</span></div></div>
+
+<div class="viewcode-block" id="CropAndPad"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.size.CropAndPad">[docs]</a><span class="k">class</span> <span class="nc">CropAndPad</span><span class="p">(</span><span class="n">Augmenter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Augmenter that crops/pads images by defined amounts in pixels or</span>
+<span class="sd">    percent (relative to input image size).</span>
+<span class="sd">    Cropping removes pixels at the sides (i.e. extracts a subimage from</span>
+<span class="sd">    a given full image). Padding adds pixels to the sides (e.g. black pixels).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    px : None or int or StochasticParameter or tuple, optional(default=None)</span>
+<span class="sd">        The number of pixels to crop (negative values) or</span>
+<span class="sd">        pad (positive values) on each side of the image.</span>
+<span class="sd">        Either this or the parameter `percent` may be set, not both at the</span>
+<span class="sd">        same time.</span>
+<span class="sd">            * If None, then pixel-based cropping will not be used.</span>
+<span class="sd">            * If int, then that exact number of pixels will always be cropped.</span>
+<span class="sd">            * If StochasticParameter, then that parameter will be used for each</span>
+<span class="sd">              image. Four samples will be drawn per image (top, right, bottom,</span>
+<span class="sd">              left).</span>
+<span class="sd">              If however `sample_independently` is set to False, only one value</span>
+<span class="sd">              will be sampled per image and used for all sides.</span>
+<span class="sd">            * If a tuple of two ints with values a and b, then each side will</span>
+<span class="sd">              be cropped by a random amount in the range a &lt;= x &lt;= b.</span>
+<span class="sd">              x is sampled per image side.</span>
+<span class="sd">              If however `sample_independently` is set to False, only one value</span>
+<span class="sd">              will be sampled per image and used for all sides.</span>
+<span class="sd">            * If a tuple of four entries, then the entries represent top, right,</span>
+<span class="sd">              bottom, left. Each entry may be a single integer (always crop by</span>
+<span class="sd">              exactly that value), a tuple of two ints a and b (crop by an</span>
+<span class="sd">              amount a &lt;= x &lt;= b), a list of ints (crop by a random value that</span>
+<span class="sd">              is contained in the list) or a StochasticParameter (sample the</span>
+<span class="sd">              amount to crop from that parameter).</span>
+
+<span class="sd">    percent : None or int or float or StochasticParameter or tuple, optional(default=None)</span>
+<span class="sd">        The number of pixels to crop (negative values) or</span>
+<span class="sd">        pad (positive values) on each side of the image given *in percent*</span>
+<span class="sd">        of the image height/width. E.g. if this is set to 0.1, the</span>
+<span class="sd">        augmenter will always crop away 10 percent of the image&#39;s height at</span>
+<span class="sd">        the top, 10 percent of the width on the right, 10 percent of the</span>
+<span class="sd">        height at the bottom and 10 percent of the width on the left.</span>
+<span class="sd">        Either this or the parameter `px` may be set, not both at the same</span>
+<span class="sd">        time.</span>
+<span class="sd">            * If None, then percent-based cropping will not be used.</span>
+<span class="sd">            * If int, then expected to be 0 (no padding/cropping).</span>
+<span class="sd">            * If float, then that percentage will always be cropped away.</span>
+<span class="sd">            * If StochasticParameter, then that parameter will be used for each</span>
+<span class="sd">              image. Four samples will be drawn per image (top, right, bottom,</span>
+<span class="sd">              left).</span>
+<span class="sd">              If however `sample_independently` is set to False, only one value</span>
+<span class="sd">              will be sampled per image and used for all sides.</span>
+<span class="sd">            * If a tuple of two floats with values a and b, then each side will</span>
+<span class="sd">              be cropped by a random percentage in the range a &lt;= x &lt;= b.</span>
+<span class="sd">              x is sampled per image side.</span>
+<span class="sd">              If however `sample_independently` is set to False, only one value</span>
+<span class="sd">              will be sampled per image and used for all sides.</span>
+<span class="sd">            * If a tuple of four entries, then the entries represent top, right,</span>
+<span class="sd">              bottom, left. Each entry may be a single float (always crop by</span>
+<span class="sd">              exactly that percent value), a tuple of two floats a and b (crop</span>
+<span class="sd">              by a percentage a &lt;= x &lt;= b), a list of floats (crop by a random</span>
+<span class="sd">              value that is contained in the list) or a StochasticParameter</span>
+<span class="sd">              (sample the percentage to crop from that parameter).</span>
+
+<span class="sd">    pad_mode : ia.ALL or string or list of strings or StochasticParameter, optional(default=&quot;constant&quot;)</span>
+<span class="sd">        Padding mode to use for numpy&#39;s pad function. The available modes</span>
+<span class="sd">        are `constant`, `edge`, `linear_ramp`, `maximum`, `median`,</span>
+<span class="sd">        `minimum`, `reflect`, `symmetric`, `wrap`. Each one of these is</span>
+<span class="sd">        explained in the numpy documentation. The modes &quot;constant&quot; and</span>
+<span class="sd">        `linear_ramp` use extra values, which are provided by `pad_cval`</span>
+<span class="sd">        when necessary.</span>
+<span class="sd">            * If ia.ALL, then a random mode from all available</span>
+<span class="sd">              modes will be sampled per image.</span>
+<span class="sd">            * If a string, it will be used as the pad mode for all</span>
+<span class="sd">              images.</span>
+<span class="sd">            * If a list of strings, a random one of these will be</span>
+<span class="sd">              sampled per image and used as the mode.</span>
+<span class="sd">            * If StochasticParameter, a random mode will be sampled from this</span>
+<span class="sd">              parameter per image.</span>
+
+<span class="sd">    pad_cval : float or int or tuple of two ints/floats or list of ints/floats or StochasticParameter, optional(default=0)</span>
+<span class="sd">        The constant value to use (for numpy&#39;s pad function) if the pad</span>
+<span class="sd">        mode is &quot;constant&quot; or the end value to use if the mode</span>
+<span class="sd">        is `linear_ramp`.</span>
+<span class="sd">            * If float/int, then that value will be used.</span>
+<span class="sd">            * If a tuple of two numbers and at least one of them is a float,</span>
+<span class="sd">              then a random number will be sampled from the continuous range</span>
+<span class="sd">              a&lt;=x&lt;=b and used as the value. If both numbers are integers,</span>
+<span class="sd">              the range is discrete.</span>
+<span class="sd">            * If a list of ints/floats, then a random value will be chosen from</span>
+<span class="sd">              the elements of the list and used as the value.</span>
+<span class="sd">            * If StochasticParameter, a random value will be sampled from that</span>
+<span class="sd">              parameter per image.</span>
+
+<span class="sd">    keep_size : bool, optional(default=True)</span>
+<span class="sd">        After cropping, the result image has a different height/width than</span>
+<span class="sd">        the input image. If this parameter is set to True, then the cropped</span>
+<span class="sd">        image will be resized to the input image&#39;s size, i.e. the image size</span>
+<span class="sd">        is then not changed by the augmenter.</span>
+
+<span class="sd">    sample_independently : bool, optional(default=True)</span>
+<span class="sd">        If false AND the values for px/percent result in exactly one</span>
+<span class="sd">        probability distribution for the amount to crop/pad, only one</span>
+<span class="sd">        single value will be sampled from that probability distribution</span>
+<span class="sd">        and used for all sides. I.e. the crop/pad amount then is the same</span>
+<span class="sd">        for all sides.</span>
+
+<span class="sd">    name : string, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    deterministic : bool, optional(default=False)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    random_state : int or np.random.RandomState or None, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; aug = iaa.CropAndPad(px=(-10, 0))</span>
+
+<span class="sd">    crops each side by a random value from the range -10px to 0px (the value</span>
+<span class="sd">    is sampled per side).</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.CropAndPad(px=(0, 10))</span>
+
+<span class="sd">    pads each side by a random value from the range 0px to 10px (the values</span>
+<span class="sd">    are sampled per side). The padding happens by zero-padding (i.e. adds</span>
+<span class="sd">    black pixels).</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.CropAndPad(px=(0, 10), pad_mode=&quot;edge&quot;)</span>
+
+<span class="sd">    pads each side by a random value from the range 0px to 10px (the values</span>
+<span class="sd">    are sampled per side). The padding uses the &#39;edge&#39; mode from numpy&#39;s</span>
+<span class="sd">    pad function.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.CropAndPad(px=(0, 10), pad_mode=[&quot;constant&quot;, &quot;edge&quot;])</span>
+
+<span class="sd">    pads each side by a random value from the range 0px to 10px (the values</span>
+<span class="sd">    are sampled per side). The padding uses randomly either the &#39;constant&#39;</span>
+<span class="sd">    or &#39;edge&#39; mode from numpy&#39;s pad function.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.CropAndPad(px=(0, 10), pad_mode=ia.ALL, pad_cval=(0, 255))</span>
+
+<span class="sd">    pads each side by a random value from the range 0px to 10px (the values</span>
+<span class="sd">    are sampled per side). It uses a random mode for numpy&#39;s pad function.</span>
+<span class="sd">    If the mode is `constant` or `linear_ramp`, it samples a random value</span>
+<span class="sd">    v from the range [0, 255] and uses that as the constant</span>
+<span class="sd">    value (`mode=constant`) or end value (`mode=linear_ramp`).</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.CropAndPad(px=(0, 10), sample_independently=False)</span>
+
+<span class="sd">    samples one value v from the discrete range [0..10] and pads all sides</span>
+<span class="sd">    by v pixels.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.CropAndPad(px=(0, 10), keep_size=False)</span>
+
+<span class="sd">    pads each side by a random value from the range 0px to 10px (the value</span>
+<span class="sd">    is sampled per side). After padding, the images are NOT resized to</span>
+<span class="sd">    their original size (i.e. the images may end up having different</span>
+<span class="sd">    heights/widths).</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.CropAndPad(px=((0, 10), (0, 5), (0, 10), (0, 5)))</span>
+
+<span class="sd">    pads the top and bottom by a random value from the range 0px to 10px</span>
+<span class="sd">    and the left and right by a random value in the range 0px to 5px.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.CropAndPad(percent=(0, 0.1))</span>
+
+<span class="sd">    pads each side by a random value from the range 0 percent to</span>
+<span class="sd">    10 percent. (Percent with respect to the side&#39;s size, e.g. for the</span>
+<span class="sd">    top side it uses the image&#39;s height.)</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.CropAndPad(percent=([0.05, 0.1], [0.05, 0.1], [0.05, 0.1], [0.05, 0.1]))</span>
+
+<span class="sd">    pads each side by either 5 percent or 10 percent.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.CropAndPad(px=(-10, 10))</span>
+
+<span class="sd">    samples per side and image a value v from the discrete range [-10..10]</span>
+<span class="sd">    and either crops (negative value) or pads (positive value) the side</span>
+<span class="sd">    by v pixels.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">px</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">percent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pad_mode</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="n">pad_cval</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keep_size</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sample_independently</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CropAndPad</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_sides</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bottom</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">px</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">percent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;noop&quot;</span>
+        <span class="k">elif</span> <span class="n">px</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">percent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Can only pad by pixels or percent, not both.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">px</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;px&quot;</span>
+            <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_integer</span><span class="p">(</span><span class="n">px</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">all_sides</span> <span class="o">=</span> <span class="n">Deterministic</span><span class="p">(</span><span class="n">px</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">px</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+                <span class="k">def</span> <span class="nf">handle_param</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_integer</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="n">Deterministic</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+                        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">ia</span><span class="o">.</span><span class="n">is_single_integer</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">ia</span><span class="o">.</span><span class="n">is_single_integer</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                        <span class="k">return</span> <span class="n">DiscreteUniform</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+                        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">all</span><span class="p">([</span><span class="n">ia</span><span class="o">.</span><span class="n">is_single_integer</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">p</span><span class="p">]))</span>
+                        <span class="k">return</span> <span class="n">Choice</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="n">p</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected int, tuple of two ints, list of ints or StochasticParameter, got type </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">p</span><span class="p">),))</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">px</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="c1">#self.top = self.right = self.bottom = self.left = handle_param(px)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">all_sides</span> <span class="o">=</span> <span class="n">handle_param</span><span class="p">(</span><span class="n">px</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span> <span class="c1"># len == 4</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">top</span> <span class="o">=</span> <span class="n">handle_param</span><span class="p">(</span><span class="n">px</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">handle_param</span><span class="p">(</span><span class="n">px</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">bottom</span> <span class="o">=</span> <span class="n">handle_param</span><span class="p">(</span><span class="n">px</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">handle_param</span><span class="p">(</span><span class="n">px</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">top</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bottom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">px</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected int, tuple of 4 ints/tuples/lists/StochasticParameters or StochasticParameter, got type </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">px</span><span class="p">),))</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># = elif percent is not None:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;percent&quot;</span>
+            <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">percent</span><span class="p">):</span>
+                <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span> <span class="o">&lt;</span> <span class="n">percent</span><span class="p">)</span>
+                <span class="c1">#self.top = self.right = self.bottom = self.left = Deterministic(percent)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">all_sides</span> <span class="o">=</span> <span class="n">Deterministic</span><span class="p">(</span><span class="n">percent</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">percent</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">percent</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+                <span class="k">def</span> <span class="nf">handle_param</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="n">Deterministic</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+                        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span> <span class="o">&lt;</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span> <span class="o">&lt;</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="k">return</span> <span class="n">Uniform</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+                        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">all</span><span class="p">([</span><span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">p</span><span class="p">]))</span>
+                        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">all</span><span class="p">([</span><span class="o">-</span><span class="mf">1.0</span> <span class="o">&lt;</span> <span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">p</span><span class="p">]))</span>
+                        <span class="k">return</span> <span class="n">Choice</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="n">p</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected int, tuple of two ints, list of ints or StochasticParameter, got type </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">p</span><span class="p">),))</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">percent</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="c1">#self.top = self.right = self.bottom = self.left = handle_param(percent)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">all_sides</span> <span class="o">=</span> <span class="n">handle_param</span><span class="p">(</span><span class="n">percent</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span> <span class="c1"># len == 4</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">top</span> <span class="o">=</span> <span class="n">handle_param</span><span class="p">(</span><span class="n">percent</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">handle_param</span><span class="p">(</span><span class="n">percent</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">bottom</span> <span class="o">=</span> <span class="n">handle_param</span><span class="p">(</span><span class="n">percent</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">handle_param</span><span class="p">(</span><span class="n">percent</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">percent</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">top</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bottom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">percent</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected number, tuple of 4 numbers/tuples/lists/StochasticParameters or StochasticParameter, got type </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">percent</span><span class="p">),))</span>
+
+        <span class="n">pad_modes_available</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="s2">&quot;edge&quot;</span><span class="p">,</span> <span class="s2">&quot;linear_ramp&quot;</span><span class="p">,</span> <span class="s2">&quot;maximum&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="s2">&quot;minimum&quot;</span><span class="p">,</span> <span class="s2">&quot;reflect&quot;</span><span class="p">,</span> <span class="s2">&quot;symmetric&quot;</span><span class="p">,</span> <span class="s2">&quot;wrap&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">pad_mode</span> <span class="o">==</span> <span class="n">ia</span><span class="o">.</span><span class="n">ALL</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pad_mode</span> <span class="o">=</span> <span class="n">Choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">pad_modes_available</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_string</span><span class="p">(</span><span class="n">pad_mode</span><span class="p">):</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">pad_mode</span> <span class="ow">in</span> <span class="n">pad_modes_available</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pad_mode</span> <span class="o">=</span> <span class="n">Deterministic</span><span class="p">(</span><span class="n">pad_mode</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pad_mode</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">all</span><span class="p">([</span><span class="n">v</span> <span class="ow">in</span> <span class="n">pad_modes_available</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pad_mode</span><span class="p">]))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pad_mode</span> <span class="o">=</span> <span class="n">Choice</span><span class="p">(</span><span class="n">pad_mode</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pad_mode</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pad_mode</span> <span class="o">=</span> <span class="n">pad_mode</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected pad_mode to be ia.ALL or string or list of strings or StochasticParameter, got </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">pad_mode</span><span class="p">),))</span>
+
+        <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">pad_cval</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pad_cval</span> <span class="o">=</span> <span class="n">Deterministic</span><span class="p">(</span><span class="n">pad_cval</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pad_cval</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pad_cval</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_float</span><span class="p">(</span><span class="n">pad_cval</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_float</span><span class="p">(</span><span class="n">pad_cval</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pad_cval</span> <span class="o">=</span> <span class="n">Uniform</span><span class="p">(</span><span class="n">pad_cval</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pad_cval</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pad_cval</span> <span class="o">=</span> <span class="n">DiscreteUniform</span><span class="p">(</span><span class="n">pad_cval</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pad_cval</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pad_cval</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">all</span><span class="p">([</span><span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pad_cval</span><span class="p">]))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pad_cval</span> <span class="o">=</span> <span class="n">Choice</span><span class="p">(</span><span class="n">pad_cval</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pad_cval</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pad_cval</span> <span class="o">=</span> <span class="n">pad_cval</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected pad_cval to be int or float or tuple of two ints/floats or list of ints/floats or StochasticParameter, got </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">pad_cval</span><span class="p">),))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_size</span> <span class="o">=</span> <span class="n">keep_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_independently</span> <span class="o">=</span> <span class="n">sample_independently</span>
+
+    <span class="k">def</span> <span class="nf">_augment_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+        <span class="n">input_dtypes</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">copy_dtypes_for_restore</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">nb_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+        <span class="n">seeds</span> <span class="o">=</span> <span class="n">random_state</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="o">**</span><span class="mi">6</span><span class="p">,</span> <span class="p">(</span><span class="n">nb_images</span><span class="p">,))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sm</span><span class="o">.</span><span class="n">xrange</span><span class="p">(</span><span class="n">nb_images</span><span class="p">):</span>
+            <span class="n">seed</span> <span class="o">=</span> <span class="n">seeds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">crop_top</span><span class="p">,</span> <span class="n">crop_right</span><span class="p">,</span> <span class="n">crop_bottom</span><span class="p">,</span> <span class="n">crop_left</span><span class="p">,</span> <span class="n">pad_top</span><span class="p">,</span> <span class="n">pad_right</span><span class="p">,</span> <span class="n">pad_bottom</span><span class="p">,</span> <span class="n">pad_left</span><span class="p">,</span> <span class="n">pad_mode</span><span class="p">,</span> <span class="n">pad_cval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_draw_samples_image</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+
+            <span class="n">image_cr</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">crop_top</span><span class="p">:</span><span class="n">height</span><span class="o">-</span><span class="n">crop_bottom</span><span class="p">,</span> <span class="n">crop_left</span><span class="p">:</span><span class="n">width</span><span class="o">-</span><span class="n">crop_right</span><span class="p">,</span> <span class="p">:]</span>
+
+            <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">pad_top</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pad_right</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pad_bottom</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pad_left</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">image_cr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">pad_vals</span> <span class="o">=</span> <span class="p">((</span><span class="n">pad_top</span><span class="p">,</span> <span class="n">pad_bottom</span><span class="p">),</span> <span class="p">(</span><span class="n">pad_left</span><span class="p">,</span> <span class="n">pad_right</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">pad_vals</span> <span class="o">=</span> <span class="p">((</span><span class="n">pad_top</span><span class="p">,</span> <span class="n">pad_bottom</span><span class="p">),</span> <span class="p">(</span><span class="n">pad_left</span><span class="p">,</span> <span class="n">pad_right</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">pad_mode</span> <span class="o">==</span> <span class="s2">&quot;constant&quot;</span><span class="p">:</span>
+                    <span class="n">image_cr_pa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">image_cr</span><span class="p">,</span> <span class="n">pad_vals</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">pad_mode</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="n">pad_cval</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">pad_mode</span> <span class="o">==</span> <span class="s2">&quot;linear_ramp&quot;</span><span class="p">:</span>
+                    <span class="n">image_cr_pa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">image_cr</span><span class="p">,</span> <span class="n">pad_vals</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">pad_mode</span><span class="p">,</span> <span class="n">end_values</span><span class="o">=</span><span class="n">pad_cval</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">image_cr_pa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">image_cr</span><span class="p">,</span> <span class="n">pad_vals</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">pad_mode</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">image_cr_pa</span> <span class="o">=</span> <span class="n">image_cr</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_size</span><span class="p">:</span>
+                <span class="n">image_cr_pa</span> <span class="o">=</span> <span class="n">ia</span><span class="o">.</span><span class="n">imresize_single_image</span><span class="p">(</span><span class="n">image_cr_pa</span><span class="p">,</span> <span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">))</span>
+
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image_cr_pa</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_np_array</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_size</span><span class="p">:</span>
+                <span class="c1"># this converts the list to an array of original input dtype</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="c1"># without this, restore_augmented_images_dtypes_() expects input_dtypes to be a list</span>
+                <span class="n">meta</span><span class="o">.</span><span class="n">restore_augmented_images_dtypes_</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">input_dtypes</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_augment_keypoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keypoints_on_images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">nb_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">keypoints_on_images</span><span class="p">)</span>
+        <span class="n">seeds</span> <span class="o">=</span> <span class="n">random_state</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="o">**</span><span class="mi">6</span><span class="p">,</span> <span class="p">(</span><span class="n">nb_images</span><span class="p">,))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">keypoints_on_image</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">keypoints_on_images</span><span class="p">):</span>
+            <span class="n">seed</span> <span class="o">=</span> <span class="n">seeds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">keypoints_on_image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="c1">#top, right, bottom, left = self._draw_samples_image(seed, height, width)</span>
+            <span class="n">crop_top</span><span class="p">,</span> <span class="n">crop_right</span><span class="p">,</span> <span class="n">crop_bottom</span><span class="p">,</span> <span class="n">crop_left</span><span class="p">,</span> <span class="n">pad_top</span><span class="p">,</span> <span class="n">pad_right</span><span class="p">,</span> <span class="n">pad_bottom</span><span class="p">,</span> <span class="n">pad_left</span><span class="p">,</span> <span class="n">_pad_mode</span><span class="p">,</span> <span class="n">_pad_cval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_draw_samples_image</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+            <span class="n">shifted</span> <span class="o">=</span> <span class="n">keypoints_on_image</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">x</span><span class="o">=-</span><span class="n">crop_left</span><span class="o">+</span><span class="n">pad_left</span><span class="p">,</span> <span class="n">y</span><span class="o">=-</span><span class="n">crop_top</span><span class="o">+</span><span class="n">pad_top</span><span class="p">)</span>
+            <span class="n">shifted</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">height</span> <span class="o">-</span> <span class="n">crop_top</span> <span class="o">-</span> <span class="n">crop_bottom</span> <span class="o">+</span> <span class="n">pad_top</span> <span class="o">+</span> <span class="n">pad_bottom</span><span class="p">,</span>
+                <span class="n">width</span> <span class="o">-</span> <span class="n">crop_left</span> <span class="o">-</span> <span class="n">crop_right</span> <span class="o">+</span> <span class="n">pad_left</span> <span class="o">+</span> <span class="n">pad_right</span>
+            <span class="p">)</span> <span class="o">+</span> <span class="n">shifted</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_size</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shifted</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="n">keypoints_on_image</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shifted</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_draw_samples_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
+        <span class="n">random_state</span> <span class="o">=</span> <span class="n">ia</span><span class="o">.</span><span class="n">new_random_state</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;noop&quot;</span><span class="p">:</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="n">right</span> <span class="o">=</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">left</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_sides</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_independently</span><span class="p">:</span>
+                    <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_sides</span><span class="o">.</span><span class="n">draw_samples</span><span class="p">((</span><span class="mi">4</span><span class="p">,),</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+                    <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="n">samples</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_sides</span><span class="o">.</span><span class="n">draw_sample</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+                    <span class="n">top</span> <span class="o">=</span> <span class="n">right</span> <span class="o">=</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">left</span> <span class="o">=</span> <span class="n">sample</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">top</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">top</span><span class="o">.</span><span class="n">draw_sample</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">draw_sample</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+                <span class="n">bottom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bottom</span><span class="o">.</span><span class="n">draw_sample</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">draw_sample</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;px&quot;</span><span class="p">:</span>
+                <span class="c1"># no change necessary for pixel values</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;percent&quot;</span><span class="p">:</span>
+                <span class="c1"># percentage values have to be transformed to pixel values</span>
+                <span class="n">top</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">height</span> <span class="o">*</span> <span class="n">top</span><span class="p">))</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">right</span><span class="p">))</span>
+                <span class="n">bottom</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">height</span> <span class="o">*</span> <span class="n">bottom</span><span class="p">))</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">left</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid mode&quot;</span><span class="p">)</span>
+
+        <span class="n">crop_top</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">top</span> <span class="k">if</span> <span class="n">top</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">crop_right</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">right</span> <span class="k">if</span> <span class="n">right</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">crop_bottom</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">bottom</span> <span class="k">if</span> <span class="n">bottom</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">crop_left</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">left</span> <span class="k">if</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="n">pad_top</span> <span class="o">=</span> <span class="n">top</span> <span class="k">if</span> <span class="n">top</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">pad_right</span> <span class="o">=</span> <span class="n">right</span> <span class="k">if</span> <span class="n">right</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">pad_bottom</span> <span class="o">=</span> <span class="n">bottom</span> <span class="k">if</span> <span class="n">bottom</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">pad_left</span> <span class="o">=</span> <span class="n">left</span> <span class="k">if</span> <span class="n">left</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="n">pad_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pad_mode</span><span class="o">.</span><span class="n">draw_sample</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+        <span class="n">pad_cval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pad_cval</span><span class="o">.</span><span class="n">draw_sample</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+
+        <span class="n">remaining_height</span> <span class="o">=</span> <span class="n">height</span> <span class="o">-</span> <span class="p">(</span><span class="n">crop_top</span> <span class="o">+</span> <span class="n">crop_bottom</span><span class="p">)</span>
+        <span class="n">remaining_width</span> <span class="o">=</span> <span class="n">width</span> <span class="o">-</span> <span class="p">(</span><span class="n">crop_left</span> <span class="o">+</span> <span class="n">crop_right</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">remaining_height</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">regain</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">remaining_height</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">regain_top</span> <span class="o">=</span> <span class="n">regain</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="n">regain_bottom</span> <span class="o">=</span> <span class="n">regain</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="k">if</span> <span class="n">regain_top</span> <span class="o">+</span> <span class="n">regain_bottom</span> <span class="o">&lt;</span> <span class="n">regain</span><span class="p">:</span>
+                <span class="n">regain_top</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">regain_top</span> <span class="o">&gt;</span> <span class="n">crop_top</span><span class="p">:</span>
+                <span class="n">diff</span> <span class="o">=</span> <span class="n">regain_top</span> <span class="o">-</span> <span class="n">crop_top</span>
+                <span class="n">regain_top</span> <span class="o">=</span> <span class="n">crop_top</span>
+                <span class="n">regain_bottom</span> <span class="o">+=</span> <span class="n">diff</span>
+            <span class="k">elif</span> <span class="n">regain_bottom</span> <span class="o">&gt;</span> <span class="n">crop_bottom</span><span class="p">:</span>
+                <span class="n">diff</span> <span class="o">=</span> <span class="n">regain_bottom</span> <span class="o">-</span> <span class="n">crop_bottom</span>
+                <span class="n">regain_bottom</span> <span class="o">=</span> <span class="n">crop_bottom</span>
+                <span class="n">regain_top</span> <span class="o">+=</span> <span class="n">diff</span>
+
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">regain_top</span> <span class="o">&lt;=</span> <span class="n">crop_top</span><span class="p">)</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">regain_bottom</span> <span class="o">&lt;=</span> <span class="n">crop_bottom</span><span class="p">)</span>
+
+            <span class="n">crop_top</span> <span class="o">=</span> <span class="n">crop_top</span> <span class="o">-</span> <span class="n">regain_top</span>
+            <span class="n">crop_bottom</span> <span class="o">=</span> <span class="n">crop_bottom</span> <span class="o">-</span> <span class="n">regain_bottom</span>
+
+        <span class="k">if</span> <span class="n">remaining_width</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">regain</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">remaining_width</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">regain_right</span> <span class="o">=</span> <span class="n">regain</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="n">regain_left</span> <span class="o">=</span> <span class="n">regain</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="k">if</span> <span class="n">regain_right</span> <span class="o">+</span> <span class="n">regain_left</span> <span class="o">&lt;</span> <span class="n">regain</span><span class="p">:</span>
+                <span class="n">regain_right</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">regain_right</span> <span class="o">&gt;</span> <span class="n">crop_right</span><span class="p">:</span>
+                <span class="n">diff</span> <span class="o">=</span> <span class="n">regain_right</span> <span class="o">-</span> <span class="n">crop_right</span>
+                <span class="n">regain_right</span> <span class="o">=</span> <span class="n">crop_right</span>
+                <span class="n">regain_left</span> <span class="o">+=</span> <span class="n">diff</span>
+            <span class="k">elif</span> <span class="n">regain_left</span> <span class="o">&gt;</span> <span class="n">crop_left</span><span class="p">:</span>
+                <span class="n">diff</span> <span class="o">=</span> <span class="n">regain_left</span> <span class="o">-</span> <span class="n">crop_left</span>
+                <span class="n">regain_left</span> <span class="o">=</span> <span class="n">crop_left</span>
+                <span class="n">regain_right</span> <span class="o">+=</span> <span class="n">diff</span>
+
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">regain_right</span> <span class="o">&lt;=</span> <span class="n">crop_right</span><span class="p">)</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">regain_left</span> <span class="o">&lt;=</span> <span class="n">crop_left</span><span class="p">)</span>
+
+            <span class="n">crop_right</span> <span class="o">=</span> <span class="n">crop_right</span> <span class="o">-</span> <span class="n">regain_right</span>
+            <span class="n">crop_left</span> <span class="o">=</span> <span class="n">crop_left</span> <span class="o">-</span> <span class="n">regain_left</span>
+
+        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">crop_top</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">crop_right</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">crop_bottom</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">crop_left</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">crop_top</span> <span class="o">+</span> <span class="n">crop_bottom</span> <span class="o">&lt;</span> <span class="n">height</span><span class="p">)</span>
+        <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">crop_right</span> <span class="o">+</span> <span class="n">crop_left</span> <span class="o">&lt;</span> <span class="n">width</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">crop_top</span><span class="p">,</span> <span class="n">crop_right</span><span class="p">,</span> <span class="n">crop_bottom</span><span class="p">,</span> <span class="n">crop_left</span><span class="p">,</span> <span class="n">pad_top</span><span class="p">,</span> <span class="n">pad_right</span><span class="p">,</span> <span class="n">pad_bottom</span><span class="p">,</span> <span class="n">pad_left</span><span class="p">,</span> <span class="n">pad_mode</span><span class="p">,</span> <span class="n">pad_cval</span>
+
+<div class="viewcode-block" id="CropAndPad.get_parameters"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.size.CropAndPad.get_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">all_sides</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pad_mode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pad_cval</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="Pad"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.size.Pad">[docs]</a><span class="k">def</span> <span class="nf">Pad</span><span class="p">(</span><span class="n">px</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">percent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pad_mode</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="n">pad_cval</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keep_size</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sample_independently</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Augmenter that pads images, i.e. adds columns/rows to them.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    px : None or int or StochasticParameter or tuple, optional(default=None)</span>
+<span class="sd">        The number of pixels to crop away (cut off) on each side of the image.</span>
+<span class="sd">        Either this or the parameter `percent` may be set, not both at the same</span>
+<span class="sd">        time.</span>
+<span class="sd">            * If None, then pixel-based cropping will not be used.</span>
+<span class="sd">            * If int, then that exact number of pixels will always be cropped.</span>
+<span class="sd">            * If StochasticParameter, then that parameter will be used for each</span>
+<span class="sd">              image. Four samples will be drawn per image (top, right, bottom,</span>
+<span class="sd">              left).</span>
+<span class="sd">            * If a tuple of two ints with values a and b, then each side will</span>
+<span class="sd">              be cropped by a random amount in the range a &lt;= x &lt;= b.</span>
+<span class="sd">              x is sampled per image side.</span>
+<span class="sd">            * If a tuple of four entries, then the entries represent top, right,</span>
+<span class="sd">              bottom, left. Each entry may be a single integer (always crop by</span>
+<span class="sd">              exactly that value), a tuple of two ints a and b (crop by an</span>
+<span class="sd">              amount a &lt;= x &lt;= b), a list of ints (crop by a random value that</span>
+<span class="sd">              is contained in the list) or a StochasticParameter (sample the</span>
+<span class="sd">              amount to crop from that parameter).</span>
+
+<span class="sd">    percent : None or int or float or StochasticParameter or tuple, optional(default=None)</span>
+<span class="sd">        The number of pixels to crop away (cut off) on each side of the image</span>
+<span class="sd">        given *in percent* of the image height/width.</span>
+<span class="sd">        E.g. if this is set to 0.1, the augmenter will always crop away</span>
+<span class="sd">        10 percent of the image&#39;s height at the top, 10 percent of the width</span>
+<span class="sd">        on the right, 10 percent of the height at the bottom and 10 percent</span>
+<span class="sd">        of the width on the left.</span>
+<span class="sd">        Either this or the parameter `px` may be set, not both at the same</span>
+<span class="sd">        time.</span>
+<span class="sd">            * If None, then percent-based cropping will not be used.</span>
+<span class="sd">            * If int, then expected to be 0 (no cropping).</span>
+<span class="sd">            * If float, then that percentage will always be cropped away.</span>
+<span class="sd">            * If StochasticParameter, then that parameter will be used for each</span>
+<span class="sd">              image. Four samples will be drawn per image (top, right, bottom,</span>
+<span class="sd">              left).</span>
+<span class="sd">            * If a tuple of two floats with values a and b, then each side will</span>
+<span class="sd">              be cropped by a random percentage in the range a &lt;= x &lt;= b.</span>
+<span class="sd">              x is sampled per image side.</span>
+<span class="sd">            * If a tuple of four entries, then the entries represent top, right,</span>
+<span class="sd">              bottom, left. Each entry may be a single float (always crop by</span>
+<span class="sd">              exactly that percent value), a tuple of two floats a and b (crop</span>
+<span class="sd">              by a percentage a &lt;= x &lt;= b), a list of floats (crop by a random</span>
+<span class="sd">              value that is contained in the list) or a StochasticParameter</span>
+<span class="sd">              (sample the percentage to crop from that parameter).</span>
+
+<span class="sd">    pad_mode : ia.ALL or string or list of strings or StochasticParameter, optional(default=&quot;constant&quot;)</span>
+<span class="sd">        Padding mode to use for numpy&#39;s pad function. The available modes</span>
+<span class="sd">        are `constant`, `edge`, `linear_ramp`, `maximum`, `median`,</span>
+<span class="sd">        `minimum`, `reflect`, `symmetric`, `wrap`. Each one of these is</span>
+<span class="sd">        explained in the numpy documentation. The modes `constant` and</span>
+<span class="sd">        `linear_ramp` use extra values, which are provided by `pad_cval`</span>
+<span class="sd">        when necessary.</span>
+<span class="sd">            * If ia.ALL, then a random mode from all available</span>
+<span class="sd">              modes will be sampled per image.</span>
+<span class="sd">            * If a string, it will be used as the pad mode for all</span>
+<span class="sd">              images.</span>
+<span class="sd">            * If a list of strings, a random one of these will be</span>
+<span class="sd">              sampled per image and used as the mode.</span>
+<span class="sd">            * If StochasticParameter, a random mode will be sampled from this</span>
+<span class="sd">              parameter per image.</span>
+
+<span class="sd">    pad_cval : float or int or tuple of two ints/floats or list of ints/floats or StochasticParameter, optional(default=0)</span>
+<span class="sd">        The constant value to use (for numpy&#39;s pad function) if the pad</span>
+<span class="sd">        mode is &quot;constant&quot; or the end value to use if the mode</span>
+<span class="sd">        is `linear_ramp`.</span>
+<span class="sd">            * If float/int, then that value will be used.</span>
+<span class="sd">            * If a tuple of two numbers and at least one of them is a float,</span>
+<span class="sd">              then a random number will be sampled from the continuous range</span>
+<span class="sd">              a&lt;=x&lt;=b and used as the value. If both numbers are integers,</span>
+<span class="sd">              the range is discrete.</span>
+<span class="sd">            * If a list of ints/floats, then a random value will be chosen from</span>
+<span class="sd">              the elements of the list and used as the value.</span>
+<span class="sd">            * If StochasticParameter, a random value will be sampled from that</span>
+<span class="sd">              parameter per image.</span>
+
+<span class="sd">    keep_size : bool, optional(default=True)</span>
+<span class="sd">        After cropping, the result image has a different height/width than</span>
+<span class="sd">        the input image. If this parameter is set to True, then the cropped</span>
+<span class="sd">        image will be resized to the input image&#39;s size, i.e. the image size</span>
+<span class="sd">        is then not changed by the augmenter.</span>
+
+<span class="sd">    sample_independently : bool, optional(default=True)</span>
+<span class="sd">        If false AND the values for px/percent result in exactly one</span>
+<span class="sd">        probability distribution for the amount to crop/pad, only one</span>
+<span class="sd">        single value will be sampled from that probability distribution</span>
+<span class="sd">        and used for all sides. I.e. the crop/pad amount then is the same</span>
+<span class="sd">        for all sides.</span>
+
+<span class="sd">    name : string, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    deterministic : bool, optional(default=False)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    random_state : int or np.random.RandomState or None, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Pad(px=(0, 10))</span>
+
+<span class="sd">    pads each side by a random value from the range 0px to 10px (the value</span>
+<span class="sd">    is sampled per side). The added rows/columns are filled with black pixels.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Pad(px=(0, 10), sample_independently=False)</span>
+
+<span class="sd">    samples one value v from the discrete range [0..10] and pads all sides</span>
+<span class="sd">    by v pixels.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Pad(px=(0, 10), keep_size=False)</span>
+
+<span class="sd">    pads each side by a random value from the range 0px to 10px (the value</span>
+<span class="sd">    is sampled per side). After padding, the images are NOT resized to their</span>
+<span class="sd">    original size (i.e. the images may end up having different heights/widths).</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Pad(px=((0, 10), (0, 5), (0, 10), (0, 5)))</span>
+
+<span class="sd">    pads the top and bottom by a random value from the range 0px to 10px</span>
+<span class="sd">    and the left and right by a random value in the range 0px to 5px.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Pad(percent=(0, 0.1))</span>
+
+<span class="sd">    pads each side by a random value from the range 0 percent to</span>
+<span class="sd">    10 percent. (Percent with respect to the side&#39;s size, e.g. for the</span>
+<span class="sd">    top side it uses the image&#39;s height.)</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Pad(percent=([0.05, 0.1], [0.05, 0.1], [0.05, 0.1], [0.05, 0.1]))</span>
+
+<span class="sd">    pads each side by either 5 percent or 10 percent.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Pad(px=(0, 10), pad_mode=&quot;edge&quot;)</span>
+
+<span class="sd">    pads each side by a random value from the range 0px to 10px (the values</span>
+<span class="sd">    are sampled per side). The padding uses the &#39;edge&#39; mode from numpy&#39;s</span>
+<span class="sd">    pad function.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Pad(px=(0, 10), pad_mode=[&quot;constant&quot;, &quot;edge&quot;])</span>
+
+<span class="sd">    pads each side by a random value from the range 0px to 10px (the values</span>
+<span class="sd">    are sampled per side). The padding uses randomly either the &#39;constant&#39;</span>
+<span class="sd">    or &#39;edge&#39; mode from numpy&#39;s pad function.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Pad(px=(0, 10), pad_mode=ia.ALL, pad_cval=(0, 255))</span>
+
+<span class="sd">    pads each side by a random value from the range 0px to 10px (the values</span>
+<span class="sd">    are sampled per side). It uses a random mode for numpy&#39;s pad function.</span>
+<span class="sd">    If the mode is `constant` or `linear_ramp`, it samples a random value</span>
+<span class="sd">    v from the range [0, 255] and uses that as the constant</span>
+<span class="sd">    value (`mode=constant`) or end value (`mode=linear_ramp`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">recursive_validate</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">v</span>
+        <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">v</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">v</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">v</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">recursive_validate</span><span class="p">(</span><span class="n">v_</span><span class="p">)</span> <span class="k">for</span> <span class="n">v_</span> <span class="ow">in</span> <span class="n">v</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">recursive_validate</span><span class="p">(</span><span class="n">v_</span><span class="p">)</span> <span class="k">for</span> <span class="n">v_</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected None or int or float or StochasticParameter or list or tuple, got </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">),))</span>
+
+    <span class="n">px</span> <span class="o">=</span> <span class="n">recursive_validate</span><span class="p">(</span><span class="n">px</span><span class="p">)</span>
+    <span class="n">percent</span> <span class="o">=</span> <span class="n">recursive_validate</span><span class="p">(</span><span class="n">percent</span><span class="p">)</span>
+    <span class="n">aug</span> <span class="o">=</span> <span class="n">CropAndPad</span><span class="p">(</span>
+        <span class="n">px</span><span class="o">=</span><span class="n">px</span><span class="p">,</span> <span class="n">percent</span><span class="o">=</span><span class="n">percent</span><span class="p">,</span>
+        <span class="n">pad_mode</span><span class="o">=</span><span class="n">pad_mode</span><span class="p">,</span> <span class="n">pad_cval</span><span class="o">=</span><span class="n">pad_cval</span><span class="p">,</span>
+        <span class="n">keep_size</span><span class="o">=</span><span class="n">keep_size</span><span class="p">,</span> <span class="n">sample_independently</span><span class="o">=</span><span class="n">sample_independently</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">aug</span></div>
+
+
+<div class="viewcode-block" id="Crop"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.size.Crop">[docs]</a><span class="k">def</span> <span class="nf">Crop</span><span class="p">(</span><span class="n">px</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">percent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep_size</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sample_independently</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Augmenter that crops/cuts away pixels at the sides of the image.</span>
+
+<span class="sd">    That allows to cut out subimages from given (full) input images.</span>
+<span class="sd">    The number of pixels to cut off may be defined in absolute values or</span>
+<span class="sd">    percent of the image sizes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    px : None or int or StochasticParameter or tuple, optional(default=None)</span>
+<span class="sd">        The number of pixels to crop away (cut off) on each side of the image.</span>
+<span class="sd">        Either this or the parameter `percent` may be set, not both at the same</span>
+<span class="sd">        time.</span>
+<span class="sd">            * If None, then pixel-based cropping will not be used.</span>
+<span class="sd">            * If int, then that exact number of pixels will always be cropped.</span>
+<span class="sd">            * If StochasticParameter, then that parameter will be used for each</span>
+<span class="sd">              image. Four samples will be drawn per image (top, right, bottom,</span>
+<span class="sd">              left).</span>
+<span class="sd">            * If a tuple of two ints with values a and b, then each side will</span>
+<span class="sd">              be cropped by a random amount in the range a &lt;= x &lt;= b.</span>
+<span class="sd">              x is sampled per image side.</span>
+<span class="sd">            * If a tuple of four entries, then the entries represent top, right,</span>
+<span class="sd">              bottom, left. Each entry may be a single integer (always crop by</span>
+<span class="sd">              exactly that value), a tuple of two ints a and b (crop by an</span>
+<span class="sd">              amount a &lt;= x &lt;= b), a list of ints (crop by a random value that</span>
+<span class="sd">              is contained in the list) or a StochasticParameter (sample the</span>
+<span class="sd">              amount to crop from that parameter).</span>
+
+<span class="sd">    percent : None or int or float or StochasticParameter or tuple, optional(default=None)</span>
+<span class="sd">        The number of pixels to crop away (cut off) on each side of the image</span>
+<span class="sd">        given *in percent* of the image height/width.</span>
+<span class="sd">        E.g. if this is set to 0.1, the augmenter will always crop away</span>
+<span class="sd">        10 percent of the image&#39;s height at the top, 10 percent of the width</span>
+<span class="sd">        on the right, 10 percent of the height at the bottom and 10 percent</span>
+<span class="sd">        of the width on the left.</span>
+<span class="sd">        Either this or the parameter `px` may be set, not both at the same</span>
+<span class="sd">        time.</span>
+<span class="sd">            * If None, then percent-based cropping will not be used.</span>
+<span class="sd">            * If int, then expected to be 0 (no cropping).</span>
+<span class="sd">            * If float, then that percentage will always be cropped away.</span>
+<span class="sd">            * If StochasticParameter, then that parameter will be used for each</span>
+<span class="sd">              image. Four samples will be drawn per image (top, right, bottom,</span>
+<span class="sd">              left).</span>
+<span class="sd">            * If a tuple of two floats with values a and b, then each side will</span>
+<span class="sd">              be cropped by a random percentage in the range a &lt;= x &lt;= b.</span>
+<span class="sd">              x is sampled per image side.</span>
+<span class="sd">            * If a tuple of four entries, then the entries represent top, right,</span>
+<span class="sd">              bottom, left. Each entry may be a single float (always crop by</span>
+<span class="sd">              exactly that percent value), a tuple of two floats a and b (crop</span>
+<span class="sd">              by a percentage a &lt;= x &lt;= b), a list of floats (crop by a random</span>
+<span class="sd">              value that is contained in the list) or a StochasticParameter</span>
+<span class="sd">              (sample the percentage to crop from that parameter).</span>
+
+<span class="sd">    keep_size : bool, optional(default=True)</span>
+<span class="sd">        After cropping, the result image has a different height/width than</span>
+<span class="sd">        the input image. If this parameter is set to True, then the cropped</span>
+<span class="sd">        image will be resized to the input image&#39;s size, i.e. the image size</span>
+<span class="sd">        is then not changed by the augmenter.</span>
+
+<span class="sd">    sample_independently : bool, optional(default=True)</span>
+<span class="sd">        If false AND the values for px/percent result in exactly one</span>
+<span class="sd">        probability distribution for the amount to crop, only one</span>
+<span class="sd">        single value will be sampled from that probability distribution</span>
+<span class="sd">        and used for all sides. I.e. the crop amount then is the same</span>
+<span class="sd">        for all sides.</span>
+
+<span class="sd">    name : string, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    deterministic : bool, optional(default=False)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    random_state : int or np.random.RandomState or None, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Crop(px=(0, 10))</span>
+
+<span class="sd">    crops each side by a random value from the range 0px to 10px (the value</span>
+<span class="sd">    is sampled per side).</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Crop(px=(0, 10), sample_independently=False)</span>
+
+<span class="sd">    samples one value v from the discrete range [0..10] and crops all sides</span>
+<span class="sd">    by v pixels.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Crop(px=(0, 10), keep_size=False)</span>
+
+<span class="sd">    crops each side by a random value from the range 0px to 10px (the value</span>
+<span class="sd">    is sampled per side). After cropping, the images are NOT resized to their</span>
+<span class="sd">    original size (i.e. the images may end up having different heights/widths).</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Crop(px=((0, 10), (0, 5), (0, 10), (0, 5)))</span>
+
+<span class="sd">    crops the top and bottom by a random value from the range 0px to 10px</span>
+<span class="sd">    and the left and right by a random value in the range 0px to 5px.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Crop(percent=(0, 0.1))</span>
+
+<span class="sd">    crops each side by a random value from the range 0 percent to</span>
+<span class="sd">    10 percent. (Percent with respect to the side&#39;s size, e.g. for the</span>
+<span class="sd">    top side it uses the image&#39;s height.)</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Crop(percent=([0.05, 0.1], [0.05, 0.1], [0.05, 0.1], [0.05, 0.1]))</span>
+
+<span class="sd">    crops each side by either 5 percent or 10 percent.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">recursive_negate</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">v</span>
+        <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">v</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">v</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">iap</span><span class="o">.</span><span class="n">Multiply</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">recursive_negate</span><span class="p">(</span><span class="n">v_</span><span class="p">)</span> <span class="k">for</span> <span class="n">v_</span> <span class="ow">in</span> <span class="n">v</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">recursive_negate</span><span class="p">(</span><span class="n">v_</span><span class="p">)</span> <span class="k">for</span> <span class="n">v_</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected None or int or float or StochasticParameter or list or tuple, got </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">),))</span>
+
+    <span class="n">px</span> <span class="o">=</span> <span class="n">recursive_negate</span><span class="p">(</span><span class="n">px</span><span class="p">)</span>
+    <span class="n">percent</span> <span class="o">=</span> <span class="n">recursive_negate</span><span class="p">(</span><span class="n">percent</span><span class="p">)</span>
+    <span class="n">aug</span> <span class="o">=</span> <span class="n">CropAndPad</span><span class="p">(</span>
+        <span class="n">px</span><span class="o">=</span><span class="n">px</span><span class="p">,</span> <span class="n">percent</span><span class="o">=</span><span class="n">percent</span><span class="p">,</span>
+        <span class="n">keep_size</span><span class="o">=</span><span class="n">keep_size</span><span class="p">,</span> <span class="n">sample_independently</span><span class="o">=</span><span class="n">sample_independently</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">aug</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Alexander Jung.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2.6',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

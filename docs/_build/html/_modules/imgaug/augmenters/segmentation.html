@@ -1,0 +1,409 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>imgaug.augmenters.segmentation &mdash; imgaug 0.2.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> imgaug
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/examples_basics.html">Examples: Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/examples_keypoints.html">Examples: Keypoints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/examples_bounding_boxes.html">Examples: Bounding Boxes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/parameters.html">Stochastic Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/alpha.html">Blending/Overlaying images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/augmenters.html">Overview of Augmenters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/modules.html">imgaug</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">imgaug</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>imgaug.augmenters.segmentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for imgaug.augmenters.segmentation</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Augmenters that apply changes to images based on forms of segmentation.</span>
+
+<span class="sd">Do not import directly from this file, as the categorization is not final.</span>
+<span class="sd">Use instead</span>
+<span class="sd">    `from imgaug import augmenters as iaa`</span>
+<span class="sd">and then e.g. ::</span>
+
+<span class="sd">    seq = iaa.Sequential([</span>
+<span class="sd">        iaa.Superpixels(...)</span>
+<span class="sd">    ])</span>
+
+<span class="sd">List of augmenters:</span>
+<span class="sd">    * Superpixels</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">imgaug</span> <span class="k">as</span> <span class="n">ia</span>
+<span class="c1"># TODO replace these imports with iap.XYZ</span>
+<span class="kn">from</span> <span class="nn">..parameters</span> <span class="k">import</span> <span class="n">StochasticParameter</span><span class="p">,</span> <span class="n">Deterministic</span><span class="p">,</span> <span class="n">Binomial</span><span class="p">,</span> <span class="n">DiscreteUniform</span><span class="p">,</span> <span class="n">Uniform</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">segmentation</span><span class="p">,</span> <span class="n">measure</span>
+<span class="kn">import</span> <span class="nn">six.moves</span> <span class="k">as</span> <span class="nn">sm</span>
+
+<span class="kn">from</span> <span class="nn">.meta</span> <span class="k">import</span> <span class="n">Augmenter</span>
+
+<span class="c1"># TODO tests</span>
+<div class="viewcode-block" id="Superpixels"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.segmentation.Superpixels">[docs]</a><span class="k">class</span> <span class="nc">Superpixels</span><span class="p">(</span><span class="n">Augmenter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Completely or partially transform images to their superpixel representation.</span>
+
+<span class="sd">    This implementation uses skimage&#39;s version of the SLIC algorithm.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p_replace : int or float or tuple/list of ints/floats or StochasticParameter, optional(default=0)</span>
+<span class="sd">        Defines the probability of any superpixel area being replaced by the</span>
+<span class="sd">        superpixel, i.e. by the average pixel color within its area.</span>
+<span class="sd">        A probability of 0 would mean, that no superpixel area is replaced by</span>
+<span class="sd">        its average (image is not changed at all).</span>
+<span class="sd">        A probability of 0.5 would mean, that half of all superpixels are</span>
+<span class="sd">        replaced by their average color.</span>
+<span class="sd">        A probability of 1.0 would mean, that all superpixels are replaced</span>
+<span class="sd">        by their average color (resulting in a standard superpixel image).</span>
+<span class="sd">        This parameter can be a tuple (a, b), e.g. (0.5, 1.0). In this case,</span>
+<span class="sd">        a random probability p with a &lt;= p &lt;= b will be rolled per image.</span>
+<span class="sd">        If this parameter is a StochasticParameter, it is expected to return</span>
+<span class="sd">        values between 0 and 1. Values &gt;=0.5 will be interpreted as the command</span>
+<span class="sd">        to replace a superpixel region with its mean. Recommended to be some</span>
+<span class="sd">        form of Binomial(...).</span>
+
+<span class="sd">    n_segments : int or tuple/list of ints or StochasticParameter, optional(default=100)</span>
+<span class="sd">        Target number of superpixels to generate.</span>
+<span class="sd">        Lower numbers are faster.</span>
+
+<span class="sd">    max_size : int or None, optional(default=128)</span>
+<span class="sd">        Maximum image size at which the superpixels are generated.</span>
+<span class="sd">        If the width or height of an image exceeds this value, it will be</span>
+<span class="sd">        downscaled so that the longest side matches `max_size`.</span>
+<span class="sd">        Though, the final output (superpixel) image has the same size as the</span>
+<span class="sd">        input image.</span>
+<span class="sd">        This is done to speed up the superpixel algorithm.</span>
+<span class="sd">        Use None to apply no downscaling.</span>
+
+<span class="sd">    interpolation : int or string, optional(default=&quot;linear&quot;)</span>
+<span class="sd">        Interpolation method to use during downscaling when `max_size` is</span>
+<span class="sd">        exceeded. Valid methods are the same as in</span>
+<span class="sd">        `ia.imresize_single_image()`.</span>
+
+<span class="sd">    name : string, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    deterministic : bool, optional(default=False)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    random_state : int or np.random.RandomState or None, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Superpixels(p_replace=1.0, n_segments=64)</span>
+
+<span class="sd">    generates ~64 superpixels per image and replaces all of them with</span>
+<span class="sd">    their average color (standard superpixel image).</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Superpixels(p_replace=0.5, n_segments=64)</span>
+
+<span class="sd">    generates always ~64 superpixels per image and replaces half of them</span>
+<span class="sd">    with their average color, while the other half are left unchanged (i.e.</span>
+<span class="sd">    they still show the input image&#39;s content).</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.Superpixels(p_replace=(0.25, 1.0), n_segments=(16, 128))</span>
+
+<span class="sd">    generates between ~16 and ~128 superpixels per image and replaces</span>
+<span class="sd">    25 to 100 percent of them with their average color.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_replace</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_segments</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Superpixels</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">p_replace</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">p_replace</span> <span class="o">=</span> <span class="n">Binomial</span><span class="p">(</span><span class="n">p_replace</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_iterable</span><span class="p">(</span><span class="n">p_replace</span><span class="p">):</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p_replace</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">p_replace</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">p_replace</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">p_replace</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">p_replace</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">p_replace</span> <span class="o">=</span> <span class="n">p_replace</span> <span class="o">=</span> <span class="n">Binomial</span><span class="p">(</span><span class="n">Uniform</span><span class="p">(</span><span class="n">p_replace</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p_replace</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p_replace</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">p_replace</span> <span class="o">=</span> <span class="n">p_replace</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected p_replace to be float, int, list/tuple of floats/ints or StochasticParameter, got </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">p_replace</span><span class="p">),))</span>
+
+        <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_integer</span><span class="p">(</span><span class="n">n_segments</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_segments</span> <span class="o">=</span> <span class="n">Deterministic</span><span class="p">(</span><span class="n">n_segments</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_iterable</span><span class="p">(</span><span class="n">n_segments</span><span class="p">):</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">n_segments</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Expected tuple/list with 2 entries, got </span><span class="si">%d</span><span class="s2"> entries.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">n_segments</span><span class="p">),))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_segments</span> <span class="o">=</span> <span class="n">DiscreteUniform</span><span class="p">(</span><span class="n">n_segments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n_segments</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_segments</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_segments</span> <span class="o">=</span> <span class="n">n_segments</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected int, tuple/list with 2 entries or StochasticParameter. Got </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">n_segments</span><span class="p">),))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="o">=</span> <span class="n">max_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interpolation</span> <span class="o">=</span> <span class="n">interpolation</span>
+
+    <span class="k">def</span> <span class="nf">_augment_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+        <span class="c1">#import time</span>
+        <span class="n">nb_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+        <span class="c1">#p_replace_samples = self.p_replace.draw_samples((nb_images,), random_state=random_state)</span>
+        <span class="n">n_segments_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_segments</span><span class="o">.</span><span class="n">draw_samples</span><span class="p">((</span><span class="n">nb_images</span><span class="p">,),</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+        <span class="n">seeds</span> <span class="o">=</span> <span class="n">random_state</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="o">**</span><span class="mi">6</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">nb_images</span><span class="p">,))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sm</span><span class="o">.</span><span class="n">xrange</span><span class="p">(</span><span class="n">nb_images</span><span class="p">):</span>
+            <span class="c1">#replace_samples = ia.new_random_state(seeds[i]).binomial(1, p_replace_samples[i], size=(n_segments_samples[i],))</span>
+            <span class="c1"># TODO this results in an error when n_segments is 0</span>
+            <span class="n">replace_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_replace</span><span class="o">.</span><span class="n">draw_samples</span><span class="p">((</span><span class="n">n_segments_samples</span><span class="p">[</span><span class="n">i</span><span class="p">],),</span> <span class="n">random_state</span><span class="o">=</span><span class="n">ia</span><span class="o">.</span><span class="n">new_random_state</span><span class="p">(</span><span class="n">seeds</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="c1">#print(&quot;n_segments&quot;, n_segments_samples[i], &quot;replace_samples.shape&quot;, replace_samples.shape)</span>
+            <span class="c1">#print(&quot;p&quot;, p_replace_samples[i])</span>
+            <span class="c1">#print(&quot;replace_samples&quot;, replace_samples)</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">replace_samples</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># not a single superpixel would be replaced by its average color,</span>
+                <span class="c1"># i.e. the image would not be changed, so just keep it</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">image</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+                <span class="n">orig_shape</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="p">:</span>
+                        <span class="n">resize_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="o">/</span> <span class="n">size</span>
+                        <span class="n">new_height</span><span class="p">,</span> <span class="n">new_width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">resize_factor</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">resize_factor</span><span class="p">)</span>
+                        <span class="n">image</span> <span class="o">=</span> <span class="n">ia</span><span class="o">.</span><span class="n">imresize_single_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">(</span><span class="n">new_height</span><span class="p">,</span> <span class="n">new_width</span><span class="p">),</span> <span class="n">interpolation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolation</span><span class="p">)</span>
+
+                <span class="c1">#image_sp = np.random.randint(0, 255, size=image.shape).astype(np.uint8)</span>
+                <span class="n">image_sp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+                <span class="c1">#time_start = time.time()</span>
+                <span class="n">segments</span> <span class="o">=</span> <span class="n">segmentation</span><span class="o">.</span><span class="n">slic</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">n_segments</span><span class="o">=</span><span class="n">n_segments_samples</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">compactness</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+                <span class="c1">#print(&quot;seg&quot;, np.min(segments), np.max(segments), n_segments_samples[i])</span>
+                <span class="c1">#print(&quot;segmented in %.4fs&quot; % (time.time() - time_start))</span>
+                <span class="c1">#print(np.bincount(segments.flatten()))</span>
+                <span class="c1">#time_start = time.time()</span>
+                <span class="n">nb_channels</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">sm</span><span class="o">.</span><span class="n">xrange</span><span class="p">(</span><span class="n">nb_channels</span><span class="p">):</span>
+                    <span class="c1"># segments+1 here because otherwise regionprops always misses</span>
+                    <span class="c1"># the last label</span>
+                    <span class="n">regions</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">regionprops</span><span class="p">(</span><span class="n">segments</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">intensity_image</span><span class="o">=</span><span class="n">image</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">c</span><span class="p">])</span>
+                    <span class="k">for</span> <span class="n">ridx</span><span class="p">,</span> <span class="n">region</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">regions</span><span class="p">):</span>
+                        <span class="c1"># with mod here, because slic can sometimes create more superpixel</span>
+                        <span class="c1"># than requested. replace_samples then does not have enough</span>
+                        <span class="c1"># values, so we just start over with the first one again.</span>
+                        <span class="k">if</span> <span class="n">replace_samples</span><span class="p">[</span><span class="n">ridx</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">replace_samples</span><span class="p">)]</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">:</span>
+                            <span class="c1">#print(&quot;changing region %d of %d, channel %d, #indices %d&quot; % (ridx, np.max(segments), c, len(np.where(segments == ridx)[0])))</span>
+                            <span class="n">mean_intensity</span> <span class="o">=</span> <span class="n">region</span><span class="o">.</span><span class="n">mean_intensity</span>
+                            <span class="n">image_sp_c</span> <span class="o">=</span> <span class="n">image_sp</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">c</span><span class="p">]</span>
+                            <span class="n">image_sp_c</span><span class="p">[</span><span class="n">segments</span> <span class="o">==</span> <span class="n">ridx</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">mean_intensity</span><span class="p">)),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+                <span class="c1">#print(&quot;colored in %.4fs&quot; % (time.time() - time_start))</span>
+
+                <span class="k">if</span> <span class="n">orig_shape</span> <span class="o">!=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                    <span class="n">image_sp</span> <span class="o">=</span> <span class="n">ia</span><span class="o">.</span><span class="n">imresize_single_image</span><span class="p">(</span><span class="n">image_sp</span><span class="p">,</span> <span class="n">orig_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">interpolation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolation</span><span class="p">)</span>
+
+                <span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">image_sp</span>
+        <span class="k">return</span> <span class="n">images</span>
+
+    <span class="k">def</span> <span class="nf">_augment_keypoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keypoints_on_images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">keypoints_on_images</span>
+
+<div class="viewcode-block" id="Superpixels.get_parameters"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.segmentation.Superpixels.get_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">p_replace</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_segments</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolation</span><span class="p">]</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Alexander Jung.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2.6',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,626 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>imgaug.augmenters.blur &mdash; imgaug 0.2.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> imgaug
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/examples_basics.html">Examples: Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/examples_keypoints.html">Examples: Keypoints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/examples_bounding_boxes.html">Examples: Bounding Boxes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/parameters.html">Stochastic Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/alpha.html">Blending/Overlaying images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/augmenters.html">Overview of Augmenters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/modules.html">imgaug</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">imgaug</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>imgaug.augmenters.blur</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for imgaug.augmenters.blur</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Augmenters that blur images.</span>
+
+<span class="sd">Do not import directly from this file, as the categorization is not final.</span>
+<span class="sd">Use instead</span>
+<span class="sd">    `from imgaug import augmenters as iaa`</span>
+<span class="sd">and then e.g. ::</span>
+
+<span class="sd">    seq = iaa.Sequential([</span>
+<span class="sd">        iaa.GaussianBlur((0.0, 3.0)),</span>
+<span class="sd">        iaa.AverageBlur((2, 5))</span>
+<span class="sd">    ])</span>
+
+<span class="sd">List of augmenters:</span>
+<span class="sd">    * GaussianBlur</span>
+<span class="sd">    * AverageBlur</span>
+<span class="sd">    * MedianBlur</span>
+<span class="sd">    * BilateralBlur</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">imgaug</span> <span class="k">as</span> <span class="n">ia</span>
+<span class="c1"># TODO replace these imports with iap.XYZ</span>
+<span class="kn">from</span> <span class="nn">..parameters</span> <span class="k">import</span> <span class="n">StochasticParameter</span><span class="p">,</span> <span class="n">Deterministic</span><span class="p">,</span> <span class="n">DiscreteUniform</span><span class="p">,</span> <span class="n">Uniform</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">ndimage</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">six.moves</span> <span class="k">as</span> <span class="nn">sm</span>
+
+<span class="kn">from</span> <span class="nn">.meta</span> <span class="k">import</span> <span class="n">Augmenter</span>
+
+<div class="viewcode-block" id="GaussianBlur"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.blur.GaussianBlur">[docs]</a><span class="k">class</span> <span class="nc">GaussianBlur</span><span class="p">(</span><span class="n">Augmenter</span><span class="p">):</span> <span class="c1"># pylint: disable=locally-disabled, unused-variable, line-too-long</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Augmenter to blur images using gaussian kernels.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sigma : float or tuple of two floats or StochasticParameter</span>
+<span class="sd">        Standard deviation of the gaussian kernel.</span>
+<span class="sd">        Values in the range 0.0 (no blur) to 3.0 (strong blur) are common.</span>
+<span class="sd">            * If a single float, that value will always be used as the standard</span>
+<span class="sd">              deviation.</span>
+<span class="sd">            * If a tuple (a, b), then a random value from the range a &lt;= x &lt;= b</span>
+<span class="sd">              will be picked per image.</span>
+<span class="sd">            * If a StochasticParameter, then N samples will be drawn from</span>
+<span class="sd">              that parameter per N input images.</span>
+
+<span class="sd">    name : string, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    deterministic : bool, optional(default=False)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    random_state : int or np.random.RandomState or None, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; aug = iaa.GaussianBlur(sigma=1.5)</span>
+
+<span class="sd">    blurs all images using a gaussian kernel with standard deviation 1.5.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.GaussianBlur(sigma=(0.0, 3.0))</span>
+
+<span class="sd">    blurs images using a gaussian kernel with a random standard deviation</span>
+<span class="sd">    from the range 0.0 &lt;= x &lt;= 3.0. The value is sampled per image.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GaussianBlur</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">sigma</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">Deterministic</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_iterable</span><span class="p">(</span><span class="n">sigma</span><span class="p">):</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Expected tuple/list with 2 entries, got </span><span class="si">%d</span><span class="s2"> entries.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sigma</span><span class="p">),))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">Uniform</span><span class="p">(</span><span class="n">sigma</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sigma</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected float, int, tuple/list with 2 entries or StochasticParameter. Got </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">sigma</span><span class="p">),))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">eps</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="c1"># epsilon value to estimate whether sigma is above 0</span>
+
+    <span class="k">def</span> <span class="nf">_augment_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">images</span>
+        <span class="n">nb_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="o">.</span><span class="n">draw_samples</span><span class="p">((</span><span class="n">nb_images</span><span class="p">,),</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sm</span><span class="o">.</span><span class="n">xrange</span><span class="p">(</span><span class="n">nb_images</span><span class="p">):</span>
+            <span class="n">nb_channels</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">sig</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">sig</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">:</span>
+                <span class="c1"># note that while gaussian_filter can be applied to all channels</span>
+                <span class="c1"># at the same time, that should not be done here, because then</span>
+                <span class="c1"># the blurring would also happen across channels (e.g. red</span>
+                <span class="c1"># values might be mixed with blue values in RGB)</span>
+                <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">sm</span><span class="o">.</span><span class="n">xrange</span><span class="p">(</span><span class="n">nb_channels</span><span class="p">):</span>
+                    <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">][:,</span> <span class="p">:,</span> <span class="n">channel</span><span class="p">]</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">][:,</span> <span class="p">:,</span> <span class="n">channel</span><span class="p">],</span> <span class="n">sig</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_augment_keypoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keypoints_on_images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">keypoints_on_images</span>
+
+<div class="viewcode-block" id="GaussianBlur.get_parameters"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.blur.GaussianBlur.get_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">]</span></div></div>
+
+<div class="viewcode-block" id="AverageBlur"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.blur.AverageBlur">[docs]</a><span class="k">class</span> <span class="nc">AverageBlur</span><span class="p">(</span><span class="n">Augmenter</span><span class="p">):</span> <span class="c1"># pylint: disable=locally-disabled, unused-variable, line-too-long</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Blur an image by computing simple means over neighbourhoods.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    k : int or tuple of two ints or tuple of each one/two ints or StochasticParameter or tuple of two StochasticParameter, optional</span>
+<span class="sd">        Kernel size to use.</span>
+<span class="sd">            * If a single int, then that value will be used for the height</span>
+<span class="sd">              and width of the kernel.</span>
+<span class="sd">            * If a tuple of two ints `(a, b)`, then the kernel size will be</span>
+<span class="sd">              sampled from the interval `[a..b]`.</span>
+<span class="sd">            * If a StochasticParameter, then `N` samples will be drawn from</span>
+<span class="sd">              that parameter per `N` input images, each representing the kernel</span>
+<span class="sd">              size for the nth image.</span>
+<span class="sd">            * If a tuple `(a, b)`, where either `a` or `b` is a tuple, then `a`</span>
+<span class="sd">              and `b` will be treated according to the rules above. This leads</span>
+<span class="sd">              to different values for height and width of the kernel.</span>
+
+<span class="sd">    name : string, optional</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    deterministic : bool, optional</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    random_state : None or int or np.random.RandomState, optional</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; aug = iaa.AverageBlur(k=5)</span>
+
+<span class="sd">    Blurs all images using a kernel size of 5x5.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.AverageBlur(k=(2, 5))</span>
+
+<span class="sd">    Blurs images using a varying kernel size per image, which is sampled</span>
+<span class="sd">    from the interval [2..5].</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.AverageBlur(k=((5, 7), (1, 3)))</span>
+
+<span class="sd">    Blurs images using a varying kernel size per image, which&#39;s height</span>
+<span class="sd">    is sampled from the interval [5..7] and which&#39;s width is sampled</span>
+<span class="sd">    from [1..3].</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AverageBlur</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;single&quot;</span>
+        <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">Deterministic</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_iterable</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">ki</span><span class="p">)</span> <span class="k">for</span> <span class="n">ki</span> <span class="ow">in</span> <span class="n">k</span><span class="p">]):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">DiscreteUniform</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="k">elif</span> <span class="nb">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ki</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">)</span> <span class="k">for</span> <span class="n">ki</span> <span class="ow">in</span> <span class="n">k</span><span class="p">]):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;two&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">k_tuple</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                    <span class="n">k_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Deterministic</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_iterable</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">ki</span><span class="p">)</span> <span class="k">for</span> <span class="n">ki</span> <span class="ow">in</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]]):</span>
+                    <span class="n">k_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">DiscreteUniform</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;k[0] expected to be int or tuple of two ints, got </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]),))</span>
+
+                <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="n">k_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Deterministic</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_iterable</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">ki</span><span class="p">)</span> <span class="k">for</span> <span class="n">ki</span> <span class="ow">in</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]]):</span>
+                    <span class="n">k_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">DiscreteUniform</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;k[1] expected to be int or tuple of two ints, got </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]),))</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;two&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k_tuple</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected int, tuple/list with 2 entries or StochasticParameter. Got </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">k</span><span class="p">),))</span>
+
+    <span class="k">def</span> <span class="nf">_augment_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">images</span>
+        <span class="n">nb_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;single&quot;</span><span class="p">:</span>
+            <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="o">.</span><span class="n">draw_samples</span><span class="p">((</span><span class="n">nb_images</span><span class="p">,),</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+            <span class="n">samples</span> <span class="o">=</span> <span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">samples</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">draw_samples</span><span class="p">((</span><span class="n">nb_images</span><span class="p">,),</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">draw_samples</span><span class="p">((</span><span class="n">nb_images</span><span class="p">,),</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sm</span><span class="o">.</span><span class="n">xrange</span><span class="p">(</span><span class="n">nb_images</span><span class="p">):</span>
+            <span class="n">kh</span><span class="p">,</span> <span class="n">kw</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="n">samples</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="c1">#print(images.shape, result.shape, result[i].shape)</span>
+            <span class="n">kernel_impossible</span> <span class="o">=</span> <span class="p">(</span><span class="n">kh</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">kw</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">kernel_does_nothing</span> <span class="o">=</span> <span class="p">(</span><span class="n">kh</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">kw</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">kernel_impossible</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">kernel_does_nothing</span><span class="p">:</span>
+                <span class="n">image_aug</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">blur</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="p">(</span><span class="n">kh</span><span class="p">,</span> <span class="n">kw</span><span class="p">))</span>
+                <span class="c1"># cv2.blur() removes channel axis for single-channel images</span>
+                <span class="k">if</span> <span class="n">image_aug</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">image_aug</span> <span class="o">=</span> <span class="n">image_aug</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">image_aug</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_augment_keypoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keypoints_on_images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">keypoints_on_images</span>
+
+<div class="viewcode-block" id="AverageBlur.get_parameters"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.blur.AverageBlur.get_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">]</span></div></div>
+
+<span class="c1"># TODO tests</span>
+<div class="viewcode-block" id="MedianBlur"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.blur.MedianBlur">[docs]</a><span class="k">class</span> <span class="nc">MedianBlur</span><span class="p">(</span><span class="n">Augmenter</span><span class="p">):</span> <span class="c1"># pylint: disable=locally-disabled, unused-variable, line-too-long</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Blur an image by computing median values over neighbourhoods.</span>
+
+<span class="sd">    Median blurring can be used to remove small dirt from images.</span>
+<span class="sd">    At larger kernel sizes, its effects have some similarity with Superpixels.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    k : int or tuple of two ints or StochasticParameter</span>
+<span class="sd">        Kernel</span>
+<span class="sd">        size.</span>
+<span class="sd">            * If a single int, then that value will be used for the height and</span>
+<span class="sd">              width of the kernel. Must be an odd value.</span>
+<span class="sd">            * If a tuple of two ints (a, b), then the kernel size will be an</span>
+<span class="sd">              odd value sampled from the interval [a..b]. a and b must both</span>
+<span class="sd">              be odd values.</span>
+<span class="sd">            * If a StochasticParameter, then N samples will be drawn from</span>
+<span class="sd">              that parameter per N input images, each representing the kernel</span>
+<span class="sd">              size for the nth image. Expected to be discrete. If a sampled</span>
+<span class="sd">              value is not odd, then that value will be increased by 1.</span>
+
+<span class="sd">    name : string, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    deterministic : bool, optional(default=False)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    random_state : int or np.random.RandomState or None, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; aug = iaa.MedianBlur(k=5)</span>
+
+<span class="sd">    blurs all images using a kernel size of 5x5.</span>
+
+<span class="sd">    &gt;&gt;&gt; aug = iaa.MedianBlur(k=(3, 7))</span>
+
+<span class="sd">    blurs images using a varying kernel size per image, which is</span>
+<span class="sd">    and odd value sampled from the interval [3..7], i.e. 3 or 5 or 7.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MedianBlur</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">k</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Expected k to be odd, got </span><span class="si">%d</span><span class="s2">. Add or subtract 1.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">),))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">Deterministic</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_iterable</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">all</span><span class="p">([</span><span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">ki</span><span class="p">)</span> <span class="k">for</span> <span class="n">ki</span> <span class="ow">in</span> <span class="n">k</span><span class="p">]))</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Expected k[0] to be odd, got </span><span class="si">%d</span><span class="s2">. Add or subtract 1.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]),))</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Expected k[1] to be odd, got </span><span class="si">%d</span><span class="s2">. Add or subtract 1.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]),))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">DiscreteUniform</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected int, tuple/list with 2 entries or StochasticParameter. Got </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">k</span><span class="p">),))</span>
+
+    <span class="k">def</span> <span class="nf">_augment_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">images</span>
+        <span class="n">nb_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="o">.</span><span class="n">draw_samples</span><span class="p">((</span><span class="n">nb_images</span><span class="p">,),</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sm</span><span class="o">.</span><span class="n">xrange</span><span class="p">(</span><span class="n">nb_images</span><span class="p">):</span>
+            <span class="n">ki</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">ki</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ki</span> <span class="o">=</span> <span class="n">ki</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">ki</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">ki</span>
+                <span class="n">image_aug</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">medianBlur</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ki</span><span class="p">)</span>
+                <span class="c1"># cv2.medianBlur() removes channel axis for single-channel</span>
+                <span class="c1"># images</span>
+                <span class="k">if</span> <span class="n">image_aug</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">image_aug</span> <span class="o">=</span> <span class="n">image_aug</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">image_aug</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_augment_keypoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keypoints_on_images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">keypoints_on_images</span>
+
+<div class="viewcode-block" id="MedianBlur.get_parameters"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.blur.MedianBlur.get_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">]</span></div></div>
+
+<span class="c1"># TODO tests</span>
+<div class="viewcode-block" id="BilateralBlur"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.blur.BilateralBlur">[docs]</a><span class="k">class</span> <span class="nc">BilateralBlur</span><span class="p">(</span><span class="n">Augmenter</span><span class="p">):</span> <span class="c1"># pylint: disable=locally-disabled, unused-variable, line-too-long</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Blur/Denoise an image using a bilateral filter.</span>
+
+<span class="sd">    Bilateral filters blur homogenous and textured areas, while trying to</span>
+<span class="sd">    preserve edges.</span>
+
+<span class="sd">    See http://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#bilateralfilter</span>
+<span class="sd">    for more information regarding the parameters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    d : int or tuple of two ints or StochasticParameter</span>
+<span class="sd">        Diameter of each pixel neighborhood.</span>
+<span class="sd">        High values for d lead to significantly worse performance. Values</span>
+<span class="sd">        equal or less than 10 seem to be good.</span>
+<span class="sd">            * If a single int, then that value will be used for the diameter.</span>
+<span class="sd">            * If a tuple of two ints (a, b), then the diameter will be a</span>
+<span class="sd">              value sampled from the interval [a..b].</span>
+<span class="sd">            * If a StochasticParameter, then N samples will be drawn from</span>
+<span class="sd">              that parameter per N input images, each representing the diameter</span>
+<span class="sd">              for the nth image. Expected to be discrete.</span>
+
+<span class="sd">    sigma_color : int or tuple of two ints or StochasticParameter</span>
+<span class="sd">        Filter sigma in the color space. A larger value of the parameter means</span>
+<span class="sd">        that farther colors within the pixel neighborhood (see sigmaSpace )</span>
+<span class="sd">        will be mixed together, resulting in larger areas of semi-equal color.</span>
+<span class="sd">            * If a single int, then that value will be used for the diameter.</span>
+<span class="sd">            * If a tuple of two ints (a, b), then the diameter will be a</span>
+<span class="sd">              value sampled from the interval [a..b].</span>
+<span class="sd">            * If a StochasticParameter, then N samples will be drawn from</span>
+<span class="sd">              that parameter per N input images, each representing the diameter</span>
+<span class="sd">              for the nth image. Expected to be discrete.</span>
+
+<span class="sd">    sigma_space :</span>
+<span class="sd">        Filter sigma in the coordinate space. A larger value of the parameter</span>
+<span class="sd">        means that farther pixels will influence each other as long as their</span>
+<span class="sd">        colors are close enough (see sigmaColor ).</span>
+<span class="sd">        * If a single int, then that value will be used for the diameter.</span>
+<span class="sd">        * If a tuple of two ints (a, b), then the diameter will be a</span>
+<span class="sd">          value sampled from the interval [a..b].</span>
+<span class="sd">        * If a StochasticParameter, then N samples will be drawn from</span>
+<span class="sd">          that parameter per N input images, each representing the diameter</span>
+<span class="sd">          for the nth image. Expected to be discrete.</span>
+
+<span class="sd">    name : string, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    deterministic : bool, optional(default=False)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    random_state : int or np.random.RandomState or None, optional(default=None)</span>
+<span class="sd">        See `Augmenter.__init__()`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; aug = iaa.BilateralBlur(d=(3, 10), sigma_color=(10, 250), sigma_space=(10, 250))</span>
+
+<span class="sd">    blurs all images using a bilateral filter with max distance 3 to 10</span>
+<span class="sd">    and wide ranges for sigma_color and sigma_space.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sigma_color</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">250</span><span class="p">),</span> <span class="n">sigma_space</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">250</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BilateralBlur</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">val</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">Deterministic</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">var</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_iterable</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
+                <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="nb">all</span><span class="p">([</span><span class="n">ia</span><span class="o">.</span><span class="n">is_single_number</span><span class="p">(</span><span class="n">var_i</span><span class="p">)</span> <span class="k">for</span> <span class="n">var_i</span> <span class="ow">in</span> <span class="n">var</span><span class="p">]))</span>
+                <span class="k">return</span> <span class="n">DiscreteUniform</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">var</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">var</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">StochasticParameter</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">var</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected int, tuple/list with 2 entries or StochasticParameter. Got </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">),))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">val</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_color</span> <span class="o">=</span> <span class="n">val</span><span class="p">(</span><span class="n">sigma_color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_space</span> <span class="o">=</span> <span class="n">val</span><span class="p">(</span><span class="n">sigma_space</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_augment_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">images</span>
+        <span class="n">nb_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="n">random_state</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="o">**</span><span class="mi">6</span><span class="p">)</span>
+        <span class="n">samples_d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">draw_samples</span><span class="p">((</span><span class="n">nb_images</span><span class="p">,),</span> <span class="n">random_state</span><span class="o">=</span><span class="n">ia</span><span class="o">.</span><span class="n">new_random_state</span><span class="p">(</span><span class="n">seed</span><span class="p">))</span>
+        <span class="n">samples_sigma_color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_color</span><span class="o">.</span><span class="n">draw_samples</span><span class="p">((</span><span class="n">nb_images</span><span class="p">,),</span> <span class="n">random_state</span><span class="o">=</span><span class="n">ia</span><span class="o">.</span><span class="n">new_random_state</span><span class="p">(</span><span class="n">seed</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">samples_sigma_space</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_space</span><span class="o">.</span><span class="n">draw_samples</span><span class="p">((</span><span class="n">nb_images</span><span class="p">,),</span> <span class="n">random_state</span><span class="o">=</span><span class="n">ia</span><span class="o">.</span><span class="n">new_random_state</span><span class="p">(</span><span class="n">seed</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sm</span><span class="o">.</span><span class="n">xrange</span><span class="p">(</span><span class="n">nb_images</span><span class="p">):</span>
+            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;BilateralBlur can currently only be applied to images with 3 channels.&quot;</span><span class="p">)</span>
+            <span class="n">di</span> <span class="o">=</span> <span class="n">samples_d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">sigma_color_i</span> <span class="o">=</span> <span class="n">samples_sigma_color</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">sigma_space_i</span> <span class="o">=</span> <span class="n">samples_sigma_space</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">di</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">bilateralFilter</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">di</span><span class="p">,</span> <span class="n">sigma_color_i</span><span class="p">,</span> <span class="n">sigma_space_i</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_augment_keypoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keypoints_on_images</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">hooks</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">keypoints_on_images</span>
+
+<div class="viewcode-block" id="BilateralBlur.get_parameters"><a class="viewcode-back" href="../../../source/imgaug.html#imgaug.augmenters.blur.BilateralBlur.get_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_space</span><span class="p">]</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Alexander Jung.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2.6',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

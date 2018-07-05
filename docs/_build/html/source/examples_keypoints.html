@@ -1,0 +1,311 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Examples: Keypoints &mdash; imgaug 0.2.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Examples: Bounding Boxes" href="examples_bounding_boxes.html" />
+    <link rel="prev" title="Examples: Basics" href="examples_basics.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> imgaug
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples_basics.html">Examples: Basics</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples: Keypoints</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#a-simple-example">A simple example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples_bounding_boxes.html">Examples: Bounding Boxes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parameters.html">Stochastic Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alpha.html">Blending/Overlaying images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="augmenters.html">Overview of Augmenters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">imgaug</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">imgaug</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Examples: Keypoints</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/examples_keypoints.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="examples-keypoints">
+<h1>Examples: Keypoints<a class="headerlink" href="#examples-keypoints" title="Permalink to this headline">¶</a></h1>
+<p><cite>imgaug</cite> can handle not only images, but also keypoints/landmarks on these.
+E.g. if an image is rotated during augmentation, the library can also rotate
+all landmarks correspondingly.</p>
+<div class="section" id="a-simple-example">
+<h2>A simple example<a class="headerlink" href="#a-simple-example" title="Permalink to this headline">¶</a></h2>
+<p>The following example loads an image and places four keypoints on it.
+The image is then augmented to be brighter, slightly rotated and scaled.
+These augmentations are also applied to the keypoints.
+The image is then shown before and after augmentation (with keypoints drawn
+on it).</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">imgaug</span> <span class="k">as</span> <span class="nn">ia</span>
+<span class="kn">from</span> <span class="nn">imgaug</span> <span class="k">import</span> <span class="n">augmenters</span> <span class="k">as</span> <span class="n">iaa</span>
+
+<span class="n">ia</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">image</span> <span class="o">=</span> <span class="n">ia</span><span class="o">.</span><span class="n">quokka</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">))</span>
+<span class="n">keypoints</span> <span class="o">=</span> <span class="n">ia</span><span class="o">.</span><span class="n">KeypointsOnImage</span><span class="p">([</span>
+    <span class="n">ia</span><span class="o">.</span><span class="n">Keypoint</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span>
+    <span class="n">ia</span><span class="o">.</span><span class="n">Keypoint</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">75</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">200</span><span class="p">),</span>
+    <span class="n">ia</span><span class="o">.</span><span class="n">Keypoint</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span>
+    <span class="n">ia</span><span class="o">.</span><span class="n">Keypoint</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+<span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="n">seq</span> <span class="o">=</span> <span class="n">iaa</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Multiply</span><span class="p">((</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)),</span> <span class="c1"># change brightness, doesn&#39;t affect keypoints</span>
+    <span class="n">iaa</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span>
+        <span class="n">rotate</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">scale</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)</span>
+    <span class="p">)</span> <span class="c1"># rotate by exactly 10deg and scale to 50-70%, affects keypoints</span>
+<span class="p">])</span>
+
+<span class="c1"># Make our sequence deterministic.</span>
+<span class="c1"># We can now apply it to the image and then to the keypoints and it will</span>
+<span class="c1"># lead to the same augmentations.</span>
+<span class="c1"># IMPORTANT: Call this once PER BATCH, otherwise you will always get the</span>
+<span class="c1"># exactly same augmentations for every batch!</span>
+<span class="n">seq_det</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">to_deterministic</span><span class="p">()</span>
+
+<span class="c1"># Augment keypoints and images.</span>
+<span class="c1"># As we only have one image and list of keypoints, we use</span>
+<span class="c1"># [image] and [keypoints] to turn both into lists (batches) for the</span>
+<span class="c1"># functions and then [0] to reverse that. In a real experiment, your</span>
+<span class="c1"># variables would likely already be lists.</span>
+<span class="n">image_aug</span> <span class="o">=</span> <span class="n">seq_det</span><span class="o">.</span><span class="n">augment_images</span><span class="p">([</span><span class="n">image</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">keypoints_aug</span> <span class="o">=</span> <span class="n">seq_det</span><span class="o">.</span><span class="n">augment_keypoints</span><span class="p">([</span><span class="n">keypoints</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># print coordinates before/after augmentation (see below)</span>
+<span class="c1"># use after.x_int and after.y_int to get rounded integer coordinates</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">keypoints</span><span class="o">.</span><span class="n">keypoints</span><span class="p">)):</span>
+    <span class="n">before</span> <span class="o">=</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">keypoints</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">after</span> <span class="o">=</span> <span class="n">keypoints_aug</span><span class="o">.</span><span class="n">keypoints</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Keypoint </span><span class="si">%d</span><span class="s2">: (</span><span class="si">%.8f</span><span class="s2">, </span><span class="si">%.8f</span><span class="s2">) -&gt; (</span><span class="si">%.8f</span><span class="s2">, </span><span class="si">%.8f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">before</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">before</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">after</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">after</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+    <span class="p">)</span>
+
+<span class="c1"># image with keypoints before/after augmentation (shown below)</span>
+<span class="n">image_before</span> <span class="o">=</span> <span class="n">keypoints</span><span class="o">.</span><span class="n">draw_on_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">image_after</span> <span class="o">=</span> <span class="n">keypoints_aug</span><span class="o">.</span><span class="n">draw_on_image</span><span class="p">(</span><span class="n">image_aug</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Console output of the example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Keypoint</span> <span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="mf">65.00000000</span><span class="p">,</span> <span class="mf">100.00000000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="mf">94.11840007</span><span class="p">,</span> <span class="mf">105.19555403</span><span class="p">)</span>
+<span class="n">Keypoint</span> <span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="mf">75.00000000</span><span class="p">,</span> <span class="mf">200.00000000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="mf">89.69884728</span><span class="p">,</span> <span class="mf">164.11942850</span><span class="p">)</span>
+<span class="n">Keypoint</span> <span class="mi">2</span><span class="p">:</span> <span class="p">(</span><span class="mf">100.00000000</span><span class="p">,</span> <span class="mf">100.00000000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="mf">114.38441167</span><span class="p">,</span> <span class="mf">108.76899867</span><span class="p">)</span>
+<span class="n">Keypoint</span> <span class="mi">3</span><span class="p">:</span> <span class="p">(</span><span class="mf">200.00000000</span><span class="p">,</span> <span class="mf">80.00000000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="mf">174.32927032</span><span class="p">,</span> <span class="mf">107.39826243</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure" id="id1">
+<img alt="Simple keypoint augmentation example" src="../_images/simple2.jpg" />
+<p class="caption"><span class="caption-text">Image with keypoints, before (left) and after (right)
+augmentation. Keypoints are shown in green and drawn in after the
+augmentation process.</span></p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="examples_bounding_boxes.html" class="btn btn-neutral float-right" title="Examples: Bounding Boxes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="examples_basics.html" class="btn btn-neutral" title="Examples: Basics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Alexander Jung.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.2.6',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>
