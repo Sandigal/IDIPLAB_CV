@@ -46,7 +46,7 @@ IDIPLAB_CV仅兼容python3。
 
 
 
-- 详细使用方法请阅读[**说明文档**](https://github.com/Sandigal/IDIPLAB_CV/wiki)。
+- 详细使用方法请阅读[**说明文档**](https://idiplab-cv.readthedocs.io/zh/latest/)。
 
 
 

@@ -103,7 +103,7 @@ datasets只存放一个数据集，具体格式详见后文。idiplab_cv是idipl
     labels_test = io.label_str2index(labels_test, class_to_index)
     labels_test = io.to_categorical(labels_test, len(class_to_index))
 
-
+target_
 
 组合2
 ````````
@@ -152,4 +152,15 @@ datasets只存放一个数据集，具体格式详见后文。idiplab_cv是idipl
 
     labels_valid = io.label_str2index(labels_valid, class_to_index)
     labels_valid = io.to_categorical(labels_valid, len(class_to_index))
+
+
+
+Field objects
+=============
+
+sdsd 
+
+.. _target:
+
+.. _hyperlink-name: link-block
 

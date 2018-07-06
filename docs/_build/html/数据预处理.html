@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>&lt;no title&gt; &mdash; imgaug 0.2.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> imgaug
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="source/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/examples_basics.html">Examples: Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/examples_keypoints.html">Examples: Keypoints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/examples_bounding_boxes.html">Examples: Bounding Boxes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/parameters.html">Stochastic Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/alpha.html">Blending/Overlaying images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/augmenters.html">Overview of Augmenters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/modules.html">imgaug</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">imgaug</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>&lt;no title&gt;</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/数据预处理.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <p># 数据预处理</p>
+<p>## 总览</p>
+<div class="figure" id="id51">
+<img alt="Heavy augmentations" src="_images/流程图.png" />
+<p class="caption"><span class="caption-text">Example augmentations of a single input image.</span></p>
+</div>
+<p>从各处收集到的图像往往需要进行处理才能送入模型进行训练，而`数据预处理`模块将解决相关问题。该模块将完成从读取图像到送入模型的主要功能。</p>
+<p>上图给出了一种常见的数据预处理流程，包括数据增强和数据集分割两大块。</p>
+<ul>
+<li><p class="first">__数据增强__：利用各种变换使扩充图像的多样性。</p>
+<p>模型越复杂，所需的数据就越多。数据约少就越容易产生过拟合。在某些数据难以收集的问题上，可以采用__数据增强__的方法增广数据。__数据增强__完全免费，其目的使增强图像的多样性，从而提高模型的泛化能力。但__数据增强__并不能带来新的图像内容的，所以提升效果有限。</p>
+<p>该部分提供了目前常用的数据增强算法，包括翻转、噪声、裁剪、仿射变换等。也提供了数据增强库[imgaug](<a class="reference external" href="https://github.com/aleju/imgaug">https://github.com/aleju/imgaug</a>)的接口，并且支持用户自定义数据增强算法。</p>
+</li>
+<li><p class="first">__数据集分割__：让数据各司其职。</p>
+<p>收集到的数据并非全部都用于训练。一般简单的处理是将数据集分割为__训练集__、__测试集__。其中，__训练集__用于建立模型，__测试集__用于评估选定模型的泛化情况。而另一个更严谨的方法是将数据集分割为__训练集__、__验证集__、__测试集__。其中，__验证集__用于交叉检验和参数。</p>
+<p>用户可以随意调整数据集分割的比例。并且对于增强数据的归属问题，该部分也保证__训练集__中不会出现__验证集__和__测试集__对应的增强数据。</p>
+</li>
+</ul>
+<p>## 目录结构</p>
+<p>&gt; 为了保证代码的正常运行，请保证`dataset`文件夹中的图像按照如下格式存放。</p>
+<p><a href="#id1"><span class="problematic" id="id2">`</span></a>dataset`下的一级目录代表数据的来源，如origin是原始数据、augment是增强数据。二级目录代表了数据的类别信息，如dogs、cats。二级目录下的图像文件代表对应类别的样本，如dog001是dogs类的样本、cat001是cats类的样本。代码将直接从样本对应的路径读取从属类别以及类别名称。为了保证内存中的样本可以和文件中的样本一一对应，最好确保每个样本拥有不同名称。</p>
+<p><a href="#id3"><span class="problematic" id="id4">``</span></a><a href="#id5"><span class="problematic" id="id6">`</span></a>powershell
+dataset/</p>
+<blockquote>
+<div><p>origin/
+dogs/</p>
+<blockquote>
+<div>dog001.jpg
+dog002.jpg
+…</div></blockquote>
+<dl class="docutils">
+<dt>cats/</dt>
+<dd><p class="first">cat001.jpg
+cat002.jpg
+…</p>
+<blockquote class="last">
+<div>…</div></blockquote>
+</dd>
+<dt>augment/</dt>
+<dd><dl class="first docutils">
+<dt>dogs/</dt>
+<dd>dog001_XXXXX.jpg
+…</dd>
+</dl>
+<p class="last">…</p>
+</dd>
+</dl>
+<p>…</p>
+</div></blockquote>
+<p><a href="#id7"><span class="problematic" id="id8">``</span></a><a href="#id9"><span class="problematic" id="id10">`</span></a></p>
+<p>## 应用范例</p>
+<p>数据增强请参照专栏。</p>
+<p>此处将按照`总览`中的**组合1**和**组合2**进行举例说明。</p>
+<p>为了统一代码的相对路径，我们将按照下图进行目录的排布。相关编码将在**工程主函数**中进行。</p>
+<p><a href="#id11"><span class="problematic" id="id12">``</span></a><a href="#id13"><span class="problematic" id="id14">`</span></a>powershell
+工程名/</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>datasets/</dt>
+<dd>数据集
+…</dd>
+<dt>idiplab_cv/</dt>
+<dd>库函数
+…</dd>
+</dl>
+<p>主函数
+…</p>
+</div></blockquote>
+<p><a href="#id15"><span class="problematic" id="id16">``</span></a><a href="#id17"><span class="problematic" id="id18">`</span></a></p>
+<p>### 组合1</p>
+<p>简单问题下，将原始数据的分割为__训练集__和__测试集__。</p>
+<ol class="arabic">
+<li><p class="first">导入库函数。</p>
+<p><code class="docutils literal"><span class="pre">`python</span>
+<span class="pre">from</span> <span class="pre">idiplab_cv.dataset_io</span> <span class="pre">import</span> <span class="pre">Dataset</span>
+<span class="pre">`</span></code></p>
+</li>
+<li><p class="first">读取所有数据，得到各类对应代号和拥有的样本数。</p>
+<p><code class="docutils literal"><span class="pre">`python</span>
+<span class="pre">dataset</span> <span class="pre">=</span> <span class="pre">io.Dataset(path=&quot;dataset&quot;)</span>
+<span class="pre">class_to_index,</span> <span class="pre">sample_per_class</span> <span class="pre">=</span> <span class="pre">dataset.load_data()</span>
+<span class="pre">`</span></code></p>
+</li>
+<li><p class="first">进行__训练集__和__测试集__的分割。测试集大概拥有原始数据的20%。</p>
+<p><code class="docutils literal"><span class="pre">`python</span>
+<span class="pre">imgs_train,</span> <span class="pre">labels_train,</span> <span class="pre">imgs_test,</span> <span class="pre">labels_test</span> <span class="pre">=</span> <span class="pre">dataset.train_test_split(test_shape=0.2)</span>
+<span class="pre">`</span></code></p>
+</li>
+<li><p class="first">将标签转换为one-hot矩阵，并且进行shuffle。</p>
+<p><code class="docutils literal"><span class="pre">`python</span>
+<span class="pre">imgs_train,</span> <span class="pre">labels_train,</span> <span class="pre">imgs_test,</span> <span class="pre">labels_test</span> <span class="pre">=</span> <span class="pre">dataset.train_test_split(test_shape=0.2)</span>
+<span class="pre">`</span></code></p>
+</li>
+</ol>
+<p>### 组合2</p>
+<p>包含数据增强，并且严谨的进行3折交叉检验。</p>
+<p><strong>组合2</strong>：按照3：1：1的比例分割出训练集、验证集和测试集，并进行数据增强。</p>
+<ol class="arabic simple">
+<li>运用`augmentation`增广原始数据。</li>
+<li>对应**组合1**中训练集(80%)，按照3：1的比例分割出子训练集(60%)和验证集(20%)。</li>
+<li>读取子训练集(60%)对应的增强数据，组成新的训练集(660%)。</li>
+</ol>
+<ol class="arabic">
+<li><p class="first">导入库函数。</p>
+<p><code class="docutils literal"><span class="pre">`python</span>
+<span class="pre">from</span> <span class="pre">idiplab_cv.augmentation</span> <span class="pre">import</span> <span class="pre">augmentation</span>
+<span class="pre">from</span> <span class="pre">idiplab_cv.dataset_io</span> <span class="pre">import</span> <span class="pre">Dataset</span>
+<span class="pre">`</span></code></p>
+</li>
+<li><p class="first">进行数据增强。相关变换包括</p>
+<p><a href="#id19"><span class="problematic" id="id20">``</span></a><a href="#id21"><span class="problematic" id="id22">`</span></a>python
+datagen_args = dict(</p>
+<blockquote>
+<div><p>rotation_range=15.,
+width_shift_range=0.05,
+height_shift_range=0.05,
+shear_range=10.,
+zoom_range=0.1,
+channel_shift_range=5.,
+horizontal_flip=True)</p>
+</div></blockquote>
+<p>agmtgen = agmt.AugmentGenerator(path=”dataset”)
+agmtgen.normol_augment(datagen_args=datagen_args,augment_amount=30)
+<a href="#id23"><span class="problematic" id="id24">``</span></a><a href="#id25"><span class="problematic" id="id26">`</span></a></p>
+</li>
+<li><p class="first">读取原始数据和增强的数据。</p>
+<p><a href="#id27"><span class="problematic" id="id28">``</span></a><a href="#id29"><span class="problematic" id="id30">`</span></a>python
+icld_agmt = True</p>
+<dl class="docutils">
+<dt>imgs_orig, _, labels_orig, imgs_agmt, _, labels_agmt = load_all_data(</dt>
+<dd><p class="first last">path_orig,
+icld_agmt)</p>
+</dd>
+</dl>
+<p><a href="#id31"><span class="problematic" id="id32">``</span></a><a href="#id33"><span class="problematic" id="id34">`</span></a></p>
+</li>
+<li><p class="first">将数据按照分为5组，取1组作为测试集(20%)进行训练，其余作为原训练集(80%)。读取原训练集(80%)对应的增强数据作为训练集(880%)。</p>
+<p><a href="#id35"><span class="problematic" id="id36">``</span></a><a href="#id37"><span class="problematic" id="id38">`</span></a>python
+now_splits = 0
+n_splits = 5</p>
+<dl class="docutils">
+<dt>imgs_train, imgs_test, labels_train, labels_test = train_test_split(</dt>
+<dd><p class="first last">imgs_orig,
+labels_orig,
+imgs_agmt,
+labels_agmt,
+all_splits,
+now_splits,
+icld_agmt)</p>
+</dd>
+</dl>
+<p><a href="#id39"><span class="problematic" id="id40">``</span></a><a href="#id41"><span class="problematic" id="id42">`</span></a></p>
+</li>
+<li><p class="first">将测试集(20%)，平分为验证集(10%)和子测试集(10%)。</p>
+<p><a href="#id43"><span class="problematic" id="id44">``</span></a><a href="#id45"><span class="problematic" id="id46">`</span></a>python
+imgs_vld, imgs_test, labels_vld, labels_test = test_valid_split(</p>
+<blockquote>
+<div><p>imgs_test, labels_test, test_size=0.5)</p>
+</div></blockquote>
+<p><a href="#id47"><span class="problematic" id="id48">``</span></a><a href="#id49"><span class="problematic" id="id50">`</span></a></p>
+</li>
+</ol>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Alexander Jung.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2.6',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

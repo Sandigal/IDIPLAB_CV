@@ -85,6 +85,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_basics.html">Examples: Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_keypoints.html">Examples: Keypoints</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples_bounding_boxes.html">Examples: Bounding Boxes</a></li>
@@ -5766,12 +5767,12 @@ old image is visible. Use a tuple (a, b) to use a random value
 
 <dl class="attribute">
 <dt id="imgaug.augmenters.color.ChangeColorspace.COLORSPACES">
-<code class="descname">COLORSPACES</code><em class="property"> = {'Lab', 'RGB', 'BGR', 'CIE', 'GRAY', 'HLS', 'Luv', 'HSV', 'YCrCb'}</em><a class="headerlink" href="#imgaug.augmenters.color.ChangeColorspace.COLORSPACES" title="Permalink to this definition">¶</a></dt>
+<code class="descname">COLORSPACES</code><em class="property"> = {'RGB', 'HSV', 'Lab', 'Luv', 'BGR', 'HLS', 'CIE', 'GRAY', 'YCrCb'}</em><a class="headerlink" href="#imgaug.augmenters.color.ChangeColorspace.COLORSPACES" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="imgaug.augmenters.color.ChangeColorspace.CV_VARS">
-<code class="descname">CV_VARS</code><em class="property"> = {'BGR2CIE': &lt;MagicMock id='2229563080488'&gt;, 'BGR2GRAY': &lt;MagicMock id='2229562768408'&gt;, 'BGR2HLS': &lt;MagicMock id='2229563248368'&gt;, 'BGR2HSV': &lt;MagicMock id='2229563160728'&gt;, 'BGR2LAB': &lt;MagicMock id='2229565862800'&gt;, 'BGR2LUV': &lt;MagicMock id='2229565879408'&gt;, 'BGR2RGB': &lt;MagicMock id='2229563095640'&gt;, 'BGR2YCrCb': &lt;MagicMock id='2229564335888'&gt;, 'HSV2BGR': &lt;MagicMock id='2229565904432'&gt;, 'HSV2RGB': &lt;MagicMock id='2229565896016'&gt;, 'RGB2BGR': &lt;MagicMock id='2229565751192'&gt;, 'RGB2CIE': &lt;MagicMock id='2229564315856'&gt;, 'RGB2GRAY': &lt;MagicMock id='2229564220080'&gt;, 'RGB2HLS': &lt;MagicMock id='2229564124072'&gt;, 'RGB2HSV': &lt;MagicMock id='2229564157176'&gt;, 'RGB2LAB': &lt;MagicMock id='2229565350912'&gt;, 'RGB2LUV': &lt;MagicMock id='2229563147040'&gt;, 'RGB2YCrCb': &lt;MagicMock id='2229564208856'&gt;}</em><a class="headerlink" href="#imgaug.augmenters.color.ChangeColorspace.CV_VARS" title="Permalink to this definition">¶</a></dt>
+<code class="descname">CV_VARS</code><em class="property"> = {'BGR2CIE': &lt;MagicMock id='2410137780688'&gt;, 'BGR2GRAY': &lt;MagicMock id='2410137930944'&gt;, 'BGR2HLS': &lt;MagicMock id='2410136613160'&gt;, 'BGR2HSV': &lt;MagicMock id='2410136711296'&gt;, 'BGR2LAB': &lt;MagicMock id='2410137715544'&gt;, 'BGR2LUV': &lt;MagicMock id='2410137763120'&gt;, 'BGR2RGB': &lt;MagicMock id='2410138061624'&gt;, 'BGR2YCrCb': &lt;MagicMock id='2410137793480'&gt;, 'HSV2BGR': &lt;MagicMock id='2410137722664'&gt;, 'HSV2RGB': &lt;MagicMock id='2410137752072'&gt;, 'RGB2BGR': &lt;MagicMock id='2410138137656'&gt;, 'RGB2CIE': &lt;MagicMock id='2410138330728'&gt;, 'RGB2GRAY': &lt;MagicMock id='2410138183160'&gt;, 'RGB2HLS': &lt;MagicMock id='2410138096360'&gt;, 'RGB2HSV': &lt;MagicMock id='2410138067912'&gt;, 'RGB2LAB': &lt;MagicMock id='2410138104440'&gt;, 'RGB2LUV': &lt;MagicMock id='2410137959616'&gt;, 'RGB2YCrCb': &lt;MagicMock id='2410138137768'&gt;}</em><a class="headerlink" href="#imgaug.augmenters.color.ChangeColorspace.CV_VARS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -6656,7 +6657,7 @@ the value of the nearest edge is used.</p>
 
 <dl class="class">
 <dt id="imgaug.augmenters.geometric.AffineCv2">
-<em class="property">class </em><code class="descclassname">imgaug.augmenters.geometric.</code><code class="descname">AffineCv2</code><span class="sig-paren">(</span><em>scale=1.0</em>, <em>translate_percent=None</em>, <em>translate_px=None</em>, <em>rotate=0.0</em>, <em>shear=0.0</em>, <em>order=&lt;MagicMock id='2229567528464'&gt;</em>, <em>cval=0</em>, <em>mode=&lt;MagicMock id='2229567538232'&gt;</em>, <em>name=None</em>, <em>deterministic=False</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/imgaug/augmenters/geometric.html#AffineCv2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imgaug.augmenters.geometric.AffineCv2" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">imgaug.augmenters.geometric.</code><code class="descname">AffineCv2</code><span class="sig-paren">(</span><em>scale=1.0</em>, <em>translate_percent=None</em>, <em>translate_px=None</em>, <em>rotate=0.0</em>, <em>shear=0.0</em>, <em>order=&lt;MagicMock id='2410138667832'&gt;</em>, <em>cval=0</em>, <em>mode=&lt;MagicMock id='2410138684440'&gt;</em>, <em>name=None</em>, <em>deterministic=False</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/imgaug/augmenters/geometric.html#AffineCv2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#imgaug.augmenters.geometric.AffineCv2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#imgaug.augmenters.meta.Augmenter" title="imgaug.augmenters.meta.Augmenter"><code class="xref py py-class docutils literal"><span class="pre">imgaug.augmenters.meta.Augmenter</span></code></a></p>
 <p>Augmenter to apply affine transformations to images using cv2 (i.e. opencv)
 backend.</p>

@@ -86,12 +86,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="source/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source/examples_basics.html">Examples: Basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source/examples_keypoints.html">Examples: Keypoints</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source/examples_bounding_boxes.html">Examples: Bounding Boxes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source/parameters.html">Stochastic Parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source/alpha.html">Blending/Overlaying images</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source/augmenters.html">Overview of Augmenters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="source/modules.html">imgaug</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/数据预处理.html">数据预处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/数据预处理.html#field-objects">Field objects</a></li>
 </ul>
 
             
@@ -177,98 +173,17 @@ processes for improved performance.</p>
 <li class="toctree-l2"><a class="reference internal" href="source/examples_basics.html#heavy-augmentations">Heavy Augmentations</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="source/examples_keypoints.html">Examples: Keypoints</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="source/examples_keypoints.html#a-simple-example">A simple example</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="source/examples_bounding_boxes.html">Examples: Bounding Boxes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="source/examples_bounding_boxes.html#a-simple-example">A simple example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/examples_bounding_boxes.html#dealing-with-bounding-boxes-outside-of-the-image">Dealing with bounding boxes outside of the image</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/examples_bounding_boxes.html#shifting-moving-bounding-boxes">Shifting/Moving Bounding Boxes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/examples_bounding_boxes.html#projection-of-bbs-onto-rescaled-images">Projection of BBs Onto Rescaled Images</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/examples_bounding_boxes.html#computing-intersections-unions-and-ious">Computing Intersections, Unions and IoUs</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="source/parameters.html">Stochastic Parameters</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="source/parameters.html#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/parameters.html#continuous-probability-distributions">Continuous Probability Distributions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/parameters.html#discrete-probability-distributions">Discrete Probability Distributions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/parameters.html#arithmetic">Arithmetic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/parameters.html#special-parameters">Special Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/parameters.html#noise-parameters">Noise Parameters</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="source/alpha.html">Blending/Overlaying images</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="source/alpha.html#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/alpha.html#constant-alpha">Constant Alpha</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/alpha.html#simplexnoisealpha">SimplexNoiseAlpha</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/alpha.html#frequencynoisealpha">FrequencyNoiseAlpha</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/alpha.html#iterativenoiseaggregator">IterativeNoiseAggregator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/alpha.html#sigmoid">Sigmoid</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="source/augmenters.html">Overview of Augmenters</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#sequential">Sequential</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#someof">SomeOf</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#oneof">OneOf</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#sometimes">Sometimes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#withcolorspace">WithColorspace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#withchannels">WithChannels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#noop">Noop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#lambda">Lambda</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#assertlambda">AssertLambda</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#assertshape">AssertShape</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#scale">Scale</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#cropandpad">CropAndPad</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#pad">Pad</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#crop">Crop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#fliplr">Fliplr</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#flipud">Flipud</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#superpixels">Superpixels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#changecolorspace">ChangeColorspace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#grayscale">Grayscale</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#gaussianblur">GaussianBlur</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#averageblur">AverageBlur</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#medianblur">MedianBlur</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#convolve">Convolve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#sharpen">Sharpen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#emboss">Emboss</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#edgedetect">EdgeDetect</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#directededgedetect">DirectedEdgeDetect</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#add">Add</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#addelementwise">AddElementwise</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#additivegaussiannoise">AdditiveGaussianNoise</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#multiply">Multiply</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#multiplyelementwise">MultiplyElementwise</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#dropout">Dropout</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#coarsedropout">CoarseDropout</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#invert">Invert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#contrastnormalization">ContrastNormalization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#affine">Affine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#piecewiseaffine">PiecewiseAffine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source/augmenters.html#elastictransformation">ElasticTransformation</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="source/modules.html">imgaug</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="source/imgaug.html">imgaug package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="source/imgaug.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="source/imgaug.html#module-imgaug.imgaug">imgaug</a></li>
-<li class="toctree-l3"><a class="reference internal" href="source/imgaug.html#module-imgaug.parameters">parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="source/imgaug.html#module-imgaug.augmenters.meta">augmenters.meta</a></li>
-<li class="toctree-l3"><a class="reference internal" href="source/imgaug.html#module-imgaug.augmenters.arithmetic">augmenters.arithmetic</a></li>
-<li class="toctree-l3"><a class="reference internal" href="source/imgaug.html#module-imgaug.augmenters.blur">augmenters.blur</a></li>
-<li class="toctree-l3"><a class="reference internal" href="source/imgaug.html#module-imgaug.augmenters.color">augmenters.color</a></li>
-<li class="toctree-l3"><a class="reference internal" href="source/imgaug.html#module-imgaug.augmenters.convolutional">augmenters.convolutional</a></li>
-<li class="toctree-l3"><a class="reference internal" href="source/imgaug.html#module-imgaug.augmenters.flip">augmenters.flip</a></li>
-<li class="toctree-l3"><a class="reference internal" href="source/imgaug.html#module-imgaug.augmenters.geometric">augmenters.geometric</a></li>
-<li class="toctree-l3"><a class="reference internal" href="source/imgaug.html#module-imgaug.augmenters.overlay">augmenters.overlay</a></li>
-<li class="toctree-l3"><a class="reference internal" href="source/imgaug.html#module-imgaug.augmenters.segmentation">augmenters.segmentation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="source/imgaug.html#module-imgaug.augmenters.size">augmenters.size</a></li>
-<li class="toctree-l3"><a class="reference internal" href="source/imgaug.html#module-imgaug">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/数据预处理.html">数据预处理</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="source/数据预处理.html#id2">总览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source/数据预处理.html#id3">目录结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source/数据预处理.html#id4">应用范例</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="source/数据预处理.html#id5">组合1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="source/数据预处理.html#id6">组合2</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="source/数据预处理.html#field-objects">Field objects</a></li>
 </ul>
 </div>
 <p>See <a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a> for API.</p>

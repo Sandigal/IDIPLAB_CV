@@ -85,12 +85,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../source/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../source/examples_basics.html">Examples: Basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../source/examples_keypoints.html">Examples: Keypoints</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../source/examples_bounding_boxes.html">Examples: Bounding Boxes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../source/parameters.html">Stochastic Parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../source/alpha.html">Blending/Overlaying images</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../source/augmenters.html">Overview of Augmenters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../source/modules.html">imgaug</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/数据预处理.html">数据预处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/数据预处理.html#field-objects">Field objects</a></li>
 </ul>
 
             
@@ -597,25 +593,10 @@
         <span class="n">images_result</span> <span class="o">=</span> <span class="n">hooks</span><span class="o">.</span><span class="n">postprocess</span><span class="p">(</span><span class="n">images_result</span><span class="p">,</span> <span class="n">augmenter</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="n">parents</span><span class="p">)</span>
 
         <span class="c1"># remove temporarily added channel axis for 2D input images</span>
-        <span class="n">output_type</span> <span class="o">=</span> <span class="s2">&quot;list&quot;</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">images_result</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;array&quot;</span>
         <span class="k">if</span> <span class="n">input_type</span> <span class="o">==</span> <span class="s2">&quot;array&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">input_added_axis</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;array&quot;</span><span class="p">:</span>
-                    <span class="n">images_result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">images_result</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">images_result</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images_result</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># if input_type == &quot;list&quot;:</span>
-            <span class="c1"># This test was removed for now because hooks can change the type</span>
-            <span class="c1">#ia.do_assert(</span>
-            <span class="c1">#    isinstance(images_result, list),</span>
-            <span class="c1">#    &quot;INTERNAL ERROR: Input was list, output was expected to be list too &quot;</span>
-            <span class="c1">#    &quot;but got %s.&quot; % (type(images_result),)</span>
-            <span class="c1">#)</span>
-            <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span>
-                <span class="nb">len</span><span class="p">(</span><span class="n">images_result</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">),</span>
-                <span class="s2">&quot;INTERNAL ERROR: Expected number of images to be unchanged after augmentation, &quot;</span>
-                <span class="s2">&quot;but was changed from </span><span class="si">%d</span><span class="s2"> to </span><span class="si">%d</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">images_result</span><span class="p">))</span>
-            <span class="p">)</span>
+                <span class="n">images_result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">images_result</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">input_type</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sm</span><span class="o">.</span><span class="n">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images_result</span><span class="p">)):</span>
                 <span class="k">if</span> <span class="n">input_added_axis</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
                     <span class="n">images_result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">images_result</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -1932,27 +1913,10 @@
                         <span class="n">parents</span><span class="o">=</span><span class="n">parents</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="p">],</span>
                         <span class="n">hooks</span><span class="o">=</span><span class="n">hooks</span>
                     <span class="p">)</span>
-                    <span class="n">output_is_array</span> <span class="o">=</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_np_array</span><span class="p">(</span><span class="n">images_to_aug</span><span class="p">)</span>
-                    <span class="n">output_all_same_shape</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">images_to_aug</span><span class="p">]))</span> <span class="o">==</span> <span class="mi">1</span>
 
-                    <span class="c1"># Map them back to their position in the images array/list</span>
-                    <span class="c1"># But it can happen that the augmented images have different shape(s) from</span>
-                    <span class="c1"># the input image, as well as being suddenly a list instead of a numpy array.</span>
-                    <span class="c1"># This is usually the case if a child augmenter has to change shapes, e.g.</span>
-                    <span class="c1"># due to cropping (without resize afterwards). So accomodate here for that</span>
-                    <span class="c1"># possibility.</span>
+                    <span class="c1"># map them back to their position in the images array/list</span>
                     <span class="k">if</span> <span class="n">input_is_array</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="ow">not</span> <span class="n">output_is_array</span> <span class="ow">and</span> <span class="n">output_all_same_shape</span><span class="p">:</span>
-                            <span class="n">images_to_aug</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images_to_aug</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">images</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-                            <span class="n">output_is_array</span> <span class="o">=</span> <span class="kc">True</span>
-
-                        <span class="k">if</span> <span class="n">output_is_array</span> <span class="ow">and</span> <span class="n">images_to_aug</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-                            <span class="n">images</span><span class="p">[</span><span class="n">active</span><span class="p">]</span> <span class="o">=</span> <span class="n">images_to_aug</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">images</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
-                            <span class="k">for</span> <span class="n">aug_idx</span><span class="p">,</span> <span class="n">original_idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">active</span><span class="p">):</span>
-                                <span class="n">images</span><span class="p">[</span><span class="n">original_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">images_to_aug</span><span class="p">[</span><span class="n">aug_idx</span><span class="p">]</span>
-                            <span class="n">input_is_array</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">images</span><span class="p">[</span><span class="n">active</span><span class="p">]</span> <span class="o">=</span> <span class="n">images_to_aug</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">for</span> <span class="n">aug_idx</span><span class="p">,</span> <span class="n">original_idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">active</span><span class="p">):</span>
                             <span class="n">images</span><span class="p">[</span><span class="n">original_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">images_to_aug</span><span class="p">[</span><span class="n">aug_idx</span><span class="p">]</span>
@@ -2179,12 +2143,9 @@
             <span class="k">for</span> <span class="n">idx_result_else_list</span><span class="p">,</span> <span class="n">idx_images</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indices_else_list</span><span class="p">):</span>
                 <span class="n">result</span><span class="p">[</span><span class="n">idx_images</span><span class="p">]</span> <span class="o">=</span> <span class="n">result_else_list</span><span class="p">[</span><span class="n">idx_result_else_list</span><span class="p">]</span>
 
-            <span class="c1"># If input was a list, keep the output as a list too,</span>
-            <span class="c1"># otherwise it was a numpy array, so make the output a numpy array too.</span>
-            <span class="c1"># Note here though that shapes can differ between images, e.g. when using Crop</span>
-            <span class="c1"># without resizing. In these cases, the output has to be a list.</span>
-            <span class="n">all_same_shape</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]))</span> <span class="o">==</span> <span class="mi">1</span>
-            <span class="k">if</span> <span class="n">input_is_np_array</span> <span class="ow">and</span> <span class="n">all_same_shape</span><span class="p">:</span>
+            <span class="c1"># if input was a list, keep the output as a list too,</span>
+            <span class="c1"># otherwise it was a numpy array, so make the output a numpy array too</span>
+            <span class="k">if</span> <span class="n">input_is_np_array</span><span class="p">:</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">input_dtype</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">images</span>
@@ -2318,14 +2279,6 @@
                     <span class="n">images</span><span class="o">=</span><span class="n">images_then_list</span><span class="p">,</span>
                     <span class="n">parents</span><span class="o">=</span><span class="n">parents</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="p">],</span>
                     <span class="n">hooks</span><span class="o">=</span><span class="n">hooks</span>
-                <span class="p">)</span>
-
-                <span class="n">ia</span><span class="o">.</span><span class="n">do_assert</span><span class="p">(</span>
-                    <span class="nb">all</span><span class="p">([</span><span class="n">img_out</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">img_in</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">img_out</span><span class="p">,</span> <span class="n">img_in</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">result_then_list</span><span class="p">,</span> <span class="n">result</span><span class="p">)]),</span>
-                    <span class="s2">&quot;Heights/widths of images changed in WithChannels from </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2">, but expected to be the same.&quot;</span> <span class="o">%</span> <span class="p">(</span>
-                        <span class="nb">str</span><span class="p">([</span><span class="n">img_in</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">img_in</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]),</span>
-                        <span class="nb">str</span><span class="p">([</span><span class="n">img_out</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">img_out</span> <span class="ow">in</span> <span class="n">result_then_list</span><span class="p">]),</span>
-                    <span class="p">)</span>
                 <span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">ia</span><span class="o">.</span><span class="n">is_np_array</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
