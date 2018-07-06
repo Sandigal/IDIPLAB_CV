@@ -1,31 +1,66 @@
-imgaug
-======
 
-`imgaug` is a library for image augmentation in machine learning experiments.
-It supports a wide range of augmentation techniques, allows to easily combine
-these, has a simple yet powerful stochastic interface, can augment images
-and keypoints/landmarks on these and offers augmentation in background
-processes for improved performance.
 
-.. figure:: images/examples_basics/heavy.jpg
-    :alt: Heavy augmentations
+IDIPLAB_CV说明文档
+====================
 
-    Example augmentations of a single input image.
+本文档涵盖了所有 ``IDIPLAB_CV`` 的内容。
+
+获得帮助
+--------------------
+
+遇到问题了？我们来帮您！
+
+* 查看下 :doc:`FAQ <faq>` ，这里有些常见的问题的解决办法。
+* 邮给我_ 您的问题
+* 在 `issue tracker`_ 中提交 `IDIPLAB_CV` 的 `bug`。
+
+.. _邮给我: sandiagal2525@gmail.com
+.. _issue tracker: https://github.com/scrapy/scrapy/issues
+
+
+快速开始
+--------------------
 
 .. toctree::
-   :maxdepth: 3
-   :caption: Contents:
+    :caption: 快速开始
+    :hidden:
 
-   source/installation
-   source/examples_basics
-   source/数据预处理
+    faq
+
+:doc:`faq`
+    使用 ``IDIPLAB_CV`` 时可能出现的问题。
 
 
-See :ref:`modindex` for API.
+数据预处理
+--------------------
 
-Indices and tables
-==================
+.. toctree::
+    :caption: 数据预处理
+    :hidden:
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+    preprocessing/overview
+    preprocessing/examples_basics
+
+:doc:`preprocessing/overview`
+    数据预处理模块功能一览。
+
+:doc:`preprocessing/examples_basics`
+    Get Scrapy installed on your computer.
+
+
+大好山河
+--------------------
+
+.. toctree::
+    :caption: 大好山河
+    :hidden:
+
+    source/installation
+    source/examples_basics
+
+:doc:`source/installation`
+    Understand what Scrapy is and how it can help you.
+
+:doc:`source/examples_basics`
+    Get Scrapy installed on your computer.
+
