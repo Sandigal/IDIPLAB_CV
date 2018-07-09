@@ -13,13 +13,16 @@ Created on Sun Apr  1 11:53:24 2018
 """
 
 import dataset_io as io
-from keras.preprocessing.image import ImageDataGenerator
-import glob
+import visul
+
+from random import randint
 import os
 import numpy as np
 import time
 from PIL import Image
-import visul
+
+from keras.preprocessing.image import ImageDataGenerator
+
 
 # %%
 
@@ -28,146 +31,114 @@ class AugmentGenerator(object):
 
     def __init__(self,
                  path,
-                 datagen_args,
-                 augment_amount=10,
                  shape=None):
         self.path = path
-        self.datagen_args = datagen_args
-        self.augment_amount = augment_amount
         self.shape = shape
 
-    def change(self, **kw):
-        self.repeat_time = 0
-        self.generator_index += 1
-        if 'path' in kw:
-            self.path = kw['path']
-        if 'datagen_args' in kw:
-            self.datagen_args = kw['datagen_args']
-        if 'augment_amount' in kw:
-            self.augment_amount = kw['augment_amount']
-        if 'shape' in kw:
-            self.shape = kw['shape']
+    def normol_augment(self,datagen_args,augment_amount):
+        print("--->Start augmentation")
 
-    def creat1(self):
-        while True:
-            print("--->Start augmentation")
+        datagen = ImageDataGenerator(**datagen_args)
 
-            datagen = ImageDataGenerator(**self.datagen_args)
+        start = time.clock()
 
-            start = time.clock()
+        is_exist = os.path.exists(
+            self.path+"/augment")
+        if not is_exist:
+            os.makedirs(self.path+"/augment")
+
+        # dog or cat
+        sub_dir_list = os.listdir(self.path+"/origin")
+        process_bar = io.ShowProcess(len(sub_dir_list))
+        for sub_dir in sub_dir_list:
+            process_bar.show_process(sub_dir)
 
             is_exist = os.path.exists(
-            self.path+"/augment")
+                self.path+"/augment/"+sub_dir)
             if not is_exist:
-                os.makedirs(self.path+"/augment")
+                os.makedirs(self.path+"/augment/"+sub_dir)
 
-            # dog or cat
-            sub_dir_list = os.listdir(self.path+"/origin")
-            for sub_dir in sub_dir_list:
+            imgs, names = io.read_imgs_in_dir(
+                self.path+"/origin/"+sub_dir, self.shape)
+            imgs = np.array(imgs)
 
-                is_exist = os.path.exists(
-                    self.path+"/augment/"+sub_dir)
-                if not is_exist:
-                    os.makedirs(self.path+"/augment/"+sub_dir)
-
-                imgs, names = io.read_imgs_in_dir(
-                    self.path+"/origin/"+sub_dir, self.shape)
-                imgs = np.array(imgs)
-
-                # dog1 or dog2
-                for img, name in zip(imgs, names):
-                    img = np.expand_dims(img, axis=0)
-
-                    augmentgen = datagen.flow(
-                        img,
-                        batch_size=1,
-                        shuffle=False,
-                        save_to_dir=self.path+"/augment/"+sub_dir,
-                        save_format='jpg')
-
-                    for i in range(self.augment_amount):
-                        augmentgen.save_prefix = name.split(
-                            '.')[0] + "_"+str(np.random.randint(0, 99999))
-                        augmentgen.next()
-
-            end = time.clock()
-            print("Cost time:", end-start, "s")
+            # dog1 or dog2
             print("")
+            process_bar = io.ShowProcess(len(names))
+            for img, name in zip(imgs, names):
+                process_bar.show_process()
+                img = np.expand_dims(img, axis=0)
 
-            yield None
+                augmentgen = datagen.flow(
+                    img,
+                    batch_size=1,
+                    shuffle=False,
+                    save_to_dir=self.path+"/augment/"+sub_dir,
+                    save_format='jpg')
 
-    def creat2(self):
-        while True:
-            print("--->Start augmentation")
+                for i in range(augment_amount):
+                    augmentgen.save_prefix = name.split(
+                        '.')[0] + "_"+str(np.random.randint(0, 99999))
+                    augmentgen.next()
 
-            path_agument = self.path
-            path_agument_suffixes = '_augment'
-            datagen = ImageDataGenerator(**self.datagen_args)
+        end = time.clock()
+        print("")
+        print("Cost time:", end-start, "s")
+        print("")
 
-            start = time.clock()
+    def supervisd_augment(self,datagen_args,augment_amount):
 
-            g = os.walk(self.path)
+        print("--->Start augmentation")
 
-            for path, dir_list, file_list in g:
-                # dir_list:类别的list，例如['cats', 'dogs']
-                for dir_name in dir_list:
-                    # dir_name:类别的名称，例如cats
+        datagen = ImageDataGenerator(**datagen_args)
 
-                    # 跳过_augment文件夹
-                    if dir_name.rfind("_augment") != -1:
-                        continue
+        start = time.clock()
 
-                    # 生成_augment文件夹，确定增强批次
-                    is_exists = os.path.exists(
-                        path_agument+dir_name+path_agument_suffixes)
-                    if not is_exists:
-                        os.makedirs(path_agument+dir_name +
-                                    path_agument_suffixes)
+        is_exist = os.path.exists(
+            self.path+"/crop_SC_augment")
+        if not is_exist:
+            os.makedirs(self.path+"/crop_SC_augment")
 
-                    imgs = []
-                    for filename in glob.glob(self.path+dir_name+'/*.jpg'):
-                        #  filename:带有路径的图片完整地址，例如../Data_Origin/cats\rezero_icon_10.jpg
+        # dog or cat
+        sub_dir_list = os.listdir(self.path+"/crop_SC")
+        process_bar = io.ShowProcess(len(sub_dir_list))
+        for sub_dir in sub_dir_list:
+            process_bar.show_process(sub_dir)
 
-                        img = Image.open(filename)
-                        if self.shape is not None:
-                            img = img.resize(self.shape)
-                        img = np.asarray(img)
-                        imgs.append(img)
+            is_exist = os.path.exists(
+                self.path+"/crop_SC_augment/"+sub_dir)
+            if not is_exist:
+                os.makedirs(self.path+"/crop_SC_augment/"+sub_dir)
 
-                    batch_size = 32
-                    imgs = np.array(imgs)
-                    augmentgen = datagen.flow(
-                        imgs,
-                        batch_size=batch_size,
-                        shuffle=True,
-                        save_to_dir=path_agument+dir_name+path_agument_suffixes,
-                        save_format='jpg')
+            imgs, names = io.read_imgs_in_dir(
+                self.path+"/crop_SC/"+sub_dir, self.shape)
+            imgs = np.array(imgs)
 
-                    for i in range(self.augment_amount):
-                        batches = 0
-                        for _ in augmentgen:
-                            augmentgen.save_prefix = str(
-                                np.random.randint(0, 99999))
-                            batches += 1
-                            if batches >= len(imgs) / batch_size:
-                                break
-#                    augmentgen.next()
+            # dog1 or dog2
+            for img, name in zip(imgs, names):
+                img = np.expand_dims(img, axis=0)
 
-                break
+                augmentgen = datagen.flow(
+                    img,
+                    batch_size=1,
+                    shuffle=False,
+                    save_to_dir=self.path+"/crop_SC_augment/"+sub_dir,
+                    save_format='jpg')
 
-            end = time.clock()
-            print("Cost time:", end-start, "s")
-            print("")
+                for i in range(augment_amount):
+                    augmentgen.save_prefix = name.split(
+                        '.')[0] + "_"+str(np.random.randint(0, 99999))
+                    augmentgen.next()
 
-            yield None
+        end = time.clock()
+        print("")
+        print("Cost time:", end-start, "s")
+        print("")
 
-    def next(self, Multithreading=False):
-        if Multithreading:
-            next(self.creat2())
-        else:
-            next(self.creat1())
+
 
 # %%
+
 
 class cropGenerator(object):
 
@@ -177,40 +148,74 @@ class cropGenerator(object):
                  labels_origin,
                  names_origin
                  ):
+        self.imgs_origin = imgs_origin
+        self.imgs_white = imgs_white
         self.labels_origin = labels_origin
-        self.imgs_white = imgs_white
-        self.imgs_white = imgs_white
-        self.names_origin=names_origin
+        self.names_origin = names_origin
+        self.cams = None
 
-    def crop(self,path,mean_std,model,active_layer, weight_layer ):
-        print("--->Start cropping")
-        start = time.clock()
-
+    def makedirs(self, path, supervised_crop=False):
         is_exist = os.path.exists(
-            path+"/crop")
+            path+"/crop_AB")
         if not is_exist:
-            os.makedirs(path+"/crop")
-
+            os.makedirs(path+"/crop_AB")
         # dog or cat
         sub_dir_list = os.listdir(path+"/origin")
         for sub_dir in sub_dir_list:
             is_exist = os.path.exists(
-                path+"/crop/"+sub_dir)
+                path+"/crop_AB/"+sub_dir)
             if not is_exist:
-                os.makedirs(self.path+"/crop/"+sub_dir)
+                os.makedirs(path+"/crop_AB/"+sub_dir)
 
+        if supervised_crop:
+            is_exist = os.path.exists(
+                path+"/crop_SC")
+            if not is_exist:
+                os.makedirs(path+"/crop_SC")
+            # dog or cat
+            for sub_dir in sub_dir_list:
+                is_exist = os.path.exists(
+                    path+"/crop_SC/"+sub_dir)
+                if not is_exist:
+                    os.makedirs(path+"/crop_SC/"+sub_dir)
+
+    def crop(self, path, model, active_layer, weight_layer, supervised_crop=False, augment_amount=None):
+        print("--->Start cropping")
+        start = time.clock()
+
+        self.makedirs(path, supervised_crop)
+
+        if self.cams is None:
+            self.cams = visul.CAMs(
+                imgs_white=self.imgs_white,
+                model=model,
+                active_layer='conv_pw_13_relu',
+                weight_layer='conv_preds')
+
+        process_bar = io.ShowProcess(len(self.labels_origin))
         for i in range(len(self.labels_origin)):
-            print(i)
-            target = self.imgs_origin[i]
-            target2 = self.imgs_white[i]
-            out, cam = visul.CAM(img=target, img2=target2, model=model, finalActiveLayerName='conv_pw_13_relu',
-                                 weightLayerName='conv_preds')
-            xAB, yAB, wAB, wAB, xSC, ySC, xxSC, yySC = visul.cropMask(cam, out)
+            process_bar.show_process()
 
-            target3 = target[yAB:yAB+wAB, xAB:xAB+wAB]
-            target3 = Image.fromarray(target3)
-            target3.save(path+"/crop/"+self.labels_origin[i]+"/"+self.names_origin[i])
+            img_show = self.imgs_origin[i]
+
+            xAB, yAB, wAB, hAB, xSC, ySC, xxSC, yySC = visul.cropMask(
+                self.cams[i], img_show)
+
+            img_crop = img_show[yAB:yAB+hAB, xAB:xAB+wAB]
+            img_crop = Image.fromarray(img_crop)
+            img_crop.save(path+"/crop_AB/" +
+                          self.labels_origin[i]+"/"+self.names_origin[i])
+
+            if supervised_crop:
+                for j in range(augment_amount):
+                    xx = randint(xSC, xxSC)
+                    yy = randint(ySC, yySC)
+                    imgs_SC = img_show[yy:yy+hAB, xx:xx+wAB]
+                    imgs_SC = Image.fromarray(imgs_SC)
+                    imgs_SC.save(
+                        path+"/crop_SC/"+self.labels_origin[i]+"/"+self.names_origin[i].split('.')[0] + "_"+str(j)+".jpg")
 
         end = time.clock()
-        print("Cost time:", end-start, "s")
+        print("")
+        print("Cost time: %.3fs" % (end-start))
         print("")

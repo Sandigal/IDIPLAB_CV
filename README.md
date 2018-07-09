@@ -33,20 +33,19 @@ IDIPLAB_CV仅兼容python3。
 - **建议**您将工程的目录结构设置为下图形式，以便配合wiki的应用范例。如果您对python的导入机制和相对路径有深刻理解，也可以自行排布目录结构。
 
   ```powershell
-  工程名/
-  	datasets/
-			数据集
-			...
-  	idiplab_cv/
-			相关函数
-			...
-		工程主函数
-		...
+  CV/ # 工程名
+  	datasets/ # 数据集
+  		...
+  	idiplab_cv/ # 相关函数
+  		...
+  	main # 工程主函数
+  	...
   ```
 
 
 
-- 详细使用方法请阅读[**说明文档**](https://idiplab-cv.readthedocs.io/zh/latest/)。
+- 详细使用方法请阅读说明文档：[**GitHub Wiki（20%）**](https://github.com/Sandiagal/IDIPLAB_CV/wiki)、[**Read the Docs（移植中）**](https://idiplab-cv.readthedocs.io/zh/latest/)。
+- 遇见还没写入文档又急着利用的功能时，可以从工程的`test`文件夹中获得项目的测试范例，自行理解使用。
 
 
 

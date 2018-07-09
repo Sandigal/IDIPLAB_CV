@@ -5,66 +5,77 @@ Created on Mon Apr  9 20:14:41 2018
 @author: Sandiagal
 """
 import numpy as np
-from scipy import misc
-import random
-from PIL import Image
-import matplotlib.pyplot as plt
+
+from skimage.util import random_noise
+
+# %%
 
 
-def noise(image):
-    image = np.copy(image)
-    height, width = image.shape[:2]
-    for i in range(int(0.005*height*width)):
-        x = np.random.randint(0, height)
-        y = np.random.randint(0, width)
-        image[x, y, :] = 255
-    return image
+class RandomNoise(object):
+
+    def __init__(self,
+                 mode='gaussian',
+                 seed=None,
+                 clip=True,
+                 **kwargs):
+        self.mode = mode
+        self.seed = seed
+        self.clip = clip
+        self.kwargs = kwargs
+
+    def __call__(self, img):
+        img = img/255
+        img = random_noise(img,
+                           mode=self.mode,
+                           seed=self.seed,
+                           clip=self.clip,
+                           **self.kwargs)
+        return img
 
 
-def random_crop(image):
-    height, width = image.shape[:2]
+class Imgaug(object):
 
-    xx = 140
-    yy = 140
+    def __init__(self, Sequential):
+        self.Sequential = Sequential
 
-    random_array = np.random.random((1))
-    x = int(random_array*(width-xx))
-    random_array = np.random.random((1))
-    y = int(random_array*(height-yy))
-
-    image_crop = image[y:y+yy, x:x+xx, :]
-#    image_crop = misc.imresize(image_crop, image.shape)
-
-    return image_crop
+    def __call__(self, img):
+        img = np.expand_dims(img, axis=0)
+        images_aug = self.Sequential.augment_images(img)
+        return images_aug
 
 
-def random_crop2(image, crop_shape, padding=None):
-    oshape = np.shape(image)
+class BaseCrop(object):
 
-    if padding:
-        oshape = (oshape[0] + 2 * padding, oshape[1] + 2 * padding)
+    def __init__(self,
+                 mode='center_crop',
+                 crop_size=(100, 100),
+                 seed=None,
+                 **kwargs):
+        self.mode = mode
+        self.crop_size = crop_size
+        self.seed = seed
+        self.kwargs = kwargs
 
-        npad = ((padding, padding), (padding, padding), (0, 0))
+    def center_crop(self, img, crop_size, **kwargs):
+        centerw, centerh = img.shape[0]//2, img.shape[1]//2
+        halfw, halfh = crop_size[0]//2, crop_size[1]//2
+        return img[centerw-halfw:centerw+halfw, centerh-halfh:centerh+halfh, :]
 
-        image_pad = np.lib.pad(image, pad_width=npad,
-                               mode='constant', constant_values=0)
-        nh = random.randint(0, oshape[0] - crop_shape[0])
-        nw = random.randint(0, oshape[1] - crop_shape[1])
-        image_crop = image_pad[nh:nh + crop_shape[0], nw:nw + crop_shape[1]]
+    def random_crop(self, img, crop_size, seed=None, **kwargs):
+        np.random.seed(seed)
+        w, h = img.shape[0], img.shape[1]
+        rangew = (w - crop_size[0]) // 2 if w > crop_size[0] else 0
+        rangeh = (h - crop_size[1]) // 2 if h > crop_size[1] else 0
+        offsetw = 0 if rangew == 0 else np.random.randint(rangew)
+        offseth = 0 if rangeh == 0 else np.random.randint(rangeh)
+        return img[offsetw:offsetw+crop_size[0], offseth:offseth+crop_size[1], :]
 
-        return image_crop
-    else:
-        print("WARNING!!! nothing to do!!!")
-        return image
-
-def noise(image):
-    image = np.copy(image)
-    height, width = image.shape[:2]
-    for i in range(int(0.005*height*width)):
-        x = np.random.randint(0, height)
-        y = np.random.randint(0, width)
-        image[x, y, :] = 255
-    return image
-
-
-
+    def __call__(self, img):
+        shape = img.shape
+        if self.mode is 'center_crop':
+            img = self.center_crop(img, self.crop_size, **self.kwargs)
+        elif self.mode is 'random_crop':
+            img = self.random_crop(img, self.crop_size,
+                                   self.seed, **self.kwargs)
+#        img = misc.imresize(img, shape)
+        return img
