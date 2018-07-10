@@ -97,8 +97,7 @@
 
     labels_train = io.label_str2index(labels_train, class_to_index)
     labels_train = io.to_categorical(labels_train, len(class_to_index))
-    imgs_train, labels_train = shuffle(
-        imgs_train, labels_train, random_state=0)
+    imgs_train, labels_train = shuffle(imgs_train, labels_train)
 
     labels_test = io.label_str2index(labels_test, class_to_index)
     labels_test = io.to_categorical(labels_test, len(class_to_index))
@@ -128,28 +127,26 @@
         )
 
     agmtgen = agmt.AugmentGenerator(path="dataset")
-    agmtgen.normol_augment(datagen_args=datagen_args,augment_amount=30)
+    agmtgen.normol_augment(datagen_args=datagen_args, augment_amount=30)
 
 3. 如组合1进行数据读取以及 **训练集** 和 **测试集** 的分割。读取时包括增强数据。 ::
 
-    dataset = io.Dataset(path="dataset"， augment=True)
+    dataset = io.Dataset(path="dataset", augment=True)
     class_to_index, sample_per_class = dataset.load_data()
     _, _, imgs_test, labels_test = dataset.train_test_split(test_shape=0.2)
 
-4. 对 **训练集** 数据进行4折交叉检验。将 **训练集** 分为4组，每次取1组作为 **验证集** (20%)进行训练，其余作为原始 **训练集** (60%)。再读取原始 **训练集** (80%)对应的增强数据作为当前 **训练集** (660%)。 ::
+4. 对 **训练集** 数据进行4折交叉检验。将 **训练集** 分为4组，每次取1组作为 **验证集** (20%)进行训练，其余作为原始 **训练集** (60%)。再读取原始 **训练集** (80%)对应的增强数据作为当前 **训练集** (660%)。
+5. 如组合1将标签转换为 `one-hot` 矩阵，并且进行 `shuffle`。 ::
 
     total_splits = 4
     for valid_split in range(total_splits):
-        imgs_train, labels_train, imgs_valid, labels_valid = dataset.cross_split(
-        total_splits=total_splits, valid_split=valid_split)
+        imgs_train, labels_train, imgs_valid, labels_valid = dataset.cross_split(total_splits, valid_split)
 
-5. 如组合1将标签转换为 `one-hot` 矩阵，并且进行 `shuffle`。 ::
+        labels_train = io.label_str2index(labels_train, class_to_index)
+        labels_train = io.to_categorical(labels_train, len(class_to_index))
+        imgs_train, labels_train = shuffle(imgs_train, labels_train)
 
-    labels_train = io.label_str2index(labels_train, class_to_index)
-    labels_train = io.to_categorical(labels_train, len(class_to_index))
-    imgs_train, labels_train = shuffle(
-        imgs_train, labels_train, random_state=0)
+        labels_valid = io.label_str2index(labels_valid, class_to_index)
+        labels_valid = io.to_categorical(labels_valid, len(class_to_index))
 
-    labels_valid = io.label_str2index(labels_valid, class_to_index)
-    labels_valid = io.to_categorical(labels_valid, len(class_to_index))
 

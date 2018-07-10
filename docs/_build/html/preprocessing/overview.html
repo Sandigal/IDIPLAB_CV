@@ -84,19 +84,11 @@
             
             
               <p class="caption"><span class="caption-text">快速开始</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">数据预处理</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id2">总览</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">目录结构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">应用范例</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id5">组合1</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id6">组合2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html#id1">个人备忘录</a></li>
 </ul>
-</li>
-</ul>
-</li>
-</ul>
+<p class="caption"><span class="caption-text">数据预处理</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">数据预处理</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id2">总览</a></li>
@@ -110,6 +102,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples_basics.html">Examples: Basics</a></li>
 </ul>
+<p class="caption"><span class="caption-text">大好山河</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../source/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../source/examples_basics.html">Examples: Basics</a></li>
@@ -263,8 +256,7 @@
 <li><p class="first">将标签转换为 <cite>one-hot</cite> 矩阵，并且进行 <cite>shuffle</cite>。</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">labels_train</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">label_str2index</span><span class="p">(</span><span class="n">labels_train</span><span class="p">,</span> <span class="n">class_to_index</span><span class="p">)</span>
 <span class="n">labels_train</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">to_categorical</span><span class="p">(</span><span class="n">labels_train</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_to_index</span><span class="p">))</span>
-<span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span> <span class="o">=</span> <span class="n">shuffle</span><span class="p">(</span>
-    <span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span> <span class="o">=</span> <span class="n">shuffle</span><span class="p">(</span><span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">)</span>
 
 <span class="n">labels_test</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">label_str2index</span><span class="p">(</span><span class="n">labels_test</span><span class="p">,</span> <span class="n">class_to_index</span><span class="p">)</span>
 <span class="n">labels_test</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">to_categorical</span><span class="p">(</span><span class="n">labels_test</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_to_index</span><span class="p">))</span>
@@ -295,33 +287,30 @@
     <span class="p">)</span>
 
 <span class="n">agmtgen</span> <span class="o">=</span> <span class="n">agmt</span><span class="o">.</span><span class="n">AugmentGenerator</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">)</span>
-<span class="n">agmtgen</span><span class="o">.</span><span class="n">normol_augment</span><span class="p">(</span><span class="n">datagen_args</span><span class="o">=</span><span class="n">datagen_args</span><span class="p">,</span><span class="n">augment_amount</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">agmtgen</span><span class="o">.</span><span class="n">normol_augment</span><span class="p">(</span><span class="n">datagen_args</span><span class="o">=</span><span class="n">datagen_args</span><span class="p">,</span> <span class="n">augment_amount</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
 </pre></div>
 </div>
 </li>
 <li><p class="first">如组合1进行数据读取以及 <strong>训练集</strong> 和 <strong>测试集</strong> 的分割。读取时包括增强数据。</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>dataset = io.Dataset(path=&quot;dataset&quot;， augment=True)
-class_to_index, sample_per_class = dataset.load_data()
-_, _, imgs_test, labels_test = dataset.train_test_split(test_shape=0.2)
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="n">augment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">class_to_index</span><span class="p">,</span> <span class="n">sample_per_class</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">imgs_test</span><span class="p">,</span> <span class="n">labels_test</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">test_shape</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
 </pre></div>
 </div>
 </li>
 <li><p class="first">对 <strong>训练集</strong> 数据进行4折交叉检验。将 <strong>训练集</strong> 分为4组，每次取1组作为 <strong>验证集</strong> (20%)进行训练，其余作为原始 <strong>训练集</strong> (60%)。再读取原始 <strong>训练集</strong> (80%)对应的增强数据作为当前 <strong>训练集</strong> (660%)。</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">total_splits</span> <span class="o">=</span> <span class="mi">4</span>
-<span class="k">for</span> <span class="n">valid_split</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_splits</span><span class="p">):</span>
-    <span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">,</span> <span class="n">imgs_valid</span><span class="p">,</span> <span class="n">labels_valid</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">cross_split</span><span class="p">(</span>
-    <span class="n">total_splits</span><span class="o">=</span><span class="n">total_splits</span><span class="p">,</span> <span class="n">valid_split</span><span class="o">=</span><span class="n">valid_split</span><span class="p">)</span>
-</pre></div>
-</div>
 </li>
 <li><p class="first">如组合1将标签转换为 <cite>one-hot</cite> 矩阵，并且进行 <cite>shuffle</cite>。</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">labels_train</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">label_str2index</span><span class="p">(</span><span class="n">labels_train</span><span class="p">,</span> <span class="n">class_to_index</span><span class="p">)</span>
-<span class="n">labels_train</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">to_categorical</span><span class="p">(</span><span class="n">labels_train</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_to_index</span><span class="p">))</span>
-<span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span> <span class="o">=</span> <span class="n">shuffle</span><span class="p">(</span>
-    <span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">total_splits</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="k">for</span> <span class="n">valid_split</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_splits</span><span class="p">):</span>
+    <span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">,</span> <span class="n">imgs_valid</span><span class="p">,</span> <span class="n">labels_valid</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">cross_split</span><span class="p">(</span><span class="n">total_splits</span><span class="p">,</span> <span class="n">valid_split</span><span class="p">)</span>
 
-<span class="n">labels_valid</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">label_str2index</span><span class="p">(</span><span class="n">labels_valid</span><span class="p">,</span> <span class="n">class_to_index</span><span class="p">)</span>
-<span class="n">labels_valid</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">to_categorical</span><span class="p">(</span><span class="n">labels_valid</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_to_index</span><span class="p">))</span>
+    <span class="n">labels_train</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">label_str2index</span><span class="p">(</span><span class="n">labels_train</span><span class="p">,</span> <span class="n">class_to_index</span><span class="p">)</span>
+    <span class="n">labels_train</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">to_categorical</span><span class="p">(</span><span class="n">labels_train</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_to_index</span><span class="p">))</span>
+    <span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span> <span class="o">=</span> <span class="n">shuffle</span><span class="p">(</span><span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">)</span>
+
+    <span class="n">labels_valid</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">label_str2index</span><span class="p">(</span><span class="n">labels_valid</span><span class="p">,</span> <span class="n">class_to_index</span><span class="p">)</span>
+    <span class="n">labels_valid</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">to_categorical</span><span class="p">(</span><span class="n">labels_valid</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_to_index</span><span class="p">))</span>
 </pre></div>
 </div>
 </li>

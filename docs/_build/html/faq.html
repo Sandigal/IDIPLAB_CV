@@ -28,7 +28,9 @@
     <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="数据预处理" href="preprocessing/overview.html" />
+    <link rel="prev" title="IDIPLAB_CV说明文档" href="index.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -81,10 +83,21 @@
               
             
             
-              <ul>
+              <p class="caption"><span class="caption-text">快速开始</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#id1">个人备忘录</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#python">Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tmux">Tmux</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">数据预处理</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="preprocessing/overview.html">数据预处理</a></li>
 <li class="toctree-l1"><a class="reference internal" href="preprocessing/examples_basics.html">Examples: Basics</a></li>
 </ul>
+<p class="caption"><span class="caption-text">大好山河</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="source/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source/examples_basics.html">Examples: Basics</a></li>
@@ -155,12 +168,71 @@
   <div class="section" id="frequently-asked-questions">
 <span id="faq"></span><h1>Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permalink to this headline">¶</a></h1>
 </div>
+<div class="section" id="id1">
+<h1>个人备忘录<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="python">
+<h2>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python3"><div class="highlight"><pre><span></span><span class="c1"># python起文件服务器</span>
+<span class="n">python3</span><span class="o">.</span><span class="mi">4</span> <span class="o">-</span><span class="n">m</span> <span class="n">http</span><span class="o">.</span><span class="n">server</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">SimpleHTTPServer</span>    <span class="c1"># python2</span>
+
+<span class="n">python</span> <span class="o">-</span><span class="n">u</span> <span class="n">script</span><span class="o">.</span><span class="n">py</span>   <span class="c1"># 刷新缓冲，执行脚本重定向结果到文件时候比较有用</span>
+
+<span class="c1"># logging</span>
+<span class="n">FATAL</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ERROR</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">WARNING</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">INFO</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">DEBUG</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># 使用virtualenv制定python版本</span>
+<span class="n">virtualenv</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python2</span><span class="o">.</span><span class="mi">7</span> <span class="n">ENV2</span><span class="o">.</span><span class="mi">7</span>
+
+<span class="c1"># pyenv 安装多个版本的 python : https://github.com/pyenv/pyenv</span>
+<span class="c1"># pyenv-virtualenv https://github.com/pyenv/pyenv-virtualenv</span>
+
+<span class="c1"># 格式化 json</span>
+<span class="n">cat</span> <span class="n">some</span><span class="o">.</span><span class="n">json</span> <span class="o">|</span> <span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">json</span><span class="o">.</span><span class="n">tool</span>
+
+<span class="c1"># brew install youtube-dl</span>
+<span class="c1"># https://askubuntu.com/questions/486297/how-to-select-video-quality-from-youtube-dl</span>
+<span class="c1"># http://www.cnblogs.com/faunjoe88/p/7810427.html</span>
+<span class="n">youtube</span><span class="o">-</span><span class="n">dl</span> <span class="o">-</span><span class="n">F</span> <span class="s2">&quot;http://www.youtube.com/watch?v=P9pzm5b6FFY&quot;</span>
+<span class="n">youtube</span><span class="o">-</span><span class="n">dl</span> <span class="o">-</span><span class="n">f</span> <span class="mi">22</span> <span class="s2">&quot;http://www.youtube.com/watch?v=P9pzm5b6FFY&quot;</span>
+<span class="n">youtube</span><span class="o">-</span><span class="n">dl</span> <span class="o">-</span><span class="n">f</span> <span class="n">bestvideo</span><span class="o">+</span><span class="n">bestaudio</span> <span class="s2">&quot;http://www.youtube.com/watch?v=P9pzm5b6FFY&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tmux">
+<h2>Tmux<a class="headerlink" href="#tmux" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>tmux rename -t oriname newname
+tmux att -t name -d               <span class="c1"># -d 不同窗口全屏</span>
+<span class="c1"># 如果手贱在本机tmux里又ssh到服务器又进入服务器的tmux怎么办</span>
+c-b c-b d
+
+<span class="c1"># Vim style pane selection</span>
+<span class="nb">bind</span> -n C-h <span class="k">select</span>-pane -L
+<span class="nb">bind</span> -n C-j <span class="k">select</span>-pane -D
+<span class="nb">bind</span> -n C-k <span class="k">select</span>-pane -U
+<span class="nb">bind</span> -n C-l <span class="k">select</span>-pane -R
+
+<span class="c1"># https://stackoverflow.com/questions/22138211/how-do-i-disconnect-all-other-users-in-tmux</span>
+tmux a -dt &lt;session-name&gt;
+</pre></div>
+</div>
+</div>
+</div>
 
 
            </div>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="preprocessing/overview.html" class="btn btn-neutral float-right" title="数据预处理" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="IDIPLAB_CV说明文档" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
