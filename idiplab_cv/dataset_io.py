@@ -1,60 +1,58 @@
-# -*- coding: utf-8 -*-
 """
-Created on Mon Apr 16 20:02:44 2018
-
-@author: Sandiagal
+该模块:`dataset_io`包含读取数据集以及数据集分割的类和函数。
 """
 
-import numpy as np
+# Author: Sandiagal <sandiagal2525@gmail.com>,
+# License: GPL-3.0
+
 import os
+from pickle import dump
+from pickle import load
 import time
-import sys
-from PIL import Image
-from pickle import dump, load
 
-from sklearn.utils import shuffle
-from sklearn.model_selection import StratifiedKFold
 from keras.utils import to_categorical
+import numpy as np
+from PIL import Image
+from sklearn.model_selection import StratifiedKFold
+from sklearn.utils import shuffle
 
-# %%
 
-
-class ShowProcess():
+class _ShowProcess():
     """
     显示处理进度的类
     调用该类相关函数即可实现处理进度的显示
     """
 
-    # 初始化函数，需要知道总共的处理次数
     def __init__(self, max_steps):
+        """
+        初始化函数，需要知道总共的处理次数
+        """
         self.max_steps = max_steps
         self.i = 0
         self.max_arrow = 29
 
-    # 显示函数，根据当前的处理进度i显示进度
-    # 效果为->Processing for P5 [=============================>]100.00%
     def show_process(self, name=None, i=None):
+        """
+        显示函数，根据当前的处理进度显示进度
+        效果为->Processing for P5 [=============================>]100.00%
+        """
         if i is not None:
             self.i = i
         else:
             self.i += 1
-        num_arrow = int(self.i * self.max_arrow / self.max_steps)  # 计算显示多少个'>'
-        num_line = self.max_arrow - num_arrow  # 计算显示多少个'-'
+        num_arrow = self.i * self.max_arrow // self.max_steps  # 计算显示多少个"="
+        num_line = self.max_arrow - num_arrow  # 计算显示多少个". "
         percent = self.i * 100.0 / self.max_steps  # 计算完成进度，格式为xx.xx%
-        process_bar = "\r"
+        process_bar_tmp = ["\r"]
         if name is not None:
-            process_bar += "-->Processing for "+name
-        process_bar += ' [' + '=' * num_arrow + '>'+' .' * num_line + \
-            ']' + '%.2f' % percent + '%'+"     "  # 带输出的字符串，'\r'表示不换行回到最左边
-        sys.stdout.write(process_bar)  # 这两句打印字符到终端
-        sys.stdout.flush()
+            process_bar_tmp.append("-->Processing for %s " % name)
+        process_bar_tmp.append(
+            "[" + "=" * num_arrow + ">"+". " * num_line + "] %5.2f%%" % percent)
+        print("".join(process_bar_tmp),end="          ")
         if self.i >= self.max_steps:
             self.i = 0
 
-# %%
-
-
-def get_split_index(labels, total_splits, valid_split):
+def _get_split_index(labels, total_splits, valid_split):
     now_split = 0
     skf = StratifiedKFold(n_splits=total_splits)
     for train_index, test_index in skf.split(np.zeros(len(labels)), labels):
@@ -63,7 +61,7 @@ def get_split_index(labels, total_splits, valid_split):
         now_split += 1
 
 
-def read_imgs_in_dir(path, shape=None):
+def _read_imgs_in_dir(path, shape=None):
     names = os.listdir(path)
     if shape is None:
         imgs = [np.array(Image.open(path + "/"+name)) for name in names]
@@ -73,17 +71,17 @@ def read_imgs_in_dir(path, shape=None):
     return imgs, names
 
 
-def read_imgs_in_dirs(path, dirs_name, shape=(224, 224)):
+def _read_imgs_in_dirs(path, dirs_name, shape=(224, 224)):
     imgall = []
     labelall = []
     nameall = []
 
     sub_dir_list = os.listdir(path+"/origin")
-    process_bar = ShowProcess(len(sub_dir_list))
+    process_bar = _ShowProcess(len(sub_dir_list))
     for sub_dir in sub_dir_list:
         process_bar.show_process(sub_dir)
 
-        imgs, names = read_imgs_in_dir(path+dirs_name+sub_dir, shape)
+        imgs, names = _read_imgs_in_dir(path+dirs_name+sub_dir, shape)
         imgall.extend(imgs)
         labelall.extend([sub_dir]*len(imgs))
         nameall.extend(names)
@@ -102,6 +100,32 @@ def reverse_dict(dic):
 
 
 def label_smooth(labels, section):
+    """标签平滑
+
+    Retrieves rows pertaining to the given keys from the Table instance
+    represented by big_table.  Silly things may happen if
+    other_silly_variable is not None.
+
+    参数:
+        labels: An open Bigtable Table instance.
+        section: A sequence of strings representing the key of each table row
+            to fetch.
+
+    返回:
+        A dict mapping keys to the corresponding table row data
+        fetched. Each row is represented as a tuple of strings. For
+        example:
+
+        {"Serak": ("Rigel VII", "Preparer"),
+         "Zim": ("Irk", "Invader"),
+         "Lrrr": ("Omicron Persei 8", "Emperor")}
+
+        If a key from the keys argument is missing from the dictionary,
+        then that row was not found in the table.
+
+    错误:
+        IOError: An error occurred accessing the bigtable.Table object.
+    """
     labels = np.copy(labels)
     eps = 0.1
     for i in range(len(labels)):
@@ -109,7 +133,8 @@ def label_smooth(labels, section):
             if np.argmax(labels[i]) < section[j]:
                 smooth_num = section[j]-section[j-1]
                 labels[i][section[j-1]:section[j]] = labels[i][section[j-1]:section[j]] * \
-                    (1 - eps)+(1-labels[i][section[j-1]                                           :section[j]]) * eps / (smooth_num)
+                    (1 - eps)+(1-labels[i][section[j-1]
+                     :section[j]]) * eps / (smooth_num)
                 break
     return labels
 
@@ -117,6 +142,15 @@ def label_smooth(labels, section):
 
 
 class Dataset(object):
+    """Summary of class here.
+
+    Longer class information....
+    Longer class information....
+
+    Attributes:
+        likes_spam: A boolean indicating if we like SPAM or not.
+        eggs: An integer count of the eggs we have laid.
+    """
 
     def __init__(self,
                  path,
@@ -143,18 +177,18 @@ class Dataset(object):
         start = time.clock()
 
         if step == 1:
-            self.imgs_origin, self.labels_origin, self.names_origin = read_imgs_in_dirs(
+            self.imgs_origin, self.labels_origin, self.names_origin = _read_imgs_in_dirs(
                 self.path, "/origin/", self.shape)
 
             if self.augment:
-                self.imgs_augment, self.labels_augment, self.names_augment = read_imgs_in_dirs(
+                self.imgs_augment, self.labels_augment, self.names_augment = _read_imgs_in_dirs(
                     self.path, "/augment/", self.shape)
         else:
-            self.imgs_origin, self.labels_origin, self.names_origin = read_imgs_in_dirs(
+            self.imgs_origin, self.labels_origin, self.names_origin = _read_imgs_in_dirs(
                 self.path, "/crop_AB/", self.shape)
 
             if self.augment:
-                self.imgs_augment, self.labels_augment, self.names_augment = read_imgs_in_dirs(
+                self.imgs_augment, self.labels_augment, self.names_augment = _read_imgs_in_dirs(
                     self.path, "/crop_SC_augment/", self.shape)
 
         sub_dir_list = os.listdir(self.path+"/origin")
@@ -169,7 +203,6 @@ class Dataset(object):
         print("Cost time: %.3fs" % (end-start))
         print("Image shape (hight, width, channel):",
               self.imgs_origin[0].shape)
-        print("Read", len(self.labels_origin), "samples")
         print("Read", len(self.labels_origin), "samples", end="")
         if self.augment:
             print(" with ", len(self.labels_augment), "augmentated", end="")
@@ -210,7 +243,6 @@ class Dataset(object):
 
         print("")
         print("Image shape:", self.imgs_origin[0].shape)
-        print("Read", len(self.labels_origin), "samples")
         print("Read", len(self.labels_origin), "samples", end="")
         if self.augment:
             print(" with ", len(self.labels_augment), "augmentated", end="")
@@ -225,7 +257,7 @@ class Dataset(object):
 
         n_splits = int(1/test_shape)
 
-        self.train_index, test_index = get_split_index(
+        self.train_index, test_index = _get_split_index(
             self.labels_origin, n_splits, 0)
         imgs_train = np.array(self.imgs_origin)[self.train_index]
         labels_train = np.array(self.labels_origin)[self.train_index]
@@ -256,7 +288,7 @@ class Dataset(object):
         start = time.clock()
 
         labels_train = np.array(self.labels_origin)[self.train_index].tolist()
-        self.train_cross_index, valid_index = get_split_index(
+        self.train_cross_index, valid_index = _get_split_index(
             labels_train, total_splits, valid_split)
         imgs_train = np.array(self.imgs_origin)[
             self.train_index][self.train_cross_index]

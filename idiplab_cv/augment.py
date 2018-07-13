@@ -35,7 +35,7 @@ class AugmentGenerator(object):
         self.path = path
         self.shape = shape
 
-    def normol_augment(self,datagen_args,augment_amount):
+    def normol_augment(self,datagen_args,augment_amount=10):
         print("--->Start augmentation")
 
         datagen = ImageDataGenerator(**datagen_args)

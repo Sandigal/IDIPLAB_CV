@@ -1,0 +1,159 @@
+
+数据预处理
+====================
+
+数据增强
+--------------------
+
+.. py:class:: idiplab_cv.augment.AugmentGenerator(path, shape=None)
+
+    sdsdsdsdsdsd
+    
+    :param str path: 数据所在目录地址。目录结构请参照 :ref:`目录结构`。
+    :param turple shape: 格式为 `(height, width, channels)`，所有的图像将被调整到该尺寸。默认:`(224, 224 3)`
+    
+    **实例化说明：**
+
+    1. 当实例化 AugmentGenerator 时，什么都不会发生，做成类只是为了不要再一行内输入太多参数。
+
+    .. py:method:: normol_augment(datagen_args, augment_amount=10)
+
+        非监督数据增强。XXXXXXXXXXXXX
+
+        :param str datagen_args: XXXXXXXX
+        :param str augment_amount: 数据增广倍数，默认为10.
+        
+    .. py:method:: supervisd_augment(datagen_args, augment_amount=10)
+
+        监督数据增强。XXXXXXXXXXXXX
+
+        :param str datagen_args: XXXXXXXX
+        :param str augment_amount: 数据增广倍数，默认为10.
+        
+.. py:class:: idiplab_cv.augment.cropGenerator(imgs_origin, imgs_white, labels_origin, names_origin)
+
+    sdsdsdsdsdsd
+    
+    :param numpy imgs_origin: XXXXXXXX
+    :param list imgs_white: XXXXXXXX
+    :param list labels_origin: XXXXXXXX
+    :param list names_origin: XXXXXXXX
+
+    
+    **实例化说明：**
+
+    1. 当实例化 cropGenerator 时，什么都不会发生，做成类只是为了不要再一行内输入太多参数。
+
+    .. py:method:: normol_augment(datagen_args, augment_amount=10)
+
+        XXXXXXXXXXXXX
+
+        :param str datagen_args: 微信加密签名
+        :param str augment_amount: 数据增广倍数，默认为10.
+        
+    .. py:method:: crop(path, model, active_layer, weight_layer, supervised_crop=False, augment_amount=None)
+
+        XXXXXXXXXXXXX
+
+        :param numpy path: XXXXXXXX
+        :param list model: XXXXXXXX
+        :param list active_layer: XXXXXXXX
+        :param list weight_layer: XXXXXXXX
+        :param list supervised_crop: XXXXXXXX
+        :param list augment_amount: XXXXXXXX
+        
+数据集分割
+--------------------
+
+.. py:class:: idiplab_cv.dataset_io.Dataset(path, shape, augment=False)
+
+    sdsdsdsdsdsd
+    
+    :param numpy path: XXXXXXXX
+    :param list shape: XXXXXXXX
+    :param list augment: XXXXXXXX
+    :param list names_origin: XXXXXXXX
+
+    **实例化说明：**
+
+    1. 当实例化 cropGenerator 时，什么都不会发生，做成类只是为了不要再一行内输入太多参数。  
+    
+    
+    .. py:attribute:: imgs_origin
+    
+        XXXXXXXXXXXXX
+    
+    .. py:attribute:: labels_origin
+     
+        XXXXXXXXXXXXXXXX
+    
+    .. py:attribute:: names_origin
+     
+        XXXXXXXXXXXXXXXX
+    
+    .. py:attribute:: imgs_augment
+     
+        XXXXXXXXXXXXXXXX
+    
+    .. py:attribute:: labels_augment
+     
+        XXXXXXXXXXXXXXXX
+        
+    .. py:attribute:: names_augment
+     
+        XXXXXXXXXXXXXXXX    
+        
+    .. py:attribute:: class_to_index
+     
+        XXXXXXXXXXXXXXXX   
+        
+    .. py:attribute:: sample_per_class
+     
+        XXXXXXXXXXXXXXXX    
+        
+    .. py:attribute:: train_index
+     
+        XXXXXXXXXXXXXXXX    
+
+    .. py:attribute:: train_cross_index
+     
+        XXXXXXXXXXXXXXXX    
+
+    .. py:attribute:: augment_index
+     
+        XXXXXXXXXXXXXXXX    
+        
+    .. py:attribute:: augment_cross_index
+     
+        XXXXXXXXXXXXXXXX            
+
+        
+    .. py:method:: normol_augment(datagen_args, augment_amount=10)
+
+        XXXXXXXXXXXXX
+
+        :param str datagen_args: 微信加密签名
+        :param str augment_amount: 数据增广倍数，默认为10.
+        
+    .. py:method:: crop(path, model, active_layer, weight_layer, supervised_crop=False, augment_amount=None)
+
+        XXXXXXXXXXXXX
+
+        :param numpy path: XXXXXXXX
+        :param list model: XXXXXXXX
+        :param list active_layer: XXXXXXXX
+        :param list weight_layer: XXXXXXXX
+        :param list supervised_crop: XXXXXXXX
+        :param list augment_amount: XXXXXXXX
+
+    
+.. py:function:: Timer.repeat(repeat=3, number=1000000)
+
+    sdsdsdsdsd
+    
+
+
+
+
+
+

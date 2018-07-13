@@ -1,0 +1,391 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>总览 &mdash; wechat-python-sdk 0.5.9 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="数据增强" href="augmentation.html" />
+    <link rel="prev" title="Frequently Asked Questions" href="../faq.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> wechat-python-sdk
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.9
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">快速开始</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+</ul>
+<p class="caption"><span class="caption-text">数据预处理</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">总览</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">目录结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">应用范例</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">组合1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">组合2</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="augmentation.html">数据增强</a></li>
+</ul>
+<p class="caption"><span class="caption-text">大好山河</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../source/installation.html">Installation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">wechat-python-sdk</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>总览</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/preprocessing/overview.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>总览<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<div class="figure align-center" id="id7">
+<a class="reference internal image-reference" href="../_images/流程图.png"><img alt="流程图" src="../_images/流程图.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">通用图像预处理流程</span></p>
+</div>
+<p>从各处收集到的图像往往需要进行处理才能送入模型进行训练，而`数据预处理`模块将解决相关问题。该模块将完成从读取图像到送入模型的主要功能。</p>
+<p>上图给出了一种常见的数据预处理流程，包括数据增强和数据集分割两大块。</p>
+<ul>
+<li><p class="first"><strong>数据增强</strong>：利用各种变换使扩充图像的多样性。
+模型越复杂，所需的数据就越多。数据约少就越容易产生过拟合。在某些数据难以收集的问题上，可以采用 <code class="docutils literal"><span class="pre">数据增强</span></code> 的方法增广数据。<code class="docutils literal"><span class="pre">数据增强</span></code> 通过对有限的数据进行各种变换，从而产生更多的等价数据。比起人为收集更多数据，<code class="docutils literal"><span class="pre">数据增强</span></code> 完全免费，并且可以增强图像的多样性，从而提高模型的泛化能力。但 <code class="docutils literal"><span class="pre">数据增强</span></code> 并不能带来新的图像内容的，所以提升效果有限。</p>
+<p>该部分提供了目前常用的数据增强算法，包括翻转、噪声、裁剪、仿射变换等。也提供了数据增强库 <a class="reference external" href="https://github.com/aleju/imgaug">imgaug</a> 的接口，并且支持用户自定义数据增强算法。</p>
+</li>
+</ul>
+<ul>
+<li><p class="first"><strong>数据集分割</strong>：让数据各司其职。</p>
+<p>收集到的数据并非全部都用于训练。一般简单的处理是将数据集分割为 <strong>训练集</strong>、<strong>测试集</strong>。其中，<strong>训练集</strong> 用于建立模型，<strong>测试集</strong> 用于评估选定模型的泛化情况。而另一个更严谨的方法是将数据集分割为 <strong>训练集</strong>、<strong>验证集</strong>、<strong>测试集</strong>。其中，验证集用于交叉检验和参数。</p>
+<p>用户可以随意调整数据集分割的比例。并且对于增强数据的归属问题，该部分也保证 <strong>训练集</strong> 中不会出现 <strong>验证集</strong> 和 <strong>测试集</strong> 对应的增强数据。</p>
+</li>
+</ul>
+<div class="section" id="id2">
+<span id="id3"></span><h2>目录结构<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">在不清楚 <cite>python</cite> 调用机制的情况下，我们强烈建议将工程文件按照下图进行存放。同时，以后所有的范例也默认为该存放方式。</p>
+</div>
+<p><cite>project</cite> 为工程名。<cite>datasets</cite>  只存放一个数据集，具体格式详见后文。<code class="docutils literal"><span class="pre">idiplab_cv</span></code> 是本工程的所有库函数，可以在项目主页进行下载。<cite>main</cite> 是用户项目的主函数，所有功能的调用以及范例的使用将在主函数中进行进行。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">project</span><span class="o">/</span>
+<span class="o">|--</span> <span class="n">datasets</span><span class="o">/</span>
+<span class="o">|</span> <span class="o">|--</span> <span class="o">...</span>
+<span class="o">|</span>
+<span class="o">|--</span> <span class="n">idiplab_cv</span><span class="o">/</span>
+<span class="o">|</span> <span class="o">|--</span> <span class="o">...</span>
+<span class="o">|</span>
+<span class="o">|--</span> <span class="n">main</span>
+<span class="o">|--</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p><cite>dataset</cite> 文件夹中的图像必须按照以下格式存放。<cite>dataset</cite> 下的一级目录代表数据的来源，如origin是原始数据、augment是增强数据。二级目录代表了数据的类别信息，如dogs、cats。二级目录下的图像文件代表对应类别的样本，如dog001是dogs类的样本、cat001是cats类的样本。代码将直接从样本对应的路径读取从属类别以及类别名称。为了保证内存中的样本可以和文件中的样本一一对应，最好确保每个样本拥有不同名称。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">/</span>
+<span class="o">|--</span> <span class="n">origin</span><span class="o">/</span>
+<span class="o">|</span> <span class="o">|--</span> <span class="n">dogs</span><span class="o">/</span>
+<span class="o">|</span> <span class="o">|</span> <span class="o">|--</span> <span class="n">dog001</span><span class="o">.</span><span class="n">jpg</span>
+<span class="o">|</span> <span class="o">|</span> <span class="o">|--</span> <span class="n">dog002</span><span class="o">.</span><span class="n">jpg</span>
+<span class="o">|</span> <span class="o">|</span> <span class="o">|--</span> <span class="o">...</span>
+<span class="o">|</span> <span class="o">|</span>
+<span class="o">|</span> <span class="o">|--</span> <span class="n">cats</span><span class="o">/</span>
+<span class="o">|</span> <span class="o">|</span> <span class="o">|--</span> <span class="n">cat001</span><span class="o">.</span><span class="n">jpg</span>
+<span class="o">|</span> <span class="o">|</span> <span class="o">|--</span> <span class="n">cat002</span><span class="o">.</span><span class="n">jpg</span>
+<span class="o">|</span> <span class="o">|</span> <span class="o">|--</span> <span class="o">...</span>
+<span class="o">|</span> <span class="o">|</span>
+<span class="o">|</span> <span class="o">|--</span> <span class="o">.../</span>
+<span class="o">|</span>
+<span class="o">|--</span> <span class="n">augment</span><span class="o">/</span>
+<span class="o">|</span> <span class="o">|--</span> <span class="n">dogs</span><span class="o">/</span>
+<span class="o">|</span> <span class="o">|</span> <span class="o">|--</span> <span class="n">dog001_XXXXX</span><span class="o">.</span><span class="n">jpg</span>
+<span class="o">|</span> <span class="o">|</span> <span class="o">|--</span> <span class="o">...</span>
+<span class="o">|</span> <span class="o">|</span>
+<span class="o">|</span> <span class="o">|--</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>应用范例<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>此处将按照总览中的 <strong>组合1</strong> 和 <strong>组合2</strong> 进行举例说明。</p>
+<div class="section" id="id5">
+<h3>组合1<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>简单问题下，将原始数据的分割为 <strong>训练集</strong> 和 <strong>测试集</strong>。</p>
+<ol class="arabic">
+<li><p class="first">导入库函数。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">idiplab_cv.dataset_io</span> <span class="k">import</span> <span class="n">Dataset</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">读取 <cite>dataset</cite> 文件夹内所有数据，得到各类对应代号和拥有的样本数。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">)</span>
+<span class="n">class_to_index</span><span class="p">,</span> <span class="n">sample_per_class</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">进行 <strong>训练集</strong> 和 <strong>测试集</strong> 的分割。测试集大概拥有原始数据的20%。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">,</span> <span class="n">imgs_test</span><span class="p">,</span> <span class="n">labels_test</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">test_shape</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">将标签转换为 <cite>one-hot</cite> 矩阵，并且进行 <cite>shuffle</cite>。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">labels_train</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">label_str2index</span><span class="p">(</span><span class="n">labels_train</span><span class="p">,</span> <span class="n">class_to_index</span><span class="p">)</span>
+<span class="n">labels_train</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">to_categorical</span><span class="p">(</span><span class="n">labels_train</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_to_index</span><span class="p">))</span>
+<span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span> <span class="o">=</span> <span class="n">shuffle</span><span class="p">(</span><span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">)</span>
+
+<span class="n">labels_test</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">label_str2index</span><span class="p">(</span><span class="n">labels_test</span><span class="p">,</span> <span class="n">class_to_index</span><span class="p">)</span>
+<span class="n">labels_test</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">to_categorical</span><span class="p">(</span><span class="n">labels_test</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_to_index</span><span class="p">))</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="id6">
+<h3>组合2<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>包含 <cite>数据增强</cite>，将原始数据的分割为 <strong>训练集</strong>、<strong>验证集</strong> 和 <strong>测试集</strong>。并且在 <strong>训练集</strong> 和 <strong>验证集</strong> 上进行严谨的4折交叉检验。</p>
+<ol class="arabic">
+<li><p class="first">导入库函数。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">idiplab_cv.augment</span> <span class="k">import</span> <span class="n">agmt</span>
+<span class="kn">from</span> <span class="nn">idiplab_cv.dataset_io</span> <span class="k">import</span> <span class="n">Dataset</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">对 <cite>dataset</cite> 文件夹内图像进行 <code class="docutils literal"><span class="pre">数据增强</span></code>。相关变换包括翻转、裁剪、仿射变换。数据增广30倍。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">datagen_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">rotation_range</span><span class="o">=</span><span class="mf">15.</span><span class="p">,</span>
+    <span class="n">width_shift_range</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">height_shift_range</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">shear_range</span><span class="o">=</span><span class="mf">10.</span><span class="p">,</span>
+    <span class="n">zoom_range</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">channel_shift_range</span><span class="o">=</span><span class="mf">5.</span><span class="p">,</span>
+    <span class="n">horizontal_flip</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+<span class="n">agmtgen</span> <span class="o">=</span> <span class="n">agmt</span><span class="o">.</span><span class="n">AugmentGenerator</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">)</span>
+<span class="n">agmtgen</span><span class="o">.</span><span class="n">normol_augment</span><span class="p">(</span><span class="n">datagen_args</span><span class="o">=</span><span class="n">datagen_args</span><span class="p">,</span> <span class="n">augment_amount</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">如组合1进行数据读取以及 <strong>训练集</strong> 和 <strong>测试集</strong> 的分割。读取时包括增强数据。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="n">augment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">class_to_index</span><span class="p">,</span> <span class="n">sample_per_class</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">imgs_test</span><span class="p">,</span> <span class="n">labels_test</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">test_shape</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">对 <strong>训练集</strong> 数据进行4折交叉检验。将 <strong>训练集</strong> 分为4组，每次取1组作为 <strong>验证集</strong> (20%)进行训练，其余作为原始 <strong>训练集</strong> (60%)。再读取原始 <strong>训练集</strong> (80%)对应的增强数据作为当前 <strong>训练集</strong> (660%)。</p>
+</li>
+<li><p class="first">如组合1将标签转换为 <cite>one-hot</cite> 矩阵，并且进行 <cite>shuffle</cite>。</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">total_splits</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="k">for</span> <span class="n">valid_split</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_splits</span><span class="p">):</span>
+    <span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">,</span> <span class="n">imgs_valid</span><span class="p">,</span> <span class="n">labels_valid</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">cross_split</span><span class="p">(</span><span class="n">total_splits</span><span class="p">,</span> <span class="n">valid_split</span><span class="p">)</span>
+
+    <span class="n">labels_train</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">label_str2index</span><span class="p">(</span><span class="n">labels_train</span><span class="p">,</span> <span class="n">class_to_index</span><span class="p">)</span>
+    <span class="n">labels_train</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">to_categorical</span><span class="p">(</span><span class="n">labels_train</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_to_index</span><span class="p">))</span>
+    <span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span> <span class="o">=</span> <span class="n">shuffle</span><span class="p">(</span><span class="n">imgs_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">)</span>
+
+    <span class="n">labels_valid</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">label_str2index</span><span class="p">(</span><span class="n">labels_valid</span><span class="p">,</span> <span class="n">class_to_index</span><span class="p">)</span>
+    <span class="n">labels_valid</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">to_categorical</span><span class="p">(</span><span class="n">labels_valid</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_to_index</span><span class="p">))</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="augmentation.html" class="btn btn-neutral float-right" title="数据增强" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../faq.html" class="btn btn-neutral" title="Frequently Asked Questions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Ace Kwok.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5.9',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

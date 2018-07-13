@@ -1,0 +1,295 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>数据增强 &mdash; wechat-python-sdk 0.5.9 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> wechat-python-sdk
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.9
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">快速开始</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
+</ul>
+<p class="caption"><span class="caption-text">数据预处理</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="preprocessing/overview.html">总览</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preprocessing/augmentation.html">数据增强</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="API/preprocessing.html">数据预处理</a></li>
+</ul>
+<p class="caption"><span class="caption-text">大好山河</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="source/basic.html">微信官方接口操作 WechatBasic</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">wechat-python-sdk</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>数据增强</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/augmentation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>数据增强<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="idiplab-cv-augment">
+<h2>idiplab_cv.augment<a class="headerlink" href="#idiplab-cv-augment" title="Permalink to this headline">¶</a></h2>
+<p>模型越复杂，所需的数据就越多。数据约少就越容易产生过拟合。在某些数据难以收集的问题上，可以采用 <code class="docutils literal"><span class="pre">数据增强</span></code> 的方法增广数据。<code class="docutils literal"><span class="pre">数据增强</span></code> 通过对有限的数据进行各种变换，从而产生更多的等价数据。比起人为收集更多数据，<code class="docutils literal"><span class="pre">数据增强</span></code> 完全免费，并且可以增强图像的多样性，从而提高模型的泛化能力。但 <code class="docutils literal"><span class="pre">数据增强</span></code> 并不能带来新的图像内容的，所以提升效果有限。</p>
+<div class="figure" id="id2">
+<img alt="Heavy augmentations" src="../images/preprocessing/heavy.jpg" />
+<p class="caption"><span class="caption-text">单张图像的数据增强范例</span></p>
+</div>
+<p>引用 imgaug- 中的数据增强范例。我们对一只 <strong>仓鼠</strong> 图像进行了仿射变换、颜色抖动、超像素解析、锐化平滑等变换后，产生了32张“新”图像。如第1行1列张图像，原先白色的仓鼠经过了数据增强，产生了粉红色的仓鼠。这将使网络获得 <strong>颜色不变性</strong>，即将不同颜色的仓鼠都识别为 <strong>仓鼠</strong>。类似的还有 <strong>位置不变性</strong>、<strong>形状不变性</strong> 等。此外如第1行3列张图像，仓鼠的头部被遮挡。这将 <code class="docutils literal"><span class="pre">Dropout</span></code> 的思想引入了 <code class="docutils literal"><span class="pre">数据增强</span></code>，即通过对部分显著特征的限制，强迫网络学习更加一般化的特征。</p>
+<p>上述图像对于网络来说都是不同的输入，这样就通过各种变换增强了图像的多样性。但通过 <code class="docutils literal"><span class="pre">数据增强</span></code> 产生的数据并非能和真实的数据相提并论。比如第3行1列张图像，仓鼠图像被颠倒了，而在现实中几乎不会出现这样的仓鼠。所以网络从这样图像中学习到了什么，也难以利用到一般的仓鼠中。此外，毕竟 <code class="docutils literal"><span class="pre">数据增强</span></code> 是基于原始图像的再创作，并不能带来新的图像内容的。所以如果增广倍数太多，也会因为图相似度太高而使提升效果下降。。</p>
+<p><code class="docutils literal"><span class="pre">数据增强</span></code> 可以大致分为2种：非监督数据增强、监督数据增强。</p>
+<p>该模块将完成通用的数据增强方法。
+在训练前对样本集进行数据增强。函数保证每张图片的增广倍数都相同，并且会根据path目录中的所有子目录，创建带有_agmt后缀的目录。增强的数据将会保存在对应的_agmt目录内。需要目录的具体格式可以参见[数据预处理](数据预处理)。</p>
+<dl class="class">
+<dt id="idiplab_cv.augment.AugmentGenerator">
+<em class="property">class </em><code class="descclassname">idiplab_cv.augment.</code><code class="descname">AugmentGenerator</code><span class="sig-paren">(</span><em>path</em>, <em>shape=None</em><span class="sig-paren">)</span><a class="headerlink" href="#idiplab_cv.augment.AugmentGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>sdsdsdsdsdsd</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<em>str</em>) – 数据所在文件夹地址，目录结尾一定要加“/”。每个类应该包含一个子目录。任何在子目录下的 jpg图像，都将被包含在生成器中。</li>
+<li><strong>shape</strong> (<em>turple</em>) – <cite>(height, width, channels)</cite>，默认:<cite>(224, 224 3)</cite>。所有的图像将被调整到的尺寸。</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>实例化说明：</strong></p>
+<ol class="arabic simple">
+<li>当实例化 WechatBasic 时，你可以传递上述参数说明中任意多个参数进去，但是传递参数不足将会在使用部分功能时引发对应的异常。</li>
+</ol>
+<blockquote>
+<div><strong>虽然认证订阅号、未认证服务号拥有 appid 及 appsecret，但不代表其能调用高级接口</strong> ，这两种类型的账号仅能进行自定义菜单及JS相关操作，进行其他权限外操作仍然会抛出异常 <code class="docutils literal"><span class="pre">OfficialAPIError</span></code></div></blockquote>
+<ol class="arabic simple" start="2">
+<li><strong>详细说明一下 access_token, access_token_expires_at, jsapi_ticket, jsapi_ticket_expires_at 参数的传入问题：</strong></li>
+</ol>
+<blockquote>
+<div>因为此开发包并不打算以服务器的方式常驻，所以，每次请求均会重新实例化 <code class="docutils literal"><span class="pre">WechatBasic</span></code> ，而微信的 <code class="docutils literal"><span class="pre">access_token</span></code> 和 <code class="docutils literal"><span class="pre">jsapi_ticket</span></code> 的有效期为 7200 秒，不可能每次实例化的时候去重新获取，所以需要你以你自己的方式去保存上一次请求中实例化后的 <code class="docutils literal"><span class="pre">WechatBasic</span></code> 中 <code class="docutils literal"><span class="pre">access_token</span></code>, <code class="docutils literal"><span class="pre">access_token_expires_at</span></code>, <code class="docutils literal"><span class="pre">jsapi_ticket</span></code>, <code class="docutils literal"><span class="pre">jsapi_ticket_expires_at</span></code> 参数，并在下一次的实例化的过程中传入，以此来保证 <code class="docutils literal"><span class="pre">access_token</span></code> 及 <code class="docutils literal"><span class="pre">jsapi_ticket</span></code> 的持久性。</div></blockquote>
+<dl class="method">
+<dt id="idiplab_cv.augment.AugmentGenerator.check_signature">
+<code class="descname">check_signature</code><span class="sig-paren">(</span><em>signature</em>, <em>timestamp</em>, <em>nonce</em><span class="sig-paren">)</span><a class="headerlink" href="#idiplab_cv.augment.AugmentGenerator.check_signature" title="Permalink to this definition">¶</a></dt>
+<dd><p>验证微信消息真实性</p>
+<p>运行时检查：<code class="docutils literal"><span class="pre">token</span></code></p>
+<p>可用公众号类型：认证/未认证订阅号, 认证/未认证服务号</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>signature</strong> (<em>str</em>) – 微信加密签名</li>
+<li><strong>timestamp</strong> (<em>str</em>) – 时间戳</li>
+<li><strong>nonce</strong> (<em>str</em>) – 随机数</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">通过验证返回 <code class="docutils literal"><span class="pre">True</span></code>, 未通过验证返回 <code class="docutils literal"><span class="pre">False</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Ace Kwok.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.5.9',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

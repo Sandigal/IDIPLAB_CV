@@ -1,0 +1,285 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>数据增强 &mdash; wechat-python-sdk 0.5.9 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="总览" href="overview.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> wechat-python-sdk
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.9
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">快速开始</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+</ul>
+<p class="caption"><span class="caption-text">数据预处理</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">总览</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">数据增强</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#idiplab-cv-augment">idiplab_cv.augment</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">wechat-python-sdk</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>数据增强</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/preprocessing/augmentation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>数据增强<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>模型越复杂，所需的数据就越多。数据约少就越容易产生过拟合。在某些数据难以收集的问题上，可以采用 <code class="docutils literal"><span class="pre">数据增强</span></code> 的方法增广数据。<code class="docutils literal"><span class="pre">数据增强</span></code> 通过对有限的数据进行各种变换，从而产生更多的等价数据。比起人为收集更多数据，<code class="docutils literal"><span class="pre">数据增强</span></code> 完全免费，并且可以增强图像的多样性，从而提高模型的泛化能力。但 <code class="docutils literal"><span class="pre">数据增强</span></code> 并不能带来新的图像内容的，所以提升效果有限。</p>
+<div class="figure" id="id2">
+<img alt="Heavy augmentations" src="../_images/heavy.jpg" />
+<p class="caption"><span class="caption-text">单张图像的数据增强范例</span></p>
+</div>
+<p>引用 imgaug- 中的数据增强范例。我们对一只 <strong>仓鼠</strong> 图像进行了仿射变换、颜色抖动、超像素解析、锐化平滑等变换后，产生了32张“新”图像。如第1行1列张图像，原先白色的仓鼠经过了数据增强，产生了粉红色的仓鼠。这将使网络获得 <strong>颜色不变性</strong>，即将不同颜色的仓鼠都识别为 <strong>仓鼠</strong>。类似的还有 <strong>位置不变性</strong>、<strong>形状不变性</strong> 等。此外如第1行3列张图像，仓鼠的头部被遮挡。这将 <code class="docutils literal"><span class="pre">Dropout</span></code> 的思想引入了 <code class="docutils literal"><span class="pre">数据增强</span></code>，即通过对部分显著特征的限制，强迫网络学习更加一般化的特征。</p>
+<p>上述图像对于网络来说都是不同的输入，这样就通过各种变换增强了图像的多样性。但通过 <code class="docutils literal"><span class="pre">数据增强</span></code> 产生的数据并非能和真实的数据相提并论。比如第3行1列张图像，仓鼠图像被颠倒了，而在现实中几乎不会出现这样的仓鼠。所以网络从这样图像中学习到了什么，也难以利用到一般的仓鼠中。此外，毕竟 <code class="docutils literal"><span class="pre">数据增强</span></code> 是基于原始图像的再创作，并不能带来新的图像内容的。所以如果增广倍数太多，也会因为图相似度太高而使提升效果下降。。</p>
+<p><code class="docutils literal"><span class="pre">数据增强</span></code> 可以大致分为2种：非监督数据增强、监督数据增强。</p>
+<p>该模块将完成通用的数据增强方法。
+在训练前对样本集进行数据增强。函数保证每张图片的增广倍数都相同，并且会根据path目录中的所有子目录，创建带有_agmt后缀的目录。增强的数据将会保存在对应的_agmt目录内。需要目录的具体格式可以参见[数据预处理](数据预处理)。</p>
+<div class="section" id="idiplab-cv-augment">
+<h2>idiplab_cv.augment<a class="headerlink" href="#idiplab-cv-augment" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="idiplab_cv.augment.AugmentGenerator">
+<em class="property">class </em><code class="descclassname">idiplab_cv.augment.</code><code class="descname">AugmentGenerator</code><span class="sig-paren">(</span><em>path</em>, <em>shape=None</em><span class="sig-paren">)</span><a class="headerlink" href="#idiplab_cv.augment.AugmentGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>sdsdsdsdsdsd</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<em>str</em>) – 数据所在目录地址。目录结构请参照 <a class="reference internal" href="overview.html#id2"><span class="std std-ref">目录结构</span></a>。</li>
+<li><strong>shape</strong> (<em>turple</em>) – 格式为 <cite>(height, width, channels)</cite>，所有的图像将被调整到该尺寸。默认:<cite>(224, 224 3)</cite></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>实例化说明：</strong></p>
+<ol class="arabic simple">
+<li>当实例化 AugmentGenerator 时，什么都不会发生，做成类只是为了不要再一行内输入太多参数。</li>
+</ol>
+<dl class="method">
+<dt id="idiplab_cv.augment.AugmentGenerator.normol_augment">
+<code class="descname">normol_augment</code><span class="sig-paren">(</span><em>signature</em>, <em>datagen_args</em>, <em>augment_amount=10</em><span class="sig-paren">)</span><a class="headerlink" href="#idiplab_cv.augment.AugmentGenerator.normol_augment" title="Permalink to this definition">¶</a></dt>
+<dd><p>非监督数据增强。XXXXXXXXXXXXX</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>datagen_args</strong> (<em>str</em>) – 微信加密签名</li>
+<li><strong>augment_amount</strong> (<em>str</em>) – 数据增广倍数，默认为10.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="overview.html" class="btn btn-neutral" title="总览" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Ace Kwok.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5.9',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

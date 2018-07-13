@@ -1,101 +1,163 @@
-# -*- coding: utf-8 -*-
 """
-Created on Wed Jun  6 16:37:39 2018
-
-@author: Sandiagal
+该模块:`visul`包含数据可视化的类和函数。
 """
 
-from dataset_io import reverse_dict
+# Author: Sandiagal <sandiagal2525@gmail.com>,
+# License: GPL-3.0
 
-import numpy as np
 import math
-import cv2
-import PIL.Image as Image
-import matplotlib.pyplot as plt
 from pickle import load
 
+import cv2
 from keras import backend as K
 from keras.models import Model
+import matplotlib.pyplot as plt
+import numpy as np
+import PIL.Image as Image
+
+from dataset_io import reverse_dict
 
 # %%
 
 
-def showHistory(path):
+def show_history(path, title="Learning curves"):
 
-    history = load(open(path, 'rb'))
+    f = open(path, "rb")
+    contact = load(f)
+    history = contact["history"]
+    f.close()
 
-    plt.figure(1)
-    plt.plot(history['loss'])
-    plt.plot(history['val_loss'])
-    plt.title('Train loss: %.4f - Val loss: %.4f' %
-              (history['loss'][-1], history['val_loss'][-1]))
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.legend(['loss', 'val_loss'], loc='upper right')
-    plt.ylim((-.05, 5))
-    plt.show()
-    plt.savefig('train val loss.jpg')
+    plt.figure()
+    plt.plot(history["loss"], "o-",
+             label="Train loss (%.2f)" % history["loss"][-1])
+    plt.plot(history["val_loss"], "o-",
+             label="Valid loss (%.2f)" % history["val_loss"][-1])
+    plt.grid()
+    plt.legend(loc="best", shadow=1)
+    plt.title(title+" loss")
+    plt.xlabel("epoch")
+    plt.ylabel("loss")
+    plt.ylim((-0.05, 5.))
+    plt.savefig(title+" loss.jpg")
 
-    plt.figure(2)
-    plt.plot(history['acc'])
-    plt.plot(history['val_acc'])
-    plt.title('Train acc: %.4f - Valid acc: %.4f' %
-              (history['acc'][-1], history['val_acc'][-1]))
-    plt.ylabel('acc')
-    plt.xlabel('epoch')
-    plt.legend(['acc', 'val_acc'], loc='upper right')
-    plt.ylim((0, 1.05))
-    plt.show()
-    plt.savefig('train val acc.jpg')
+    plt.figure()
+    plt.plot(history["acc"], "o-",
+             label="Train accuracy (%.2f%%)" % (history["acc"][-1]*100))
+    plt.plot(history["val_acc"], "o-",
+             label="Valid accuracy (%.2f%%)" % (history["val_acc"][-1]*100))
+    plt.grid()
+    plt.legend(loc="best", shadow=1)
+    plt.title(title+" accuracy")
+    plt.xlabel("epoch")
+    plt.ylabel("accuracy")
+    plt.ylim((-0.05, 1.05))
+    plt.savefig(title+" accuracy.jpg")
 
     return plt
 
 
-def showHistorys(path=""):
+def show_cross_history(path, title="Learning curves"):
 
     accs = []
     val_accs = []
     for i in range(3):
-        f = open(path+"20180704_validSplit."+str(i)+"_result.h5", "rb")
+        f = open(path+"20180711_validSplit."+str(i)+"_result.h5", "rb")
         contact = load(f)
         accs.append(contact["history"]["acc"])
         val_accs.append(contact["history"]["val_acc"])
+        f.close()
 
     plt.figure()
     len_acc = np.max([len(acc) for acc in accs])
     for i in range(len(accs)):
         accs[i] = accs[i]+(len_acc-len(accs[i]))*[accs[i][-1]]
-        val_accs[i] = val_accs[i]+(len_acc-len(val_accs[i]))*[val_accs[i][-1]]
-        plt.plot(val_accs[i], lw=1, alpha=0.3, label="Accuracy for %s fold (%.2f%%)" % (i, val_accs[i][-1]*100))
+        val_accs[i] += (len_acc-len(val_accs[i]))*[val_accs[i][-1]]
+        plt.plot(val_accs[i], lw=1, alpha=0.3,
+                 label="Accuracy for %s fold (%.2f%%)" % (i, val_accs[i][-1]*100))
 
     accs_mean = np.mean(accs, axis=0)
     accs_std = np.std(accs, axis=0)
     val_accs_mean = np.mean(val_accs, axis=0)
     val_accs_std = np.std(val_accs, axis=0)
 
-    plt.fill_between(range(len_acc), accs_mean - accs_std,
-                     accs_mean + accs_std, alpha=0.2,
-                     color="r")
-    plt.fill_between(range(len_acc), val_accs_mean - val_accs_std,
-                     val_accs_mean + val_accs_std, alpha=0.2, color="g")
+    plt.fill_between(range(len_acc),
+                     accs_mean - accs_std,
+                     accs_mean + accs_std,
+                     alpha=0.2, color="r")
+    plt.fill_between(range(len_acc),
+                     val_accs_mean - val_accs_std,
+                     val_accs_mean + val_accs_std,
+                     alpha=0.2, color="g",
+                     label=r"$\pm$ 1 std. dev.")
     plt.plot(accs_mean, "o-", alpha=0.8, color="r",
-             label="Training score")
+             label=r"Training score (%.2f $\pm$ %.2f%%)" % (
+                 accs_mean[-1]*100, accs_std[-1]*100))
     plt.plot(val_accs_mean, "o-", alpha=0.8, color="g",
-             label="Cross-validation score")
+             label=r"Cross-validation score (%.2f $\pm$ %.2f%%)" % (
+                 val_accs_mean[-1]*100, val_accs_std[-1]*100))
 
     plt.grid()
-    plt.title("Learning Curves \nTrain: %.2f%% - Valid: %.2f%%" %
-              (accs_mean[-1]*100, val_accs_mean[-1]*100))
-    plt.ylim(0, 1.05)
+    plt.title(title)
+    plt.ylim(-0.05, 1.05)
     plt.xlabel("epoch")
     plt.ylabel("accuracy")
-    plt.legend(loc="best")
-    plt.savefig("train val acc.jpg")
+    plt.legend(loc="best", fontsize=10, shadow=1)
+    plt.savefig(title+".jpg")
 
     return plt
 
 
-def drawline(img, pt1, pt2, color, thickness=1, style='dotted', gap=20):
+def show_cross_historys(paths, title="Learning curves", subtitles=None):
+
+    if subtitles is None:
+        subtitles = []
+        for i in range(len(paths)):
+            subtitles.append("Curves"+str(i))
+
+    val_accss = []
+    for path in paths:
+        val_accs = []
+        for i in range(3):
+            f = open(path+"20180709_validSplit."+str(i)+"_result.h5", "rb")
+            contact = load(f)
+            val_accs.append(contact["history"]["val_acc"])
+            f.close()
+        val_accss.append(val_accs)
+
+    plt.figure()
+    len_acc = np.max([len(val_acc)
+                      for val_acc in val_accs for val_accs in val_accss])
+
+    colors = ["g", "r", "b", "c", "m", "y", "k", "w"]
+    for i in range(len(paths)):
+        for j in range(len(val_accss[i])):
+            val_accss[i][j] += (len_acc-len(val_accss[i][j])
+                                )*[val_accss[i][j][-1]]
+
+        val_accs_mean = np.mean(val_accss[i], axis=0)
+        val_accs_std = np.std(val_accss[i], axis=0)
+
+        plt.fill_between(range(len_acc),
+                         val_accs_mean - val_accs_std,
+                         val_accs_mean + val_accs_std,
+                         alpha=0.2, color=colors[i],)
+        plt.plot(val_accs_mean, "o-", alpha=0.8, color=colors[i],
+                 label=subtitles[i]+r" (%.2f $\pm$ %.2f%%)" % (
+            val_accs_mean[-1]*100, val_accs_std[-1]*100))
+
+    plt.grid()
+    plt.title(title)
+    plt.ylim(0, 1.05)
+    plt.xlabel("epoch")
+    plt.ylabel("accuracy")
+    plt.legend(loc="best", fontsize=14, shadow=1)
+
+    plt.savefig(title+".jpg")
+
+    return plt
+
+
+def _drawline(img, pt1, pt2, color, thickness=1, style="dotted", gap=20):
     dist = ((pt1[0]-pt2[0])**2+(pt1[1]-pt2[1])**2)**.5
     pts = []
     for i in np.arange(0, dist, gap):
@@ -105,7 +167,7 @@ def drawline(img, pt1, pt2, color, thickness=1, style='dotted', gap=20):
         p = (x, y)
         pts.append(p)
 
-    if style == 'dotted':
+    if style == "dotted":
         for p in pts:
             cv2.circle(img, p, thickness, color, -1)
     else:
@@ -120,19 +182,19 @@ def drawline(img, pt1, pt2, color, thickness=1, style='dotted', gap=20):
             i += 1
 
 
-def drawpoly(img, pts, color, thickness=1, style='dotted',):
+def _drawpoly(img, pts, color, thickness=1, style="dotted",):
     s = pts[0]
     e = pts[0]
     pts.append(pts.pop(0))
     for p in pts:
         s = e
         e = p
-        drawline(img, s, e, color, thickness, style)
+        _drawline(img, s, e, color, thickness, style)
 
 
-def drawrect(img, pt1, pt2, color, thickness=1, style='dotted'):
+def _drawrect(img, pt1, pt2, color, thickness=1, style="dotted"):
     pts = [pt1, (pt2[0], pt1[1]), pt2, (pt1[0], pt2[1])]
-    drawpoly(img, pts, color, thickness, style)
+    _drawpoly(img, pts, color, thickness, style)
 
 # %%
 
@@ -160,20 +222,24 @@ def show_grid(imgs, title=None, suptitles=None):
 #    space = 2*int(np.sqrt(width*height)/40)
 
 #    newSize = ((width+space) * cols, (height+space) * cols)
-#    emphImf = Image.new('RGB', (width+space, width+space), (225, 225, 0))
-#    grid = Image.new('RGB', newSize)
+#    emphImf = Image.new("RGB", (width+space, width+space), (225, 225, 0))
+#    grid = Image.new("RGB", newSize)
 
 #    plt.figure()
-    f, axarr = plt.subplots(cols, rows,gridspec_kw={"wspace": 0, "hspace": .5})
-#                            figsize=(15,15),
+    f, axarr = plt.subplots(cols, rows,
+                            figsize=(10,10),
+                            gridspec_kw={"wspace": 0., "hspace": 0.5})
     if title:
         plt.suptitle(title)
+    else:
+        title="grid"
     for idx, ax in enumerate(f.axes):
         if idx < imgs_num:
             ax.imshow(imgs[idx])
             if suptitles:
                 ax.set_title(suptitles[idx])
         ax.axis("off")
+    plt.savefig(title+".jpg")
 
 #    for y in range(rows):
 #        for x in range(cols):
@@ -184,20 +250,17 @@ def show_grid(imgs, title=None, suptitles=None):
 #    grid.resize((int(newSize[0]*1080/newSize[1]), 1080), Image.ANTIALIAS)
 
 #    plt.imshow(grid)
-#    plt.axis('off')
+#    plt.axis("off")
     return plt
+
 
 def overall(imgs, number_to_show=20):
     # Plot images of the digits
     img_show = []
     for i in range(0, len(imgs), len(imgs)//number_to_show):
         img_show.append(imgs[i])
-    grid = showGrid(img_show)
-    plt.figure(figsize=(10, 9))
-    plt.imshow(grid)
-    plt.title('A selection from the dataset')
-    plt.xticks([])
-    plt.yticks([])
+    plt = show_grid(img_show, "A selection from the dataset")
+    return plt
 
 
 def CAM(img_white, model, feature_layer, weight_layer, idx_predic=None, display=False, img_show=None, label_show=None, class_to_index=None, top2=False):
@@ -205,7 +268,8 @@ def CAM(img_white, model, feature_layer, weight_layer, idx_predic=None, display=
 
     getOutput = K.function([model.input], [model.get_layer(
         feature_layer).output, model.output])
-    [avtiveMap, scores_predict] = getOutput([np.expand_dims(img_white, axis=0)])
+    [avtiveMap, scores_predict] = getOutput(
+        [np.expand_dims(img_white, axis=0)])
     if idx_predic == None:
         idx_predic = np.argmax(scores_predict)
 
@@ -236,11 +300,11 @@ def CAM(img_white, model, feature_layer, weight_layer, idx_predic=None, display=
 
             plt.figure(figsize=(11, 8))
             plt.subplot(121)
-            plt.axis('off')
+            plt.axis("off")
             plt.title("Actual: %s" % (label_show))
             plt.imshow(img_show)
             plt.subplot(122)
-            plt.axis('off')
+            plt.axis("off")
             plt.title("Predict: %s %.2f%%" %
                       (predic_class, predict_score * 100))
             plt.imshow(mix)
@@ -249,12 +313,12 @@ def CAM(img_white, model, feature_layer, weight_layer, idx_predic=None, display=
 
             plt.figure()
             plt.subplot(221)
-            plt.axis('off')
+            plt.axis("off")
             plt.title("Original image: %s" % (label_show))
             plt.imshow(img_show)
 
             plt.subplot(222)
-            plt.axis('off')
+            plt.axis("off")
             plt.title("Top 1: %s %.2f%%" % (predic_class, predict_score * 100))
             plt.imshow(mix)
 
@@ -271,7 +335,7 @@ def CAM(img_white, model, feature_layer, weight_layer, idx_predic=None, display=
                                    alpha=0.8, beta=0.4, gamma=0)
 
             plt.subplot(223)
-            plt.axis('off')
+            plt.axis("off")
             plt.title("For ground truth: %s %.2f%%" %
                       (label_show, predict_score3 * 100))
             plt.imshow(mix3)
@@ -290,7 +354,7 @@ def CAM(img_white, model, feature_layer, weight_layer, idx_predic=None, display=
                                    alpha=0.8, beta=0.4, gamma=0)
 
             plt.subplot(224)
-            plt.axis('off')
+            plt.axis("off")
             plt.title("Top 2: %s %.2f%%" %
                       (predic_class4, predict_score4 * 100))
             plt.imshow(mix4)
@@ -342,7 +406,7 @@ def cropMask(cam, img_show, display=False):
     n, h,  = cam.shape
 
     can = 255*(1-cam)
-    can = can.astype('uint8')
+    can = can.astype("uint8")
     _, thresh = cv2.threshold(can, 0.7*255, 255, cv2.THRESH_BINARY)
     _, contours, hierarchy = cv2.findContours(
         thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -381,7 +445,7 @@ def cropMask(cam, img_show, display=False):
 
     if display:
         cv2.rectangle(img_show, (xSC, ySC), (xSC+wAB, ySC+hAB), (0, 255, 0), 5)
-        drawrect(img_show, (xSC, ySC), (ww, hh), (0, 255, 0), 5, 'dotted')
+        _drawrect(img_show, (xSC, ySC), (ww, hh), (0, 255, 0), 5, "dotted")
         text = "Supervised crop"
         cv2.putText(img_show, text, (xSC, ySC), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=0.5, color=(0, 255, 0), thickness=10, lineType=cv2.LINE_AA)
@@ -405,7 +469,7 @@ def cropMask(cam, img_show, display=False):
 
         plt.figure(figsize=(10, 8))
         plt.imshow(img_show)
-        plt.axis('off')
-#        plt.savefig('crop.jpg')
+        plt.axis("off")
+#        plt.savefig("crop.jpg")
 
     return xAB, yAB, wAB, hAB, xSC, ySC, ww-wAB, hh-hAB
