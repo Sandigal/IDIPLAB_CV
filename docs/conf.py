@@ -189,7 +189,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', u'IDIPLAB_CV', u'IDIPLAB_CV Documentation',
+  ('index', u'IDIPLAB_CV.tex', u'IDIPLAB_CV Documentation',
    u'Sandiagal', 'manual'),
 ]
 
