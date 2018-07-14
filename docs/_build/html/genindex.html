@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; wechat-python-sdk 0.5.9 documentation</title>
+  <title>Index &mdash; IDIPLAB_CV 0.5.9 documentation</title>
   
 
   
@@ -48,7 +48,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> wechat-python-sdk
+            <a href="index.html" class="icon icon-home"> IDIPLAB_CV
           
 
           
@@ -89,15 +89,21 @@
 <p class="caption"><span class="caption-text">数据预处理</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="preprocessing/overview.html">总览</a></li>
-<li class="toctree-l1"><a class="reference internal" href="preprocessing/augmentation.html">数据增强</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preprocessing/augment.html">数据增强</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="API/preprocessing.html">数据预处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/augment.html">augment module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/builtInModels.html">builtInModels module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/dataset_io.html">dataset_io module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/manifold.html">manifold module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/metrics.html">metrics module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/preprocess.html">preprocess module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/visul.html">visul module</a></li>
 </ul>
-<p class="caption"><span class="caption-text">大好山河</span></p>
+<p class="caption"><span class="caption-text">玄学时刻</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="source/basic.html">微信官方接口操作 WechatBasic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="magic/paradox.html">训练集时准确率和测试时不一样？</a></li>
 </ul>
 
             
@@ -112,7 +118,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">wechat-python-sdk</a>
+          <a href="index.html">IDIPLAB_CV</a>
         
       </nav>
 
@@ -164,85 +170,104 @@
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
- <a href="#C"><strong>C</strong></a>
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
- | <a href="#G"><strong>G</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
- | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
+ | <a href="#Y"><strong>Y</strong></a>
  
 </div>
-<h2 id="C">C</h2>
+<h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="augmentation.html#idiplab_cv.augment.AugmentGenerator.check_signature">check_signature() (idiplab_cv.augment.AugmentGenerator method)</a>
-
-      <ul>
-        <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.check_signature">(wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      </ul></li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.create_group">create_group() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/augment.html#module-augment">augment (module)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.create_menu">create_menu() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/augment.html#augment.AugmentGenerator">AugmentGenerator (class in augment)</a>
 </li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.create_qrcode">create_qrcode() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      <li><a href="API/preprocessing.html#idiplab_cv.augment.cropGenerator.crop">crop() (idiplab_cv.augment.cropGenerator method)</a>
+  </ul></td>
+</tr></table>
 
-      <ul>
-        <li><a href="API/preprocessing.html#idiplab_cv.dataset_io.Dataset.crop">(idiplab_cv.dataset_io.Dataset method)</a>
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/preprocess.html#preprocess.BaseCrop">BaseCrop (class in preprocess)</a>
 </li>
-      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/builtInModels.html#module-builtInModels">builtInModels (module)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/visul.html#visul.CAM">CAM() (in module visul)</a>
+</li>
+      <li><a href="API/visul.html#visul.CAMs">CAMs() (in module visul)</a>
+</li>
+      <li><a href="API/preprocess.html#preprocess.BaseCrop.center_crop">center_crop() (preprocess.BaseCrop method)</a>
+</li>
+      <li><a href="API/metrics.html#metrics.classification_report">classification_report() (in module metrics)</a>
+</li>
+      <li><a href="API/metrics.html#metrics.confusion_matrix">confusion_matrix() (in module metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/dataset_io.html#dataset_io.Dataset.create_h5">create_h5() (dataset_io.Dataset method)</a>
+</li>
+      <li><a href="API/augment.html#augment.cropGenerator.crop">crop() (augment.cropGenerator method)</a>
+</li>
+      <li><a href="API/augment.html#augment.cropGenerator">cropGenerator (class in augment)</a>
+</li>
+      <li><a href="API/visul.html#visul.cropMask">cropMask() (in module visul)</a>
+</li>
+      <li><a href="API/dataset_io.html#dataset_io.Dataset.cross_split">cross_split() (dataset_io.Dataset method)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.delete_menu">delete_menu() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/dataset_io.html#dataset_io.Dataset">Dataset (class in dataset_io)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.download_media">download_media() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/dataset_io.html#module-dataset_io">dataset_io (module)</a>
+</li>
+      <li><a href="API/metrics.html#metrics.decode_predictions">decode_predictions() (in module metrics)</a>
 </li>
   </ul></td>
 </tr></table>
 
-<h2 id="G">G</h2>
+<h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.generate_jsapi_signature">generate_jsapi_signature() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.get_access_token">get_access_token() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.get_followers">get_followers() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.get_group_by_id">get_group_by_id() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.get_groups">get_groups() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/builtInModels.html#builtInModels.FC1">FC1() (in module builtInModels)</a>
 </li>
   </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.get_jsapi_ticket">get_jsapi_ticket() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.get_menu">get_menu() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.get_message">get_message() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.get_user_info">get_user_info() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.grant_jsapi_ticket">grant_jsapi_ticket() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.grant_token">grant_token() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/manifold.html#manifold.HLLE">HLLE() (in module manifold)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -250,15 +275,15 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/preprocessing.html#idiplab_cv.augment.AugmentGenerator">idiplab_cv.augment.AugmentGenerator (built-in class)</a>, <a href="augmentation.html#idiplab_cv.augment.AugmentGenerator">[1]</a>, <a href="preprocessing/augmentation.html#idiplab_cv.augment.AugmentGenerator">[2]</a>
+      <li><a href="API/preprocess.html#preprocess.Imgaug">Imgaug (class in preprocess)</a>
 </li>
-      <li><a href="API/preprocessing.html#idiplab_cv.augment.cropGenerator">idiplab_cv.augment.cropGenerator (built-in class)</a>
+      <li><a href="API/dataset_io.html#dataset_io.Dataset.imgs_augment">imgs_augment (dataset_io.Dataset attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/preprocessing.html#idiplab_cv.dataset_io.Dataset">idiplab_cv.dataset_io.Dataset (built-in class)</a>
+      <li><a href="API/dataset_io.html#dataset_io.Dataset.imgs_origin">imgs_origin (dataset_io.Dataset attribute)</a>
 </li>
-      <li><a href="API/preprocessing.html#idiplab_cv.dataset_io.Dataset.imgs_origin">imgs_origin (idiplab_cv.dataset_io.Dataset attribute)</a>
+      <li><a href="API/manifold.html#manifold.isomap">isomap() (in module manifold)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -266,7 +291,23 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/preprocessing.html#idiplab_cv.dataset_io.Dataset.labels_origin">labels_origin (idiplab_cv.dataset_io.Dataset attribute)</a>
+      <li><a href="API/dataset_io.html#dataset_io.label_smooth">label_smooth() (in module dataset_io)</a>
+</li>
+      <li><a href="API/dataset_io.html#dataset_io.label_str2index">label_str2index() (in module dataset_io)</a>
+</li>
+      <li><a href="API/dataset_io.html#dataset_io.Dataset.labels_origin">labels_origin (dataset_io.Dataset attribute)</a>
+</li>
+      <li><a href="API/manifold.html#manifold.LinearDiscriminant">LinearDiscriminant() (in module manifold)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/manifold.html#manifold.LLE">LLE() (in module manifold)</a>
+</li>
+      <li><a href="API/dataset_io.html#dataset_io.Dataset.load_data">load_data() (dataset_io.Dataset method)</a>
+</li>
+      <li><a href="API/dataset_io.html#dataset_io.Dataset.load_h5">load_h5() (dataset_io.Dataset method)</a>
+</li>
+      <li><a href="API/manifold.html#manifold.LTSA">LTSA() (in module manifold)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -274,11 +315,21 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.message">message (wechat_sdk.basic.WechatBasic attribute)</a>
+      <li><a href="API/augment.html#augment.cropGenerator.makedirs">makedirs() (augment.cropGenerator method)</a>
+</li>
+      <li><a href="API/manifold.html#module-manifold">manifold (module)</a>
+</li>
+      <li><a href="API/manifold.html#manifold.manifold">manifold() (in module manifold)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.move_user">move_user() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/manifold.html#manifold.mds">mds() (in module manifold)</a>
+</li>
+      <li><a href="API/metrics.html#module-metrics">metrics (module)</a>
+</li>
+      <li><a href="API/builtInModels.html#builtInModels.mobilenetGAP">mobilenetGAP() (in module builtInModels)</a>
+</li>
+      <li><a href="API/manifold.html#manifold.ModifiedLLE">ModifiedLLE() (in module manifold)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -286,21 +337,37 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/preprocessing.html#idiplab_cv.augment.AugmentGenerator.normol_augment">normol_augment() (idiplab_cv.augment.AugmentGenerator method)</a>, <a href="preprocessing/augmentation.html#idiplab_cv.augment.AugmentGenerator.normol_augment">[1]</a>
+      <li><a href="API/dataset_io.html#dataset_io.Dataset.names_origin">names_origin (dataset_io.Dataset attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/augment.html#augment.AugmentGenerator.normol_augment">normol_augment() (augment.AugmentGenerator method)</a>
+</li>
+      <li><a href="API/metrics.html#metrics.number_per_class">number_per_class() (in module metrics)</a>
+</li>
+  </ul></td>
+</tr></table>
 
-      <ul>
-        <li><a href="API/preprocessing.html#idiplab_cv.augment.cropGenerator.normol_augment">(idiplab_cv.augment.cropGenerator method)</a>
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/visul.html#visul.overall">overall() (in module visul)</a>
 </li>
-        <li><a href="API/preprocessing.html#idiplab_cv.dataset_io.Dataset.normol_augment">(idiplab_cv.dataset_io.Dataset method)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.parse_data">parse_data() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/manifold.html#manifold.PCA">PCA() (in module manifold)</a>
+</li>
+      <li><a href="API/manifold.html#manifold.plot_embedding">plot_embedding() (in module manifold)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/metrics.html#metrics.PR">PR() (in module metrics)</a>
+</li>
+      <li><a href="API/preprocess.html#module-preprocess">preprocess (module)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -308,19 +375,19 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.response_image">response_image() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/manifold.html#manifold.Random">Random() (in module manifold)</a>
 </li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.response_music">response_music() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/preprocess.html#preprocess.BaseCrop.random_crop">random_crop() (preprocess.BaseCrop method)</a>
 </li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.response_news">response_news() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/preprocess.html#preprocess.RandomNoise">RandomNoise (class in preprocess)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.response_text">response_text() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/manifold.html#manifold.RandomTrees">RandomTrees() (in module manifold)</a>
 </li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.response_video">response_video() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/dataset_io.html#dataset_io.reverse_dict">reverse_dict() (in module dataset_io)</a>
 </li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.response_voice">response_voice() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/metrics.html#metrics.ROC">ROC() (in module metrics)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -328,27 +395,17 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.send_article_message">send_article_message() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/visul.html#visul.show_cross_history">show_cross_history() (in module visul)</a>
 </li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.send_image_message">send_image_message() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.send_music_message">send_music_message() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.send_template_message">send_template_message() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.send_text_message">send_text_message() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/visul.html#visul.show_cross_historys">show_cross_historys() (in module visul)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.send_video_message">send_video_message() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/visul.html#visul.show_grid">show_grid() (in module visul)</a>
 </li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.send_voice_message">send_voice_message() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/visul.html#visul.show_history">show_history() (in module visul)</a>
 </li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.set_template_industry">set_template_industry() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.show_qrcode">show_qrcode() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-      <li><a href="API/preprocessing.html#idiplab_cv.augment.AugmentGenerator.supervisd_augment">supervisd_augment() (idiplab_cv.augment.AugmentGenerator method)</a>
+      <li><a href="API/manifold.html#manifold.Spectral">Spectral() (in module manifold)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -356,19 +413,19 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/preprocessing.html#Timer.repeat">Timer.repeat() (built-in function)</a>
+      <li><a href="API/dataset_io.html#dataset_io.Dataset.train_test_split">train_test_split() (dataset_io.Dataset method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/manifold.html#manifold.tsne">tsne() (in module manifold)</a>
 </li>
   </ul></td>
 </tr></table>
 
-<h2 id="U">U</h2>
+<h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.update_group">update_group() (wechat_sdk.basic.WechatBasic method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic.upload_media">upload_media() (wechat_sdk.basic.WechatBasic method)</a>
+      <li><a href="API/visul.html#module-visul">visul (module)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -376,7 +433,15 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/basic.html#wechat_sdk.basic.WechatBasic">wechat_sdk.basic.WechatBasic (built-in class)</a>
+      <li><a href="API/metrics.html#metrics.worst_samples">worst_samples() (in module metrics)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Y">Y</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/builtInModels.html#builtInModels.YannLeCun">YannLeCun() (in module builtInModels)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -393,7 +458,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Ace Kwok.
+        &copy; Copyright 2018, Sandiagal.
 
     </p>
   </div>

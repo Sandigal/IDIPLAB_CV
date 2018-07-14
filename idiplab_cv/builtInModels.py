@@ -1,18 +1,27 @@
 # -*- coding: utf-8 -*-
+"""XXXXX
+该模块:`dataset_io`包含读取数据集以及数据集分割的类和函数。
+详情请参照XXX
 """
-Created on Sun Apr  1 11:53:24 2018
 
-@author: Sandiagal
-"""
+# Author: Sandiagal <sandiagal2525@gmail.com>,
+# License: GPL-3.0
 
-# GRADED FUNCTION: HappyModel
 
-from keras.models import Sequential, Model
-from keras.layers import Conv2D, MaxPooling2D, GlobalAveragePooling2D
-from keras.layers import Activation, Dropout, Flatten, Dense, BatchNormalization, Reshape
 from keras import regularizers
 from keras.applications import mobilenet
-from keras.applications.mobilenet import preprocess_input
+from keras.layers import Activation
+from keras.layers import BatchNormalization
+from keras.layers import Conv2D
+from keras.layers import Dropout
+from keras.layers import Dense
+from keras.layers import Flatten
+from keras.layers import GlobalAveragePooling2D
+from keras.layers import MaxPooling2D
+from keras.layers import Reshape
+from keras.models import Model
+from keras.models import Sequential
+
 
 def YannLeCun(input_shape):
     """
@@ -70,8 +79,8 @@ def mobilenetGAP(input_shape, classes, dropout=None):
     #        input_shape=input_shape, dropout=dropout, include_top=False, weights="imagenet", pooling="avg")
     #    output = base_model.output
 
-#    base_conv = mobilenet.MobileNet(
-#        input_shape=(224, 224, 3), dropout=dropout, include_top=False, weights="imagenet", pooling="avg")
+    #    base_conv = mobilenet.MobileNet(
+    #        input_shape=(224, 224, 3), dropout=dropout, include_top=False, weights="imagenet", pooling="avg")
     base_model = mobilenet.MobileNet(
         input_shape=input_shape, dropout=dropout, include_top=False, weights=None, pooling="avg")
 #    for new_layer, layer in zip(base_model.layers[0:], base_conv.layers[0:]):
@@ -112,15 +121,15 @@ def FC1(input_shape, classes):
     model.add(GlobalAveragePooling2D())
     return model
 
-#%%
+# %%
 
-#input_shape = (None, None, 3)  # 32的倍数
+# input_shape = (None, None, 3)  # 32的倍数
 #lenn = 3
 #model = mobilenetGAP(input_shape, lenn)
-#model.compile(optimizer="adam", loss='categorical_crossentropy',
+# model.compile(optimizer="adam", loss='categorical_crossentropy',
 #              metrics=['accuracy'])
 ## plot_model(model, to_file='5.4.png', show_shapes=True)
-#model.summary()
+# model.summary()
 #
 #
 #from PIL import Image
@@ -128,7 +137,7 @@ def FC1(input_shape, classes):
 #import os
 #from keras.utils import to_categorical
 #
-#imgs = np.array([np.array(Image.open("../data/dataset 672x448/crop/P3/" + fname))
+# imgs = np.array([np.array(Image.open("../data/dataset 672x448/crop/P3/" + fname))
 #                 for fname in os.listdir("../data/dataset 672x448/crop/P3/")])
 #lable = [0, 0, 1, 1, 2, 2]
 #lable = to_categorical(lable, lenn)

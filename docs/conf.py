@@ -17,6 +17,7 @@ import sys, os
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../idiplab_cv'))
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 # -- General configuration -----------------------------------------------------
@@ -26,7 +27,8 @@ on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc']
+extensions = ['sphinx.ext.autodoc',
+                    'sphinx.ext.napoleon']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -41,8 +43,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'wechat-python-sdk'
-copyright = u'2014, Ace Kwok'
+project = u'IDIPLAB_CV'
+copyright = u'2018, Sandiagal'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -168,7 +170,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'wechatdoc'
+htmlhelp_basename = 'IDIPLAB_CV'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -187,8 +189,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'wechat.tex', u'wechat-python-sdk Documentation',
-   u'Ace Kwok', 'manual'),
+  ('index', u'IDIPLAB_CV', u'IDIPLAB_CV Documentation',
+   u'Sandiagal', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -217,8 +219,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'wechat-python-sdk', u'wechat-python-sdk Documentation',
-     [u'Ace Kwok'], 1)
+    ('index', u'IDIPLAB_CV', u'IDIPLAB_CV Documentation',
+     u'Sandiagal', 'manual')
 ]
 
 # If true, show URL addresses after external links.
@@ -231,8 +233,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'wechat-python-sdk', u'wechat-python-sdk Documentation',
-   u'Ace Kwok', 'wechat'),
+  ('index', u'IDIPLAB_CV', u'IDIPLAB_CV Documentation',
+   u'Sandiagal', 'manual')
 ]
 
 # Documents to append as an appendix to all manuals.

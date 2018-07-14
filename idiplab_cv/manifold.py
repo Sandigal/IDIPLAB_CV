@@ -1,23 +1,28 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun  6 16:37:39 2018
-
-@author: Sandiagal
+该模块:`dataset_io`包含读取数据集以及数据集分割的类和函数。
 """
 
-import visul
+# Author: Sandiagal <sandiagal2525@gmail.com>,
+# License: GPL-3.0
+
+
 from time import time
 
-import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import offsetbox
-from sklearn.random_projection import SparseRandomProjection
+import numpy as np
 from sklearn.decomposition import TruncatedSVD
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.ensemble import RandomTreesEmbedding
-from sklearn.manifold import Isomap, LocallyLinearEmbedding, MDS, SpectralEmbedding, TSNE
+from sklearn.manifold import Isomap
+from sklearn.manifold import LocallyLinearEmbedding
+from sklearn.manifold import MDS
+from sklearn.manifold import SpectralEmbedding
+from sklearn.manifold import TSNE
+from sklearn.random_projection import SparseRandomProjection
 
-# %%
+import visul
 
 
 def plot_embedding(X, labels, imgs, title=None):

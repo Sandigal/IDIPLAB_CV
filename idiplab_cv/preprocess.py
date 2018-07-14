@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Apr  9 20:14:41 2018
-
-@author: Sandiagal
+该模块:`dataset_io`包含读取数据集以及数据集分割的类和函数。
 """
+
+# Author: Sandiagal <sandiagal2525@gmail.com>,
+# License: GPL-3.0
+
 import numpy as np
-
 from skimage.util import random_noise
-
-# %%
 
 
 class RandomNoise(object):
@@ -18,6 +17,14 @@ class RandomNoise(object):
                  seed=None,
                  clip=True,
                  **kwargs):
+        """
+        Args:
+            param1 (int): The first parameter.
+            param2 (:obj:`str`, optional): The second parameter. Defaults to None.
+                Second line of description should be indented.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
         self.mode = mode
         self.seed = seed
         self.clip = clip

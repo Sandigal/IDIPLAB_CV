@@ -38,12 +38,12 @@ IDIPLAB_CV说明文档
     :hidden:
 
     preprocessing/overview
-    preprocessing/augmentation
+    preprocessing/augment
     
 :doc:`preprocessing/overview`
     数据预处理模块功能一览。
     
-:doc:`preprocessing/augmentation`
+:doc:`preprocessing/augment`
     数据增强。
 
 API
@@ -53,21 +53,28 @@ API
     :caption: API
     :hidden:
 
-    API/preprocessing
-
-:doc:`API/preprocessing`
-    Understand what Scrapy is and how it can help you.
+    API/augment
+    API/builtInModels
+    API/dataset_io
+    API/manifold
+    API/metrics
+    API/preprocess
+    API/visul
     
-大好山河
+:doc:`API/augment`
+    数据增强。
+    
+    
+玄学时刻
 --------------------
 
 .. toctree::
-    :caption: 大好山河
+    :caption: 玄学时刻
     :hidden:
 
-    source/basic
+    magic/paradox
 
-:doc:`source/basic`
+:doc:`magic/paradox`
     Understand what Scrapy is and how it can help you.
 
 Indices and tables

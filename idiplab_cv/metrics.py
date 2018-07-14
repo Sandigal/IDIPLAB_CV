@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu May  3 16:30:43 2018
-
-@author: Sandiagal
+该模块:`dataset_io`包含读取数据集以及数据集分割的类和函数。
 """
+
+# Author: Sandiagal <sandiagal2525@gmail.com>,
+# License: GPL-3.0
 
 from itertools import product
 

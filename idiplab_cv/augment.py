@@ -1,33 +1,36 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Apr  1 11:53:24 2018
-
-@author: Sandiagal
-
-分别读取每个类下的单个文件，用flow对单个图片分别处理
-输出图像分类到对应类文件夹内
-保证每张图片数量相同
-保证增强后图像的前缀和原图一致
-失去多线程的优势
-
+该模块 :meth:`augment` 包含数据增强的类和函数。
+详细 :ref:`数据增强`
 """
+
+# Author: Sandiagal <sandiagal2525@gmail.com>,
+# License: GPL-3.0
+
+
+import os
+from random import randint
+import time
+
+from keras.preprocessing.image import ImageDataGenerator
+import numpy as np
+from PIL import Image
 
 import dataset_io as io
 import visul
 
-from random import randint
-import os
-import numpy as np
-import time
-from PIL import Image
-
-from keras.preprocessing.image import ImageDataGenerator
-
-
-# %%
-
 
 class AugmentGenerator(object):
+    """
+        sdsdsdsdsdsd
+
+    :param str path: 数据所在目录地址。目录结构请参照 :ref:`目录结构`。
+    :param turple shape: 格式为 `(height, width, channels)`，所有的图像将被调整到该尺寸。默认:`(224, 224 3)`
+
+    **实例化说明：**
+
+    1. 当实例化 AugmentGenerator 时，什么都不会发生，做成类只是为了不要再一行内输入太多参数。
+    """
 
     def __init__(self,
                  path,
@@ -35,7 +38,13 @@ class AugmentGenerator(object):
         self.path = path
         self.shape = shape
 
-    def normol_augment(self,datagen_args,augment_amount=10):
+    def normol_augment(self, datagen_args, augment_amount=10):
+        """
+        非监督数据增强。XXXXXXXXXXXXX
+
+        :param str datagen_args: XXXXXXXX
+        :param str augment_amount: 数据增广倍数，默认为10.
+        """
         print("--->Start augmentation")
 
         datagen = ImageDataGenerator(**datagen_args)
@@ -85,59 +94,6 @@ class AugmentGenerator(object):
         print("")
         print("Cost time:", end-start, "s")
         print("")
-
-    def supervisd_augment(self,datagen_args,augment_amount):
-
-        print("--->Start augmentation")
-
-        datagen = ImageDataGenerator(**datagen_args)
-
-        start = time.clock()
-
-        is_exist = os.path.exists(
-            self.path+"/crop_SC_augment")
-        if not is_exist:
-            os.makedirs(self.path+"/crop_SC_augment")
-
-        # dog or cat
-        sub_dir_list = os.listdir(self.path+"/crop_SC")
-        process_bar = io.ShowProcess(len(sub_dir_list))
-        for sub_dir in sub_dir_list:
-            process_bar.show_process(sub_dir)
-
-            is_exist = os.path.exists(
-                self.path+"/crop_SC_augment/"+sub_dir)
-            if not is_exist:
-                os.makedirs(self.path+"/crop_SC_augment/"+sub_dir)
-
-            imgs, names = io.read_imgs_in_dir(
-                self.path+"/crop_SC/"+sub_dir, self.shape)
-            imgs = np.array(imgs)
-
-            # dog1 or dog2
-            for img, name in zip(imgs, names):
-                img = np.expand_dims(img, axis=0)
-
-                augmentgen = datagen.flow(
-                    img,
-                    batch_size=1,
-                    shuffle=False,
-                    save_to_dir=self.path+"/crop_SC_augment/"+sub_dir,
-                    save_format='jpg')
-
-                for i in range(augment_amount):
-                    augmentgen.save_prefix = name.split(
-                        '.')[0] + "_"+str(np.random.randint(0, 99999))
-                    augmentgen.next()
-
-        end = time.clock()
-        print("")
-        print("Cost time:", end-start, "s")
-        print("")
-
-
-
-# %%
 
 
 class cropGenerator(object):

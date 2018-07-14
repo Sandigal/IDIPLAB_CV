@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 """
-该模块:`dataset_io`包含读取数据集以及数据集分割的类和函数。
+该模块 :meth:`dataset_io` 包含读取数据集以及数据集分割的类和函数。
 """
 
 # Author: Sandiagal <sandiagal2525@gmail.com>,
@@ -46,19 +47,22 @@ class _ShowProcess():
         process_bar_tmp = ["\r"]
         if name is not None:
             process_bar_tmp.append("-->Processing for %s " % name)
-        process_bar_tmp.append(
-            "[" + "=" * num_arrow + ">"+". " * num_line + "] %5.2f%%" % percent)
-        print("".join(process_bar_tmp),end="          ")
+        process_bar_tmp.append("[" + "=" * num_arrow + ">")
+        process_bar_tmp.append(". " * num_line + "] %5.2f%%" % percent)
+        print("".join(process_bar_tmp), end="          ")
         if self.i >= self.max_steps:
             self.i = 0
 
+
 def _get_split_index(labels, total_splits, valid_split):
+    valid_split = valid_split if valid_split < total_splits else total_splits-1
     now_split = 0
     skf = StratifiedKFold(n_splits=total_splits)
     for train_index, test_index in skf.split(np.zeros(len(labels)), labels):
         if now_split == valid_split:
             return train_index, test_index
         now_split += 1
+    return None
 
 
 def _read_imgs_in_dir(path, shape=None):
@@ -66,8 +70,8 @@ def _read_imgs_in_dir(path, shape=None):
     if shape is None:
         imgs = [np.array(Image.open(path + "/"+name)) for name in names]
     else:
-        imgs = [np.array(Image.open(path + "/"+name).resize(shape,
-                                                            Image.ANTIALIAS)) for name in names]
+        imgs = [np.array(Image.open(path + "/"+name).resize(
+                shape, Image.ANTIALIAS)) for name in names]
     return imgs, names
 
 
@@ -106,12 +110,10 @@ def label_smooth(labels, section):
     represented by big_table.  Silly things may happen if
     other_silly_variable is not None.
 
-    参数:
-        labels: An open Bigtable Table instance.
-        section: A sequence of strings representing the key of each table row
-            to fetch.
+    :param numpy path: An open Bigtable Table instance.
+    :param numpy section: An open Bigtable Table instance.
 
-    返回:
+    Returns:
         A dict mapping keys to the corresponding table row data
         fetched. Each row is represented as a tuple of strings. For
         example:
@@ -123,18 +125,20 @@ def label_smooth(labels, section):
         If a key from the keys argument is missing from the dictionary,
         then that row was not found in the table.
 
-    错误:
-        IOError: An error occurred accessing the bigtable.Table object.
+    Raises:
+        AttributeError: The ``Raises`` section is a list of all exceptions
+            that are relevant to the interface.
+        ValueError: If `param2` is equal to `param1`.
     """
     labels = np.copy(labels)
     eps = 0.1
-    for i in range(len(labels)):
+    for i, _ in enumerate(labels):
         for j in range(1, len(section)):
             if np.argmax(labels[i]) < section[j]:
                 smooth_num = section[j]-section[j-1]
-                labels[i][section[j-1]:section[j]] = labels[i][section[j-1]:section[j]] * \
-                    (1 - eps)+(1-labels[i][section[j-1]
-                     :section[j]]) * eps / (smooth_num)
+                labels_reference = labels[i][section[j-1]:section[j]]
+                labels_reference = labels_reference * (1 - eps) + \
+                    (1-labels_reference) * eps / (smooth_num)
                 break
     return labels
 
@@ -142,20 +146,26 @@ def label_smooth(labels, section):
 
 
 class Dataset(object):
-    """Summary of class here.
+    """Class methods are similar to regular functions.
 
-    Longer class information....
-    Longer class information....
+    The __init__ method may be documented in either the class level
+    docstring, or as a docstring on the __init__ method itself.
+
+    Args:
+        param1 (str): Description of `param1`.
+        param2 (:obj:`int`, optional): Description of `param2`. Multiple
+            lines are supported.
+        param3 (:obj:`list` of :obj:`str`): Description of `param3`.
 
     Attributes:
-        likes_spam: A boolean indicating if we like SPAM or not.
-        eggs: An integer count of the eggs we have laid.
+        imgs_origin (str): Description of `attr1`.
+        labels_origin (:obj:`int`, optional): Description of `attr2`.
+        names_origin (str): Description of `attr1`.
+        imgs_augment (:obj:`int`, optional): Description of `attr2`.
+
     """
 
-    def __init__(self,
-                 path,
-                 shape=(224, 224),
-                 augment=False):
+    def __init__(self, path, shape=(224, 224), augment=False):
         self.path = path
         self.shape = shape
         self.augment = augment
@@ -173,6 +183,16 @@ class Dataset(object):
         self.augment_cross_index = []
 
     def load_data(self, step=1):
+        """
+        Args:
+            path (str): The path of the file to wrap
+            field_storage (FileStorage): The :class:`FileStorage` instance to wrap
+            temporary (bool): Whether or not to delete the file when the File
+               instance is destructed
+
+        Returns:
+            BufferedFileStorage (int): A buffered writable file descriptor
+        """
         print("--->Start loading data ")
         start = time.clock()
 
@@ -213,22 +233,50 @@ class Dataset(object):
         return self.class_to_index, self.sample_per_class
 
     def create_h5(self, name):
-        content = {
-            "imgs_origin": self.imgs_origin,
-            "imgs_augment": self.imgs_augment,
-            "labels_origin": self.labels_origin,
-            "labels_augment": self.labels_augment,
-            "names_augment": self.names_augment,
-            "class_to_index": self.class_to_index,
-            "sample_per_class": self.sample_per_class,
-        }
-        f = open(name, "wb")
-        dump(content, f, True)
-        f.close()
+        """Generators have a ``Yields`` section instead of a ``Returns`` section.
+
+        Args:
+            n (int): The upper limit of the range to generate, from 0 to `n` - 1.
+
+        Returns:
+            bool: True if successful, False otherwise.
+
+            The return type is optional and may be specified at the beginning of
+            the ``Returns`` section followed by a colon.
+
+            The ``Returns`` section may span multiple lines and paragraphs.
+            Following lines should be indented to match the first line.
+
+            The ``Returns`` section supports any reStructuredText formatting,
+            including literal blocks ::
+
+                {
+                    'param1': param1,
+                    'param2': param2
+                }
+
+        Examples:
+            Examples should be written in doctest format, and should illustrate how
+            to use the function.
+
+            >>> print([i for i in example_generator(4)])
+            [0, 1, 2, 3]
+
+        """
+        content = {"imgs_origin": self.imgs_origin,
+                   "imgs_augment": self.imgs_augment,
+                   "labels_origin": self.labels_origin,
+                   "labels_augment": self.labels_augment,
+                   "names_augment": self.names_augment,
+                   "class_to_index": self.class_to_index,
+                   "sample_per_class": self.sample_per_class}
+        file = open(name, "wb")
+        dump(content, file, True)
+        file.close()
 
     def load_h5(self, name):
-        f = open(name, "rb")
-        contact = load(f)
+        file = open(name, "rb")
+        contact = load(file)
         self.imgs_origin = contact["imgs_origin"]
         self.imgs_augment = contact["imgs_augment"]
         self.labels_origin = contact["labels_origin"]
@@ -239,7 +287,7 @@ class Dataset(object):
         self.imgs_origin = contact["imgs_origin"]
         self.imgs_origin = contact["imgs_origin"]
         self.imgs_origin = contact["imgs_origin"]
-        f.close()
+        file.close()
 
         print("")
         print("Image shape:", self.imgs_origin[0].shape)
@@ -267,8 +315,9 @@ class Dataset(object):
         if self.augment:
             augment_amount = int(
                 len(self.labels_augment)/len(self.labels_origin))
-            self.augment_index = [a+b for a in self.train_index *
-                                  augment_amount for b in range(augment_amount)]
+            self.augment_index = [a+b
+                                  for a in self.train_index * augment_amount
+                                  for b in range(augment_amount)]
             imgs_train = np.append(imgs_train, np.array(
                 self.imgs_augment)[self.augment_index], axis=0)
             labels_train = np.append(labels_train, np.array(
@@ -302,12 +351,20 @@ class Dataset(object):
         if self.augment:
             augment_amount = int(
                 len(self.labels_augment)/len(self.labels_origin))
-            self.augment_cross_index = [a+b for a in self.train_cross_index *
-                                        augment_amount for b in range(augment_amount)]
-            imgs_train = np.append(imgs_train, np.array(self.imgs_augment)[
-                                   self.augment_index][self.augment_cross_index], axis=0)
-            labels_train = np.append(labels_train, np.array(self.labels_augment)[
-                                     self.augment_index][self.augment_cross_index], axis=0)
+            self.augment_cross_index = [
+                a+b
+                for a in self.train_cross_index * augment_amount
+                for b in range(augment_amount)]
+            imgs_train = np.append(
+                imgs_train,
+                np.array(self.imgs_augment)[
+                    self.augment_index][self.augment_cross_index],
+                axis=0)
+            labels_train = np.append(
+                labels_train,
+                np.array(self.labels_augment)[
+                    self.augment_index][self.augment_cross_index],
+                axis=0)
 
         end = time.clock()
         print("Cost time: %.3fs" % (end-start))
