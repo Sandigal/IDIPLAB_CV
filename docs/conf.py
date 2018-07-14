@@ -33,6 +33,9 @@ extensions = [
                     
 autodoc_mock_imports = [
 'keras',
+'sklearn',
+'scipy',
+'skimage',
 'matplotlib',
 'numpy',
 'cv2']                   
