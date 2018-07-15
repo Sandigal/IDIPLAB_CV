@@ -151,3 +151,11 @@ doctest:
 	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
 	@echo "Testing of doctests in the sources finished, look at the " \
 	      "results in $(BUILDDIR)/doctest/output.txt."
+
+xelatexpdf:
+    $(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
+    @echo "Running LaTeX files through xelatex..."
+    sed -i s/pdflatex/xelatex/ $(BUILDDIR)/latex/Makefile
+    $(MAKE) -C $(BUILDDIR)/latex all-pdf
+    @echo "xelatex finished; the PDF files are in $(BUILDDIR)/latex."
+    
