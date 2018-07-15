@@ -1,4 +1,4 @@
-# IDIPLAB_CV ![License](https://img.shields.io/aur/license/yaourt.svg?style=plastic)![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg?style=plastic)
+# IDIPLAB_CV ![AUR](https://img.shields.io/aur/license/yaourt.svg)![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg)![Documentation Status](https://readthedocs.org/projects/idiplab-cv/badge/?version=latest)
 
 IDIPLAB机器视觉工具包。
 
@@ -44,7 +44,7 @@ IDIPLAB_CV仅兼容python3。
 
 
 
-- 详细使用方法请阅读说明文档：[**GitHub Wiki（20%）**](https://github.com/Sandiagal/IDIPLAB_CV/wiki)、[**Read the Docs（移植中）**](https://idiplab-cv.readthedocs.io/zh/latest/)。
+- 详细使用方法请阅读说明文档：[**GitHub Wiki（20%）**](https://github.com/Sandiagal/IDIPLAB_CV/wiki)、[**Read the Docs（25%）**](https://idiplab-cv.readthedocs.io/zh/latest/)。
 - 遇见还没写入文档又急着利用的功能时，可以从工程的`test`文件夹中获得项目的测试范例，自行理解使用。
 
 
