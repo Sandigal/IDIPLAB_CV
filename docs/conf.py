@@ -17,7 +17,7 @@ import sys, os
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath('idiplab_cv'))
+sys.path.insert(0, os.path.abspath('../idiplab_cv'))
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 # -- General configuration -----------------------------------------------------
@@ -32,13 +32,13 @@ extensions = [
 'sphinx.ext.napoleon']
                     
 autodoc_mock_imports = [
+'cv2',
 'keras',
-'sklearn',
-'scipy',
-'skimage',
 'matplotlib',
 'numpy',
-'cv2']                   
+'scipy',
+'skimage',
+'sklearn',]                   
                      
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
