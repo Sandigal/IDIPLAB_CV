@@ -1,4 +1,6 @@
-# IDIPLAB_CV ![AUR](https://img.shields.io/aur/license/yaourt.svg)![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg)![Documentation Status](https://readthedocs.org/projects/idiplab-cv/badge/?version=latest)
+# IDIPLAB_CV 
+
+![AUR](https://img.shields.io/aur/license/yaourt.svg) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg) ![Documentation Status](https://readthedocs.org/projects/idiplab-cv/badge/?version=latest)
 
 IDIPLAB机器视觉工具包。
 
