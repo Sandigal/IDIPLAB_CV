@@ -171,9 +171,105 @@
             
   <div class="section" id="module-builtInModels">
 <span id="builtinmodels-module"></span><h1>builtInModels module<a class="headerlink" href="#module-builtInModels" title="Permalink to this headline">¶</a></h1>
-<p>XXXXX
-该模块:<a href="#id1"><span class="problematic" id="id2">`</span></a>dataset_io`包含读取数据集以及数据集分割的类和函数。
-详情请参照XXX</p>
+<p>内置模型模块。</p>
+<p>该模块 <a class="reference internal" href="#module-builtInModels" title="builtInModels"><code class="xref py py-meth docutils literal"><span class="pre">builtInModels()</span></code></a> 将keras提供的模型进一步整合。首先隐藏了初学者不会使用的 <code class="docutils literal"><span class="pre">input_tensor</span></code> 等选项。其次重新调整了模型结构，以解决原模型中的问题：加载了 <code class="docutils literal"><span class="pre">ImageNet</span></code> 上预训练的权值后无法另外调整输出类别数。</p>
+<p>带 <cite>GAP</cite> 的模型意味着使用了全局平均池化 <code class="docutils literal"><span class="pre">GLobalAveragePool2D</span></code>。最后一层卷积层后面再加一层全局平均池化层，可以输出个二维 Tensor <cite>(sample, channel)</cite>。通过该手法可以大幅减少全连接层的参数，并且也是使用CAM的前提。</p>
+<dl class="docutils">
+<dt>模型一览:</dt>
+<dd><table border="1" class="first last docutils">
+<colgroup>
+<col width="32%" />
+<col width="11%" />
+<col width="17%" />
+<col width="17%" />
+<col width="16%" />
+<col width="8%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">模型</th>
+<th class="head">大小</th>
+<th class="head">Top-1 准确率</th>
+<th class="head">Top-5 准确率</th>
+<th class="head">参数数量</th>
+<th class="head">深度</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="#builtInModels.xceptionGAP" title="builtInModels.xceptionGAP"><code class="xref py py-meth docutils literal"><span class="pre">xceptionGAP()</span></code></a></td>
+<td>88 MB</td>
+<td>0.790</td>
+<td>0.945</td>
+<td>22,910,480</td>
+<td>126</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-meth docutils literal"><span class="pre">vgg16GAP()</span></code></td>
+<td>528 MB</td>
+<td>0.715</td>
+<td>0.901</td>
+<td>138,357,544</td>
+<td>23</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-meth docutils literal"><span class="pre">vgg19GAP()</span></code></td>
+<td>549 MB</td>
+<td>0.727</td>
+<td>0.910</td>
+<td>143,667,240</td>
+<td>26</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#builtInModels.resnet50GAP" title="builtInModels.resnet50GAP"><code class="xref py py-meth docutils literal"><span class="pre">resnet50GAP()</span></code></a></td>
+<td>99 MB</td>
+<td>0.759</td>
+<td>0.929</td>
+<td>25,636,712</td>
+<td>168</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#builtInModels.inceptionV3GAP" title="builtInModels.inceptionV3GAP"><code class="xref py py-meth docutils literal"><span class="pre">inceptionV3GAP()</span></code></a></td>
+<td>92 MB</td>
+<td>0.788</td>
+<td>0.944</td>
+<td>23,851,784</td>
+<td>159</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#builtInModels.inceptionResnetV2GAP" title="builtInModels.inceptionResnetV2GAP"><code class="xref py py-meth docutils literal"><span class="pre">inceptionResnetV2GAP()</span></code></a></td>
+<td>215 MB</td>
+<td>0.804</td>
+<td>0.953</td>
+<td>55,873,736</td>
+<td>572</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#builtInModels.mobilenetGAP" title="builtInModels.mobilenetGAP"><code class="xref py py-meth docutils literal"><span class="pre">mobilenetGAP()</span></code></a></td>
+<td>17 MB</td>
+<td>0.665</td>
+<td>0.871</td>
+<td>4,253,864</td>
+<td>88</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-meth docutils literal"><span class="pre">denseNet121GAP()</span></code></td>
+<td>33 MB</td>
+<td>0.745</td>
+<td>0.918</td>
+<td>8,062,504</td>
+<td>121</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-meth docutils literal"><span class="pre">denseNet169GAP()</span></code></td>
+<td>57 MB</td>
+<td>0.759</td>
+<td>0.928</td>
+<td>14,307,880</td>
+<td>169</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-meth docutils literal"><span class="pre">denseNet201GAP()</span></code></td>
+<td>80 MB</td>
+<td>0.770</td>
+<td>0.933</td>
+<td>20,242,984</td>
+<td>201</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>像进一步了解模型的配置，请阅读keras官方文档中的 <a class="reference external" href="https://keras.io/applications/">Applications</a> 章节。</p>
 <dl class="function">
 <dt id="builtInModels.FC1">
 <code class="descclassname">builtInModels.</code><code class="descname">FC1</code><span class="sig-paren">(</span><em>input_shape</em>, <em>classes</em><span class="sig-paren">)</span><a class="headerlink" href="#builtInModels.FC1" title="Permalink to this definition">¶</a></dt>
@@ -190,9 +286,56 @@ model – a Model() instance in Keras</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="builtInModels.denseNetGAP">
+<code class="descclassname">builtInModels.</code><code class="descname">denseNetGAP</code><span class="sig-paren">(</span><em>input_shape</em>, <em>classes</em>, <em>depth</em><span class="sig-paren">)</span><a class="headerlink" href="#builtInModels.denseNetGAP" title="Permalink to this definition">¶</a></dt>
+<dd><p>feature_layer = “conv5_block16_concat”
+feature_layer = “conv5_block32_concat”
+feature_layer = “conv5_block32_concat”
+weight_layer = “fc1000”</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="builtInModels.inceptionResnetV2GAP">
+<code class="descclassname">builtInModels.</code><code class="descname">inceptionResnetV2GAP</code><span class="sig-paren">(</span><em>input_shape</em>, <em>classes</em><span class="sig-paren">)</span><a class="headerlink" href="#builtInModels.inceptionResnetV2GAP" title="Permalink to this definition">¶</a></dt>
+<dd><p>feature_layer = “conv_7b_ac”
+weight_layer = “predictions”</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="builtInModels.inceptionV3GAP">
+<code class="descclassname">builtInModels.</code><code class="descname">inceptionV3GAP</code><span class="sig-paren">(</span><em>input_shape</em>, <em>classes</em><span class="sig-paren">)</span><a class="headerlink" href="#builtInModels.inceptionV3GAP" title="Permalink to this definition">¶</a></dt>
+<dd><p>feature_layer = “mixed10”
+weight_layer = “predictions”</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="builtInModels.mobilenetGAP">
-<code class="descclassname">builtInModels.</code><code class="descname">mobilenetGAP</code><span class="sig-paren">(</span><em>input_shape</em>, <em>classes</em>, <em>dropout=None</em><span class="sig-paren">)</span><a class="headerlink" href="#builtInModels.mobilenetGAP" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">builtInModels.</code><code class="descname">mobilenetGAP</code><span class="sig-paren">(</span><em>input_shape</em>, <em>classes</em>, <em>dropout=0.001</em><span class="sig-paren">)</span><a class="headerlink" href="#builtInModels.mobilenetGAP" title="Permalink to this definition">¶</a></dt>
+<dd><p>在 ImageNet 上预训练的 MobileNet 模型。</p>
+<p>要通过 <cite>load_model</cite> 载入 MobileNet 模型，你需要导入自定义对象 <cite>relu6</cite> 和 <cite>DepthwiseConv2D</cite> 并通过 <cite>custom_objects</cite> 传参。</p>
+<p>下面是示例代码</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">(</span><span class="s1">&#39;mobilenet.h5&#39;</span><span class="p">,</span> <span class="n">custom_objects</span><span class="o">=</span><span class="p">{</span>
+                   <span class="s1">&#39;relu6&#39;</span><span class="p">:</span> <span class="n">mobilenet</span><span class="o">.</span><span class="n">relu6</span><span class="p">,</span>
+                   <span class="s1">&#39;DepthwiseConv2D&#39;</span><span class="p">:</span> <span class="n">mobilenet</span><span class="o">.</span><span class="n">DepthwiseConv2D</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>feature_layer = “conv_pw_13_relu”
+weight_layer = “conv_preds”</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="builtInModels.resnet50GAP">
+<code class="descclassname">builtInModels.</code><code class="descname">resnet50GAP</code><span class="sig-paren">(</span><em>input_shape</em>, <em>classes</em><span class="sig-paren">)</span><a class="headerlink" href="#builtInModels.resnet50GAP" title="Permalink to this definition">¶</a></dt>
+<dd><p>feature_layer = “activation_49”
+weight_layer = “fc1000”</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="builtInModels.xceptionGAP">
+<code class="descclassname">builtInModels.</code><code class="descname">xceptionGAP</code><span class="sig-paren">(</span><em>input_shape</em>, <em>classes</em><span class="sig-paren">)</span><a class="headerlink" href="#builtInModels.xceptionGAP" title="Permalink to this definition">¶</a></dt>
+<dd><p>feature_layer = “block14_sepconv2_act”
+weight_layer = “predictions”</p>
+</dd></dl>
 
 </div>
 

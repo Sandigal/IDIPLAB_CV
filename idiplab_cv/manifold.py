@@ -22,8 +22,6 @@ from sklearn.manifold import SpectralEmbedding
 from sklearn.manifold import TSNE
 from sklearn.random_projection import SparseRandomProjection
 
-import visul
-
 
 def plot_embedding(X, labels, imgs, title=None):
     # Scale and visualize the embedding vectors
@@ -35,7 +33,7 @@ def plot_embedding(X, labels, imgs, title=None):
     for i in range(X.shape[0]):
         plt.text(X[i, 0], X[i, 1], str(labels[i]),
                  color=plt.cm.Set1(labels[i] / 10.),
-                 fontdict={'weight': 'bold', 'size': 9})
+                 fontdict={'weight': 'bold', 'size': 50})
 
     if hasattr(offsetbox, 'AnnotationBbox'):
         # only print thumbnails with matplotlib > 1.0
@@ -48,13 +46,14 @@ def plot_embedding(X, labels, imgs, title=None):
             shown_images = np.r_[shown_images, [X[i]]]
             imagebox = offsetbox.AnnotationBbox(
                 offsetbox.OffsetImage(
-                    imgs[i], zoom=0.05, cmap=plt.cm.gray_r),
+                    imgs[i], zoom=0.8, cmap=plt.cm.gray_r),
                 X[i], pad=.0)
             ax.add_artist(imagebox)
     plt.xticks([]), plt.yticks([])
     if title is not None:
         plt.title(title)
     plt.show()
+
 
 def Random(X, labels, imgs):
     # Random 2D projection using a random unitary matrix
@@ -208,7 +207,7 @@ def tsne(X, labels, imgs):
 
 def manifold(imgs, labels, manifold_args):
     imgs = np.copy(imgs)
-    visul.overall(imgs, 64)
+#    visul.overall(imgs, 64)
 
     X = imgs.reshape((len(imgs), -1))
     X = X/255
