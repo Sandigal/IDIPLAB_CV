@@ -24,12 +24,15 @@ class AugmentGenerator(object):
     """
         sdsdsdsdsdsd
 
-    :param str path: 数据所在目录地址。目录结构请参照 :ref:`目录结构`。
-    :param turple shape: 格式为 `(height, width, channels)`，所有的图像将被调整到该尺寸。默认:`(224, 224 3)`
 
-    **实例化说明：**
+        当实例化 AugmentGenerator 时，什么都不会发生，做成类只是为了不要再一行内输入太多参数。
 
-    1. 当实例化 AugmentGenerator 时，什么都不会发生，做成类只是为了不要再一行内输入太多参数。
+    Args:
+        path (:obj:`str`): 数据所在目录地址。目录结构请参照 :ref:`目录结构`。
+        shape (:obj:`turple` of :obj:`int`, 可选): 所有的图像将以该尺寸来输出。格式为 `(width, height, channels)`，默认为`(336, 224, 3)`。
+
+
+
     """
 
     def __init__(self,
@@ -44,6 +47,26 @@ class AugmentGenerator(object):
 
         :param str datagen_args: XXXXXXXX
         :param str augment_amount: 数据增广倍数，默认为10.
+
+
+        Examples:
+
+            >>> agmtgen = agmt.AugmentGenerator(path="../data/dataset 336x224")
+            >>> datagen_args = dict(
+            ...         rotation_range=15.,
+            ...         width_shift_range=0.05,
+            ...         height_shift_range=0.05)
+            >>> agmtgen.normol_augment(datagen_args=datagen_args, augment_amount=2)
+
+            --->Start augmentation
+            -->Processing for C1 [=========>. . . . . . . . . . . . . . . . . . . . ] 33.33%
+            -->Processing for C2 [===================>. . . . . . . . . . ] 66.67%
+            -->Processing for C3 [=============================>] 100.00%
+            [=============================>] 100.00%
+            Cost time: 30.498 s
+
+
+
         """
         print("--->Start augmentation")
 
@@ -58,24 +81,24 @@ class AugmentGenerator(object):
 
         # dog or cat
         sub_dir_list = os.listdir(self.path+"/origin")
-        process_bar = io.ShowProcess(len(sub_dir_list))
+        process_bar_dir = io._ShowProcess(len(sub_dir_list))
         for sub_dir in sub_dir_list:
-            process_bar.show_process(sub_dir)
+            process_bar_dir.show_process(sub_dir)
 
             is_exist = os.path.exists(
                 self.path+"/augment/"+sub_dir)
             if not is_exist:
                 os.makedirs(self.path+"/augment/"+sub_dir)
 
-            imgs, names = io.read_imgs_in_dir(
+            imgs, names = io._read_imgs_in_dir(
                 self.path+"/origin/"+sub_dir, self.shape)
             imgs = np.array(imgs)
 
             # dog1 or dog2
             print("")
-            process_bar = io.ShowProcess(len(names))
+            process_bar_pic = io._ShowProcess(len(names))
             for img, name in zip(imgs, names):
-                process_bar.show_process()
+                process_bar_pic.show_process()
                 img = np.expand_dims(img, axis=0)
 
                 augmentgen = datagen.flow(
@@ -92,7 +115,7 @@ class AugmentGenerator(object):
 
         end = time.clock()
         print("")
-        print("Cost time:", end-start, "s")
+        print("Cost time: %.3fs" % (end-start))
         print("")
 
 
@@ -148,7 +171,7 @@ class cropGenerator(object):
                 active_layer='conv_pw_13_relu',
                 weight_layer='conv_preds')
 
-        process_bar = io.ShowProcess(len(self.labels_origin))
+        process_bar = io._ShowProcess(len(self.labels_origin))
         for i in range(len(self.labels_origin)):
             process_bar.show_process()
 

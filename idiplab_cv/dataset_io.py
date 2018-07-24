@@ -75,7 +75,7 @@ def _read_imgs_in_dir(path, shape=None):
     return imgs, names
 
 
-def _read_imgs_in_dirs(path, dirs_name, shape=(224, 224)):
+def _read_imgs_in_dirs(path, dirs_name, shape=None):
     imgall = []
     labelall = []
     nameall = []
@@ -151,12 +151,6 @@ class Dataset(object):
     The __init__ method may be documented in either the class level
     docstring, or as a docstring on the __init__ method itself.
 
-    Args:
-        param1 (str): Description of `param1`.
-        param2 (:obj:`int`, optional): Description of `param2`. Multiple
-            lines are supported.
-        param3 (:obj:`list` of :obj:`str`): Description of `param3`.
-
     Attributes:
         imgs_origin (str): Description of `attr1`.
         labels_origin (:obj:`int`, optional): Description of `attr2`.
@@ -165,10 +159,7 @@ class Dataset(object):
 
     """
 
-    def __init__(self, path, shape=(224, 224), augment=False):
-        self.path = path
-        self.shape = shape
-        self.augment = augment
+    def __init__(self):
         self.imgs_origin = []
         self.labels_origin = []
         self.names_origin = []
@@ -182,54 +173,110 @@ class Dataset(object):
         self.augment_index = []
         self.augment_cross_index = []
 
-    def load_data(self, step=1):
-        """
-        Args:
-            path (str): The path of the file to wrap
-            field_storage (FileStorage): The :class:`FileStorage` instance to wrap
-            temporary (bool): Whether or not to delete the file when the File
-               instance is destructed
-
-        Returns:
-            BufferedFileStorage (int): A buffered writable file descriptor
-        """
-        print("--->Start loading data ")
-        start = time.clock()
+    def _load_file(self, path, shape=None, augment=False, step=1):
 
         if step == 1:
             self.imgs_origin, self.labels_origin, self.names_origin = _read_imgs_in_dirs(
-                self.path, "/origin/", self.shape)
+                path, "/origin/", shape)
 
-            if self.augment:
+            if augment:
                 self.imgs_augment, self.labels_augment, self.names_augment = _read_imgs_in_dirs(
-                    self.path, "/augment/", self.shape)
+                    path, "/augment/", shape)
         else:
             self.imgs_origin, self.labels_origin, self.names_origin = _read_imgs_in_dirs(
-                self.path, "/crop_AB/", self.shape)
+                path, "/crop_AB/", shape)
 
-            if self.augment:
+            if augment:
                 self.imgs_augment, self.labels_augment, self.names_augment = _read_imgs_in_dirs(
-                    self.path, "/crop_SC_augment/", self.shape)
+                    path, "/crop_SC_augment/", shape)
 
-        sub_dir_list = os.listdir(self.path+"/origin")
+        sub_dir_list = os.listdir(path+"/origin")
         self.class_to_index = dict(zip(sub_dir_list, range(len(sub_dir_list))))
+
+    def _load_h5(self, path, augment=False):
+        file = open(path, "rb")
+        contact = load(file)
+        self.imgs_origin = contact["imgs_origin"]
+        self.labels_origin = contact["labels_origin"]
+        if augment is True:
+            self.imgs_augment = contact["imgs_augment"]
+            self.labels_augment = contact["labels_augment"]
+            self.names_augment = contact["names_augment"]
+        self.names_origin = contact["names_origin"]
+        self.class_to_index = contact["class_to_index"]
+        self.sample_per_class = contact["sample_per_class"]
+        file.close()
+
+    def load_data(self, path, shape=(336, 224), augment=False):
+        """读取图像
+
+        支持两种读取模式，函数会自动从 ``path`` 中进行判断。
+            1. 从文件夹中读取所有jpg、png等图片格式的文件。目录结构请参照 :ref:`目录结构`。
+            2. 从打包的 :obj:`h5` 文件中读取数据。您需要先使用方法1进行读取
+
+        .. note:: 运行方法2的前提是已经有一个打包的:obj:`h5` 文件。为此，需要先用方法1读取数据，再用 :meth:`create_h5` 打包。
+
+        Args:
+            path (:obj:`str`): 数据所在目录地址，或 :obj:`h5` 文件地址。
+            shape (:obj:`turple` of :obj:`int`, 可选): 所有的图像都将以该尺寸读入内存。格式为 `(width, height, channel)`，默认为`(336, 224, 3)`。
+            augment (:obj:`bool`, 可选): 是否读取增强数据。
+
+        Returns:
+                class_to_index (:obj:`dict` of :obj:`str` to :obj:`int`): 各类对应的标签序号
+                sample_per_class (:obj:`dict` of :obj:`str` to :obj:`int`): 各类对应的样本数量
+
+        Examples:
+
+            >>> dataset = io.Dataset()
+            >>> class_to_index, sample_per_class = dataset.load_data(
+            ...         path="../data/dataset 336x224",
+            ...         shape=(336, 224),
+            ...         augment=True)
+            --->Start loading data
+            -->Processing for C3 [=============================>] 100.00%
+            Cost time: 2.702s
+            Image shape (hight, width, channel): (224, 336, 3)
+            Read 400 samples with  800 augmentated
+            Class index: {'C1': 0, 'C2': 1, 'C3': 2}
+            Sample per class: {'C3': 120, 'C2': 60, 'C1': 220}
+
+            >>> class_to_index, sample_per_class = dataset.load_data(
+            ...         path="dataset_test.h5",
+            ...         augment=True)
+            --->Start loading data
+            Cost time: 1.132s
+            Image shape (hight, width, channel): (224, 336, 3)
+            Read 400 samples with  800 augmentated
+            Class index: {'C1': 0, 'C2': 1, 'C3': 2}
+            Sample per class: {'C3': 120, 'C2': 60, 'C1': 220}
+
+        """
+
+        print("--->Start loading data ")
+        start = time.clock()
+
+        if path.endswith("h5") is False:
+            self._load_file(path, shape, augment)
+            print("")
+        else:
+            self._load_h5(path, augment)
 
         classes = set(self.labels_origin)
         for classe in classes:
             self.sample_per_class[classe] = self.labels_origin.count(classe)
 
         end = time.clock()
-        print("")
         print("Cost time: %.3fs" % (end-start))
         print("Image shape (hight, width, channel):",
               self.imgs_origin[0].shape)
         print("Read", len(self.labels_origin), "samples", end="")
-        if self.augment:
+        if augment:
             print(" with ", len(self.labels_augment), "augmentated", end="")
         print("")
         print("Class index: "+str(self.class_to_index))
         print("Sample per class: "+str(self.sample_per_class))
         print("")
+
         return self.class_to_index, self.sample_per_class
 
     def create_h5(self, name):
@@ -267,37 +314,13 @@ class Dataset(object):
                    "imgs_augment": self.imgs_augment,
                    "labels_origin": self.labels_origin,
                    "labels_augment": self.labels_augment,
+                   "names_origin": self.names_origin,
                    "names_augment": self.names_augment,
                    "class_to_index": self.class_to_index,
                    "sample_per_class": self.sample_per_class}
         file = open(name, "wb")
         dump(content, file, True)
         file.close()
-
-    def load_h5(self, name):
-        file = open(name, "rb")
-        contact = load(file)
-        self.imgs_origin = contact["imgs_origin"]
-        self.imgs_augment = contact["imgs_augment"]
-        self.labels_origin = contact["labels_origin"]
-        self.labels_augment = contact["labels_augment"]
-        self.names_augment = contact["names_augment"]
-        self.class_to_index = contact["class_to_index"]
-        self.sample_per_class = contact["sample_per_class"]
-        self.imgs_origin = contact["imgs_origin"]
-        self.imgs_origin = contact["imgs_origin"]
-        self.imgs_origin = contact["imgs_origin"]
-        file.close()
-
-        print("")
-        print("Image shape:", self.imgs_origin[0].shape)
-        print("Read", len(self.labels_origin), "samples", end="")
-        if self.augment:
-            print(" with ", len(self.labels_augment), "augmentated", end="")
-        print("")
-        print("Class index: "+str(self.class_to_index))
-        print("Sample per class: "+str(self.sample_per_class))
-        print("")
 
     def train_test_split(self, test_shape=0.25):
         print("--->Start spliting dataset to trainset and testset")
@@ -347,6 +370,8 @@ class Dataset(object):
             self.train_index][valid_index]
         labels_valid = np.array(self.labels_origin)[
             self.train_index][valid_index]
+        names_valid = np.array(self.names_origin)[
+            self.train_index][valid_index]
 
         if self.augment:
             augment_amount = int(
@@ -373,4 +398,4 @@ class Dataset(object):
         print("Trainset size", len(labels_train),
               "with validset size", len(labels_valid))
         print("")
-        return imgs_train, labels_train, imgs_valid, labels_valid
+        return imgs_train, labels_train, imgs_valid, labels_valid, names_valid

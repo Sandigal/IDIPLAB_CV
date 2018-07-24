@@ -174,25 +174,11 @@
 <p>该模块 <a class="reference internal" href="#module-dataset_io" title="dataset_io"><code class="xref py py-meth docutils literal"><span class="pre">dataset_io()</span></code></a> 包含读取数据集以及数据集分割的类和函数。</p>
 <dl class="class">
 <dt id="dataset_io.Dataset">
-<em class="property">class </em><code class="descclassname">dataset_io.</code><code class="descname">Dataset</code><span class="sig-paren">(</span><em>path</em>, <em>shape=(224</em>, <em>224)</em>, <em>augment=False</em><span class="sig-paren">)</span><a class="headerlink" href="#dataset_io.Dataset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">dataset_io.</code><code class="descname">Dataset</code><a class="headerlink" href="#dataset_io.Dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Class methods are similar to regular functions.</p>
 <p>The __init__ method may be documented in either the class level
 docstring, or as a docstring on the __init__ method itself.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>param1</strong> (<em>str</em>) – Description of <cite>param1</cite>.</li>
-<li><strong>param2</strong> (<code class="xref py py-obj docutils literal"><span class="pre">int</span></code>, optional) – Description of <cite>param2</cite>. Multiple
-lines are supported.</li>
-<li><strong>param3</strong> (<code class="xref py py-obj docutils literal"><span class="pre">list</span></code> of <code class="xref py py-obj docutils literal"><span class="pre">str</span></code>) – Description of <cite>param3</cite>.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
 <dl class="attribute">
 <dt id="dataset_io.Dataset.imgs_origin">
 <code class="descname">imgs_origin</code><a class="headerlink" href="#dataset_io.Dataset.imgs_origin" title="Permalink to this definition">¶</a></dt>
@@ -261,33 +247,67 @@ to use the function.</p>
 
 <dl class="method">
 <dt id="dataset_io.Dataset.load_data">
-<code class="descname">load_data</code><span class="sig-paren">(</span><em>step=1</em><span class="sig-paren">)</span><a class="headerlink" href="#dataset_io.Dataset.load_data" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<code class="descname">load_data</code><span class="sig-paren">(</span><em>path</em>, <em>shape=(336</em>, <em>224)</em>, <em>augment=False</em><span class="sig-paren">)</span><a class="headerlink" href="#dataset_io.Dataset.load_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>读取图像</p>
+<dl class="docutils">
+<dt>支持两种读取模式，函数会自动从 <code class="docutils literal"><span class="pre">path</span></code> 中进行判断。</dt>
+<dd><ol class="first last arabic simple">
+<li>从文件夹中读取所有jpg、png等图片格式的文件。目录结构请参照 <a class="reference internal" href="../preprocessing/overview.html#id2"><span class="std std-ref">目录结构</span></a>。</li>
+<li>从打包的 <code class="xref py py-obj docutils literal"><span class="pre">h5</span></code> 文件中读取数据。您需要先使用方法1进行读取</li>
+</ol>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">运行方法2的前提是已经有一个打包的:obj:<cite>h5</cite> 文件。为此，需要先用方法1读取数据，再用 <a class="reference internal" href="#dataset_io.Dataset.create_h5" title="dataset_io.Dataset.create_h5"><code class="xref py py-meth docutils literal"><span class="pre">create_h5()</span></code></a> 打包。</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> (<em>str</em>) – The path of the file to wrap</li>
-<li><strong>field_storage</strong> (<em>FileStorage</em>) – The <code class="xref py py-class docutils literal"><span class="pre">FileStorage</span></code> instance to wrap</li>
-<li><strong>temporary</strong> (<em>bool</em>) – Whether or not to delete the file when the File
-instance is destructed</li>
+<li><strong>path</strong> (<code class="xref py py-obj docutils literal"><span class="pre">str</span></code>) – 数据所在目录地址，或 <code class="xref py py-obj docutils literal"><span class="pre">h5</span></code> 文件地址。</li>
+<li><strong>shape</strong> (<code class="xref py py-obj docutils literal"><span class="pre">turple</span></code> of <code class="xref py py-obj docutils literal"><span class="pre">int</span></code>, 可选) – 所有的图像都将以该尺寸读入内存。格式为 <cite>(width, height, channel)</cite>，默认为`(336, 224, 3)`。</li>
+<li><strong>augment</strong> (<code class="xref py py-obj docutils literal"><span class="pre">bool</span></code>, 可选) – 是否读取增强数据。</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A buffered writable file descriptor</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">各类对应的标签序号
+sample_per_class (<code class="xref py py-obj docutils literal"><span class="pre">dict</span></code> of <code class="xref py py-obj docutils literal"><span class="pre">str</span></code> to <code class="xref py py-obj docutils literal"><span class="pre">int</span></code>): 各类对应的样本数量</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">BufferedFileStorage (int)</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">class_to_index (<code class="xref py py-obj docutils literal"><span class="pre">dict</span></code> of <code class="xref py py-obj docutils literal"><span class="pre">str</span></code> to <code class="xref py py-obj docutils literal"><span class="pre">int</span></code>)</p>
 </td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">Dataset</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">class_to_index</span><span class="p">,</span> <span class="n">sample_per_class</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">path</span><span class="o">=</span><span class="s2">&quot;../data/dataset 336x224&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">336</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="n">augment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">---&gt;Start loading data</span>
+<span class="go">--&gt;Processing for C3 [=============================&gt;] 100.00%</span>
+<span class="go">Cost time: 2.702s</span>
+<span class="go">Image shape (hight, width, channel): (224, 336, 3)</span>
+<span class="go">Read 400 samples with  800 augmentated</span>
+<span class="go">Class index: {&#39;C1&#39;: 0, &#39;C2&#39;: 1, &#39;C3&#39;: 2}</span>
+<span class="go">Sample per class: {&#39;C3&#39;: 120, &#39;C2&#39;: 60, &#39;C1&#39;: 220}</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">class_to_index</span><span class="p">,</span> <span class="n">sample_per_class</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">path</span><span class="o">=</span><span class="s2">&quot;dataset_test.h5&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">augment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">---&gt;Start loading data</span>
+<span class="go">Cost time: 1.132s</span>
+<span class="go">Image shape (hight, width, channel): (224, 336, 3)</span>
+<span class="go">Read 400 samples with  800 augmentated</span>
+<span class="go">Class index: {&#39;C1&#39;: 0, &#39;C2&#39;: 1, &#39;C3&#39;: 2}</span>
+<span class="go">Sample per class: {&#39;C3&#39;: 120, &#39;C2&#39;: 60, &#39;C1&#39;: 220}</span>
+</pre></div>
+</div>
 </dd></dl>
-
-<dl class="method">
-<dt id="dataset_io.Dataset.load_h5">
-<code class="descname">load_h5</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#dataset_io.Dataset.load_h5" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="method">
 <dt id="dataset_io.Dataset.train_test_split">
