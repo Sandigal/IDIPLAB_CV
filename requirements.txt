@@ -1,0 +1,10 @@
+matplotlib==2.1.2
+numpy==1.14.3
+scikit_image==0.13.1
+scipy==1.0.1
+tensorflow==1.8.0
+Keras==2.1.6
+opencv_python==3.4.0.14
+Pillow==5.2.0
+skimage==0.0
+scikit_learn==0.19.2
