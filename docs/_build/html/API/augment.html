@@ -91,6 +91,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../preprocessing/overview.html">总览</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../preprocessing/augment.html">数据增强</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../preprocessing/augment.html#module-augment">augment module</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -171,16 +172,15 @@
             
   <div class="section" id="module-augment">
 <span id="augment-module"></span><h1>augment module<a class="headerlink" href="#module-augment" title="Permalink to this headline">¶</a></h1>
-<p>该模块 <a class="reference internal" href="#module-augment" title="augment"><code class="xref py py-meth docutils literal"><span class="pre">augment()</span></code></a> 包含数据增强的类和函数。
+<p>该模块 <a class="reference internal" href="../preprocessing/augment.html#module-augment" title="augment"><code class="xref py py-meth docutils literal"><span class="pre">augment()</span></code></a> 包含数据增强的类和函数。
 详细 <a class="reference internal" href="../preprocessing/augment.html#id1"><span class="std std-ref">数据增强</span></a></p>
 <dl class="class">
 <dt id="augment.AugmentGenerator">
 <em class="property">class </em><code class="descclassname">augment.</code><code class="descname">AugmentGenerator</code><span class="sig-paren">(</span><em>path</em>, <em>shape=None</em><span class="sig-paren">)</span><a class="headerlink" href="#augment.AugmentGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<blockquote>
-<div><p>sdsdsdsdsdsd</p>
-<p>当实例化 AugmentGenerator 时，什么都不会发生，做成类只是为了不要再一行内输入太多参数。</p>
-</div></blockquote>
+<p>数据增强生成器</p>
+<p>AugmentGenerator 将从指定目录下的 <strong>origin</strong> 文件夹中读取所有数据，并创建 <strong>augment</strong> 文件夹来存放增强数据。需要目录的具体格式可以参见参照 <a class="reference internal" href="../preprocessing/overview.html#id2"><span class="std std-ref">目录结构</span></a>。为了保证处理成功，请保证目录内不存在 <strong>Thumbs.db</strong> 等隐藏文件。</p>
+<p>当实例化 AugmentGenerator 时，您需要指出数据所在目录地址和图像的输出尺寸。尽管部分模型支持多尺度输入，但同一批训练数据必须保持相同维度。您可以分批产生多尺度数据，再分批训练。</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -196,14 +196,27 @@
 <dl class="method">
 <dt id="augment.AugmentGenerator.normol_augment">
 <code class="descname">normol_augment</code><span class="sig-paren">(</span><em>datagen_args</em>, <em>augment_amount=10</em><span class="sig-paren">)</span><a class="headerlink" href="#augment.AugmentGenerator.normol_augment" title="Permalink to this definition">¶</a></dt>
-<dd><p>非监督数据增强。XXXXXXXXXXXXX</p>
+<dd><p>非监督数据增强。</p>
+<p>XXXXXXXXXXXXX</p>
+<ul class="simple">
+<li><strong>samplewise_center</strong>: 布尔值。将每个样本的均值设置为 0。</li>
+<li><strong>samplewise_std_normalization</strong>: 布尔值。将每个输入除以其标准差。</li>
+<li><strong>zca_epsilon</strong>: ZCA 白化的 epsilon 值，默认为 1e-6。</li>
+<li><strong>zca_whitening</strong>: 布尔值。应用 ZCA 白化。</li>
+</ul>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>datagen_args</strong> (<em>str</em>) – XXXXXXXX</li>
-<li><strong>augment_amount</strong> (<em>str</em>) – 数据增广倍数，默认为10.</li>
+<li><strong>datagen_args</strong> (<code class="xref py py-obj docutils literal"><span class="pre">dict</span></code>) – <p>可选数据增强方法。选用的方法将依次叠加进行处理。对于指定参数的方法，如果为 <cite>rotation_range=30</cite>，在实际运算时，具体参数将在0-30之间随机选取。</p>
+<dl class="docutils">
+<dt>{“Serak”: (“Rigel VII”, “Preparer”),</dt>
+<dd>”Zim”: (“Irk”, “Invader”),
+“Lrrr”: (“Omicron Persei 8”, “Emperor”)}</dd>
+</dl>
+</li>
+<li><strong>augment_amount</strong> (<code class="xref py py-obj docutils literal"><span class="pre">int</span></code>, 可选) – 数据增广倍数，默认为`10`。</li>
 </ul>
 </td>
 </tr>
@@ -216,14 +229,14 @@
 <span class="gp">... </span>        <span class="n">width_shift_range</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
 <span class="gp">... </span>        <span class="n">height_shift_range</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">agmtgen</span><span class="o">.</span><span class="n">normol_augment</span><span class="p">(</span><span class="n">datagen_args</span><span class="o">=</span><span class="n">datagen_args</span><span class="p">,</span> <span class="n">augment_amount</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">---&gt;Start augmentation</span>
+<span class="go">--&gt;Processing for C1 [=========&gt;. . . . . . . . . . . . . . . . . . . . ] 33.33%</span>
+<span class="go">--&gt;Processing for C2 [===================&gt;. . . . . . . . . . ] 66.67%</span>
+<span class="go">--&gt;Processing for C3 [=============================&gt;] 100.00%</span>
+<span class="go">[=============================&gt;] 100.00%</span>
+<span class="go">Cost time: 30.498 s</span>
 </pre></div>
 </div>
-<p>—&gt;Start augmentation
-–&gt;Processing for C1 [=========&gt;… … … … … … . . ] 33.33%
-–&gt;Processing for C2 [===================&gt;… … … . ] 66.67%
-–&gt;Processing for C3 [=============================&gt;] 100.00%
-[=============================&gt;] 100.00%
-Cost time: 30.498 s</p>
 </dd></dl>
 
 </dd></dl>

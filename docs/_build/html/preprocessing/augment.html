@@ -29,7 +29,6 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="augment module" href="../API/augment.html" />
     <link rel="prev" title="总览" href="overview.html" /> 
 
   
@@ -90,11 +89,17 @@
 <p class="caption"><span class="caption-text">数据预处理</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">总览</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">数据增强</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">数据增强</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-augment">API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">数据增强方法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">组合1</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../API/augment.html">augment module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../API/builtInModels.html">builtInModels module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../API/dataset_io.html">dataset_io module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../API/manifold.html">manifold module</a></li>
@@ -172,15 +177,150 @@
   <div class="section" id="id1">
 <span id="id2"></span><h1>数据增强<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <p>模型越复杂，所需的数据就越多。数据约少就越容易产生过拟合。在某些数据难以收集的问题上，可以采用 <code class="docutils literal"><span class="pre">数据增强</span></code> 的方法增广数据。<code class="docutils literal"><span class="pre">数据增强</span></code> 通过对有限的数据进行各种变换，从而产生更多的等价数据。比起人为收集更多数据，<code class="docutils literal"><span class="pre">数据增强</span></code> 完全免费，并且可以增强图像的多样性，从而提高模型的泛化能力。但 <code class="docutils literal"><span class="pre">数据增强</span></code> 并不能带来新的图像内容的，所以提升效果有限。</p>
-<div class="figure" id="id3">
+<div class="figure" id="id5">
 <img alt="Heavy augmentations" src="../_images/heavy.jpg" />
 <p class="caption"><span class="caption-text">单张图像的数据增强范例</span></p>
 </div>
-<p>引用 imgaug- 中的数据增强范例。我们对一只 <strong>仓鼠</strong> 图像进行了仿射变换、颜色抖动、超像素解析、锐化平滑等变换后，产生了32张“新”图像。如第1行1列张图像，原先白色的仓鼠经过了数据增强，产生了粉红色的仓鼠。这将使网络获得 <strong>颜色不变性</strong>，即将不同颜色的仓鼠都识别为 <strong>仓鼠</strong>。类似的还有 <strong>位置不变性</strong>、<strong>形状不变性</strong> 等。此外如第1行3列张图像，仓鼠的头部被遮挡。这将 <code class="docutils literal"><span class="pre">Dropout</span></code> 的思想引入了 <code class="docutils literal"><span class="pre">数据增强</span></code>，即通过对部分显著特征的限制，强迫网络学习更加一般化的特征。</p>
-<p>上述图像对于网络来说都是不同的输入，这样就通过各种变换增强了图像的多样性。但通过 <code class="docutils literal"><span class="pre">数据增强</span></code> 产生的数据并非能和真实的数据相提并论。比如第3行1列张图像，仓鼠图像被颠倒了，而在现实中几乎不会出现这样的仓鼠。所以网络从这样图像中学习到了什么，也难以利用到一般的仓鼠中。此外，毕竟 <code class="docutils literal"><span class="pre">数据增强</span></code> 是基于原始图像的再创作，并不能带来新的图像内容的。所以如果增广倍数太多，也会因为图相似度太高而使提升效果下降。。</p>
+<p>引用 <a class="reference external" href="https://github.com/aleju/imgaug">imgaug</a> 中的数据增强范例。我们对一只 <strong>短尾矮袋鼠</strong> 图像进行了仿射变换、颜色抖动、超像素解析、锐化平滑等变换后，产生了32张“新”图像。如第1行1列张图像，原先白色的袋鼠经过了数据增强，产生了粉红色的袋鼠。这将使网络获得 <strong>颜色不变性</strong>，即将不同颜色的袋鼠都识别为 <strong>袋鼠</strong>。类似的还有 <strong>位置不变性</strong>、<strong>形状不变性</strong> 等。此外如第1行3列张图像，袋鼠的头部被遮挡。这将 <code class="docutils literal"><span class="pre">Dropout</span></code> 的思想引入了 <code class="docutils literal"><span class="pre">数据增强</span></code>，即通过对部分显著特征的限制，强迫网络学习更加一般化的特征。</p>
+<p>上述图像对于网络来说都是不同的输入，这样就通过各种变换增强了图像的多样性。但通过 <code class="docutils literal"><span class="pre">数据增强</span></code> 产生的数据并非能和真实的数据相提并论。比如第3行1列张图像，袋鼠图像被颠倒了，而在现实中几乎不会出现这样的袋鼠。所以网络从这样图像中学习到了什么，也难以利用到一般的袋鼠中。此外，毕竟 <code class="docutils literal"><span class="pre">数据增强</span></code> 是基于原始图像的再创作，并不能带来新的图像内容的。所以如果增广倍数太多，也会因为图相似度太高而使提升效果下降。。</p>
 <p><code class="docutils literal"><span class="pre">数据增强</span></code> 可以大致分为2种：非监督数据增强、监督数据增强。</p>
-<p>该模块将完成通用的数据增强方法。
-在训练前对样本集进行数据增强。函数保证每张图片的增广倍数都相同，并且会根据path目录中的所有子目录，创建带有_agmt后缀的目录。增强的数据将会保存在对应的_agmt目录内。需要目录的具体格式可以参见[数据预处理](数据预处理)。</p>
+<p>该模块将完成通用的数据增强方法。</p>
+<div class="section" id="module-augment">
+<span id="api"></span><h2>API<a class="headerlink" href="#module-augment" title="Permalink to this headline">¶</a></h2>
+<p>该模块 <a class="reference internal" href="#module-augment" title="augment"><code class="xref py py-meth docutils literal"><span class="pre">augment()</span></code></a> 包含数据增强的类和函数。</p>
+<dl class="class">
+<dt id="augment.AugmentGenerator">
+<em class="property">class </em><code class="descclassname">augment.</code><code class="descname">AugmentGenerator</code><span class="sig-paren">(</span><em>path</em>, <em>shape=None</em><span class="sig-paren">)</span><a class="headerlink" href="#augment.AugmentGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>数据增强生成器。</p>
+<p>AugmentGenerator 将从指定目录下的 <strong>origin</strong> 文件夹中读取所有数据，并创建 <strong>augment</strong> 文件夹来存放增强数据。需要目录的具体格式可以参见参照 <a class="reference internal" href="overview.html#id2"><span class="std std-ref">目录结构</span></a>。为了保证处理成功，请保证目录内不存在 <strong>Thumbs.db</strong> 等隐藏文件。</p>
+<p>当实例化 AugmentGenerator 时，您需要指出数据所在目录地址和图像的输出尺寸。尽管部分模型支持多尺度输入，但同一批训练数据必须保持相同维度。您可以分批产生多尺度数据，再分批训练。</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<code class="xref py py-obj docutils literal"><span class="pre">str</span></code>) – 数据所在目录地址。目录结构请参照 <a class="reference internal" href="overview.html#id2"><span class="std std-ref">目录结构</span></a>。</li>
+<li><strong>shape</strong> (<code class="xref py py-obj docutils literal"><span class="pre">turple</span></code> of <code class="xref py py-obj docutils literal"><span class="pre">int</span></code>, 可选) – 所有的图像将以该尺寸来输出。格式为 <cite>(width, height, channels)</cite>，默认为 <cite>(336, 224, 3)</cite>。</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="augment.AugmentGenerator.normol_augment">
+<code class="descname">normol_augment</code><span class="sig-paren">(</span><em>datagen_args</em>, <em>augment_amount=10</em><span class="sig-paren">)</span><a class="headerlink" href="#augment.AugmentGenerator.normol_augment" title="Permalink to this definition">¶</a></dt>
+<dd><p>非监督数据增强。</p>
+<p>XXXXXXXXXXXXX</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>datagen_args</strong> (<code class="xref py py-obj docutils literal"><span class="pre">dict</span></code>) – 可选数据增强方法。选用的方法将依次叠加进行处理。所有支持方法的具体介绍可以参见参照 <span class="xref std std-ref">数据增强方法</span>。</li>
+<li><strong>augment_amount</strong> (<code class="xref py py-obj docutils literal"><span class="pre">int</span></code>, 可选) – 数据增广倍数，默认为`10`。</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">agmtgen</span> <span class="o">=</span> <span class="n">agmt</span><span class="o">.</span><span class="n">AugmentGenerator</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;../data/dataset 336x224&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">datagen_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">rotation_range</span><span class="o">=</span><span class="mf">15.</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">width_shift_range</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">height_shift_range</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">agmtgen</span><span class="o">.</span><span class="n">normol_augment</span><span class="p">(</span><span class="n">datagen_args</span><span class="o">=</span><span class="n">datagen_args</span><span class="p">,</span> <span class="n">augment_amount</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">---&gt;Start augmentation</span>
+<span class="go">--&gt;Processing for C1 [=========&gt;. . . . . . . . . . . . . . . . . . . . ] 33.33%</span>
+<span class="go">--&gt;Processing for C2 [===================&gt;. . . . . . . . . . ] 66.67%</span>
+<span class="go">--&gt;Processing for C3 [=============================&gt;] 100.00%</span>
+<span class="go">[=============================&gt;] 100.00%</span>
+<span class="go">Cost time: 30.498 s</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="augment.cropGenerator">
+<em class="property">class </em><code class="descclassname">augment.</code><code class="descname">cropGenerator</code><span class="sig-paren">(</span><em>imgs_origin</em>, <em>imgs_white</em>, <em>labels_origin</em>, <em>names_origin</em><span class="sig-paren">)</span><a class="headerlink" href="#augment.cropGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="augment.cropGenerator.crop">
+<code class="descname">crop</code><span class="sig-paren">(</span><em>path</em>, <em>model</em>, <em>active_layer</em>, <em>weight_layer</em>, <em>supervised_crop=False</em>, <em>augment_amount=None</em><span class="sig-paren">)</span><a class="headerlink" href="#augment.cropGenerator.crop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="augment.cropGenerator.makedirs">
+<code class="descname">makedirs</code><span class="sig-paren">(</span><em>path</em>, <em>supervised_crop=False</em><span class="sig-paren">)</span><a class="headerlink" href="#augment.cropGenerator.makedirs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="id3">
+<h2>数据增强方法<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="#augment.AugmentGenerator.normol_augment" title="augment.AugmentGenerator.normol_augment"><code class="xref py py-meth docutils literal"><span class="pre">AugmentGenerator.normol_augment()</span></code></a> 目前支持以下数据增强方法。对于指定参数的方法，如果为 <cite>rotation_range=30</cite>，在实际运算时，具体参数将在0-30之间随机选取。</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><strong>samplewise_center</strong>: 布尔值。将每个样本的均值设置为 0。</p>
+</li>
+<li><p class="first"><strong>samplewise_std_normalization</strong>: 布尔值。将每个输入除以其标准差。</p>
+</li>
+<li><p class="first"><strong>zca_epsilon</strong>: ZCA 白化的 epsilon 值，默认为 1e-6。</p>
+</li>
+<li><p class="first"><strong>zca_whitening</strong>: 布尔值。应用 ZCA 白化。</p>
+</li>
+<li><p class="first"><strong>rotation_range</strong>: 整形数。随机旋转的度数范围。</p>
+</li>
+<li><p class="first"><strong>width_shift_range</strong>: 浮点数（总宽度的比例）。随机水平移动的范围。</p>
+</li>
+<li><p class="first"><strong>height_shift_range</strong>: 浮点数（总高度的比例）。随机垂直移动的范围。</p>
+</li>
+<li><p class="first"><strong>shear_range</strong>: 浮点数。剪切强度（以弧度逆时针方向剪切角度）。</p>
+</li>
+<li><p class="first"><strong>zoom_range</strong>: 浮点数或[lower, upper]。随机缩放范围。如果是浮点数，<cite>[lower, upper] = [1-zoom_range, 1+zoom_range]</cite>。</p>
+</li>
+<li><p class="first"><strong>channel_shift_range</strong>: 浮点数。随机通道转换的范围。</p>
+</li>
+<li><dl class="first docutils">
+<dt><strong>fill_mode</strong>: {“constant”, “nearest”, “reflect” or “wrap”} 之一。输入边界以外的点根据给定的模式填充：</dt>
+<dd><ul class="first last simple">
+<li>“constant”: <cite>kkkkkkkk|abcd|kkkkkkkk</cite> (<cite>cval=k</cite>)</li>
+<li>“nearest”: <cite>aaaaaaaa|abcd|dddddddd</cite></li>
+<li>“reflect”: <cite>abcddcba|abcd|dcbaabcd</cite></li>
+<li>“wrap”: <cite>abcdabcd|abcd|abcdabcd</cite></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first"><strong>cval</strong>: 浮点数或整数。用于边界之外的点的值，当 <cite>fill_mode = “constant”</cite> 时。</p>
+</li>
+<li><p class="first"><strong>horizontal_flip</strong>: 布尔值。随机水平翻转。</p>
+</li>
+<li><p class="first"><strong>vertical_flip</strong>: 布尔值。随机垂直翻转。</p>
+</li>
+<li><p class="first"><strong>rescale</strong>: 重缩放因子。默认为 None。如果是 None 或 0，不进行缩放，否则将数据乘以所提供的值（在应用任何其他转换之前）。</p>
+</li>
+<li><p class="first"><strong>preprocessing_function</strong>: 应用于每个输入的函数。这个函数会在任何其他改变之前运行。这个函数需要一个参数：一张图像（秩为 3 的 Numpy 张量），并且应该输出一个同尺寸的 Numpy 张量。例如</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">noise</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+    <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">0.0005</span><span class="o">*</span><span class="n">height</span><span class="o">*</span><span class="n">width</span><span class="p">)):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+        <span class="n">image</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mi">255</span>
+    <span class="k">return</span> <span class="n">image</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+<div class="section" id="id4">
+<h3>组合1<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
 </div>
 
 
@@ -190,8 +330,6 @@
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../API/augment.html" class="btn btn-neutral float-right" title="augment module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="overview.html" class="btn btn-neutral" title="总览" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 该模块 :meth:`augment` 包含数据增强的类和函数。
-详细 :ref:`数据增强`
 """
 
 # Author: Sandiagal <sandiagal2525@gmail.com>,
@@ -21,18 +20,15 @@ import visul
 
 
 class AugmentGenerator(object):
-    """
-        sdsdsdsdsdsd
+    """数据增强生成器。
 
+    AugmentGenerator 将从指定目录下的 **origin** 文件夹中读取所有数据，并创建 **augment** 文件夹来存放增强数据。需要目录的具体格式可以参见参照 :ref:`目录结构`。为了保证处理成功，请保证目录内不存在 **Thumbs.db** 等隐藏文件。
 
-        当实例化 AugmentGenerator 时，什么都不会发生，做成类只是为了不要再一行内输入太多参数。
+    当实例化 AugmentGenerator 时，您需要指出数据所在目录地址和图像的输出尺寸。尽管部分模型支持多尺度输入，但同一批训练数据必须保持相同维度。您可以分批产生多尺度数据，再分批训练。
 
     Args:
         path (:obj:`str`): 数据所在目录地址。目录结构请参照 :ref:`目录结构`。
-        shape (:obj:`turple` of :obj:`int`, 可选): 所有的图像将以该尺寸来输出。格式为 `(width, height, channels)`，默认为`(336, 224, 3)`。
-
-
-
+        shape (:obj:`turple` of :obj:`int`, 可选): 所有的图像将以该尺寸来输出。格式为 `(width, height, channels)`，默认为 `(336, 224, 3)`。
     """
 
     def __init__(self,
@@ -42,12 +38,13 @@ class AugmentGenerator(object):
         self.shape = shape
 
     def normol_augment(self, datagen_args, augment_amount=10):
-        """
-        非监督数据增强。XXXXXXXXXXXXX
+        """非监督数据增强。
 
-        :param str datagen_args: XXXXXXXX
-        :param str augment_amount: 数据增广倍数，默认为10.
+        XXXXXXXXXXXXX
 
+        Args:
+            datagen_args (:obj:`dict`): 可选数据增强方法。选用的方法将依次叠加进行处理。所有支持方法的具体介绍可以参见参照 :ref:`数据增强方法`。
+            augment_amount (:obj:`int`, 可选): 数据增广倍数，默认为`10`。
 
         Examples:
 
@@ -57,7 +54,6 @@ class AugmentGenerator(object):
             ...         width_shift_range=0.05,
             ...         height_shift_range=0.05)
             >>> agmtgen.normol_augment(datagen_args=datagen_args, augment_amount=2)
-
             --->Start augmentation
             -->Processing for C1 [=========>. . . . . . . . . . . . . . . . . . . . ] 33.33%
             -->Processing for C2 [===================>. . . . . . . . . . ] 66.67%
