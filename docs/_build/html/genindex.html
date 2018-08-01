@@ -91,13 +91,15 @@
 <li class="toctree-l1"><a class="reference internal" href="preprocessing/overview.html">总览</a></li>
 <li class="toctree-l1"><a class="reference internal" href="preprocessing/augment.html">数据增强</a></li>
 </ul>
+<p class="caption"><span class="caption-text">模型与训练</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="models/models.html">内置模型</a></li>
+</ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="API/builtInModels.html">builtInModels module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API/dataset_io.html">dataset_io module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API/manifold.html">manifold module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API/metrics.html">metrics module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="API/preprocess.html">preprocess module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="API/visul.html">visul module</a></li>
 </ul>
 <p class="caption"><span class="caption-text">玄学时刻</span></p>
@@ -173,7 +175,6 @@
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
- | <a href="#F"><strong>F</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
@@ -204,11 +205,7 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/preprocess.html#preprocess.BaseCrop">BaseCrop (class in preprocess)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/builtInModels.html#module-builtInModels">builtInModels (module)</a>
+      <li><a href="preprocessing/augment.html#preprocess.BaseCrop">BaseCrop (class in preprocess)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -220,7 +217,7 @@
 </li>
       <li><a href="API/visul.html#visul.CAMs">CAMs() (in module visul)</a>
 </li>
-      <li><a href="API/preprocess.html#preprocess.BaseCrop.center_crop">center_crop() (preprocess.BaseCrop method)</a>
+      <li><a href="preprocessing/augment.html#preprocess.BaseCrop.center_crop">center_crop() (preprocess.BaseCrop method)</a>
 </li>
       <li><a href="API/metrics.html#metrics.classification_report">classification_report() (in module metrics)</a>
 </li>
@@ -252,15 +249,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="API/metrics.html#metrics.decode_predictions">decode_predictions() (in module metrics)</a>
 </li>
-      <li><a href="API/builtInModels.html#builtInModels.denseNetGAP">denseNetGAP() (in module builtInModels)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="F">F</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/builtInModels.html#builtInModels.FC1">FC1() (in module builtInModels)</a>
+      <li><a href="models/models.html#models.denseNetGAP">denseNetGAP() (in module models)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -268,7 +257,7 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/preprocess.html#preprocess.Imgaug">Imgaug (class in preprocess)</a>
+      <li><a href="preprocessing/augment.html#preprocess.Imgaug">Imgaug (class in preprocess)</a>
 </li>
       <li><a href="API/dataset_io.html#dataset_io.Dataset.imgs_augment">imgs_augment (dataset_io.Dataset attribute)</a>
 </li>
@@ -276,9 +265,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="API/dataset_io.html#dataset_io.Dataset.imgs_origin">imgs_origin (dataset_io.Dataset attribute)</a>
 </li>
-      <li><a href="API/builtInModels.html#builtInModels.inceptionResnetV2GAP">inceptionResnetV2GAP() (in module builtInModels)</a>
+      <li><a href="models/models.html#models.inceptionResnetV2GAP">inceptionResnetV2GAP() (in module models)</a>
 </li>
-      <li><a href="API/builtInModels.html#builtInModels.inceptionV3GAP">inceptionV3GAP() (in module builtInModels)</a>
+      <li><a href="models/models.html#models.inceptionV3GAP">inceptionV3GAP() (in module models)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -304,11 +293,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="preprocessing/augment.html#augment.cropGenerator.makedirs">makedirs() (augment.cropGenerator method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="API/metrics.html#module-metrics">metrics (module)</a>
 </li>
-      <li><a href="API/builtInModels.html#builtInModels.mobilenetGAP">mobilenetGAP() (in module builtInModels)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models/models.html#models.mobilenetGAP">mobilenetGAP() (in module models)</a>
+</li>
+      <li><a href="models/models.html#module-models">models (module)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -317,6 +308,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="API/dataset_io.html#dataset_io.Dataset.names_origin">names_origin (dataset_io.Dataset attribute)</a>
+</li>
+      <li><a href="models/models.html#models.NASNetGAP">NASNetGAP() (in module models)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -342,7 +335,7 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/preprocess.html#module-preprocess">preprocess (module)</a>
+      <li><a href="preprocessing/augment.html#module-preprocess">preprocess (module)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -350,13 +343,13 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/preprocess.html#preprocess.BaseCrop.random_crop">random_crop() (preprocess.BaseCrop method)</a>
+      <li><a href="preprocessing/augment.html#preprocess.BaseCrop.random_crop">random_crop() (preprocess.BaseCrop method)</a>
 </li>
-      <li><a href="API/preprocess.html#preprocess.RandomNoise">RandomNoise (class in preprocess)</a>
+      <li><a href="preprocessing/augment.html#preprocess.RandomNoise">RandomNoise (class in preprocess)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/builtInModels.html#builtInModels.resnet50GAP">resnet50GAP() (in module builtInModels)</a>
+      <li><a href="models/models.html#models.resnet50GAP">resnet50GAP() (in module models)</a>
 </li>
       <li><a href="API/dataset_io.html#dataset_io.reverse_dict">reverse_dict() (in module dataset_io)</a>
 </li>
@@ -384,6 +377,10 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models/models.html#models.top">top() (in module models)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="API/dataset_io.html#dataset_io.Dataset.train_test_split">train_test_split() (dataset_io.Dataset method)</a>
 </li>
   </ul></td>
@@ -391,6 +388,10 @@
 
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models/models.html#models.VGGGAP">VGGGAP() (in module models)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="API/visul.html#module-visul">visul (module)</a>
 </li>
@@ -408,7 +409,7 @@
 <h2 id="X">X</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/builtInModels.html#builtInModels.xceptionGAP">xceptionGAP() (in module builtInModels)</a>
+      <li><a href="models/models.html#models.xceptionGAP">xceptionGAP() (in module models)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -416,7 +417,7 @@
 <h2 id="Y">Y</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/builtInModels.html#builtInModels.YannLeCun">YannLeCun() (in module builtInModels)</a>
+      <li><a href="models/models.html#models.YannLeCun">YannLeCun() (in module models)</a>
 </li>
   </ul></td>
 </tr></table>

@@ -29,6 +29,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="内置模型" href="../models/models.html" />
     <link rel="prev" title="总览" href="overview.html" /> 
 
   
@@ -91,20 +92,21 @@
 <li class="toctree-l1"><a class="reference internal" href="overview.html">总览</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">数据增强</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-augment">API</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">数据增强方法</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id4">组合1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">数据增强方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">自定义方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-preprocess">API2</a></li>
 </ul>
 </li>
 </ul>
-</li>
+<p class="caption"><span class="caption-text">模型与训练</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../models/models.html">内置模型</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../API/builtInModels.html">builtInModels module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../API/dataset_io.html">dataset_io module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../API/manifold.html">manifold module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../API/metrics.html">metrics module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../API/preprocess.html">preprocess module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../API/visul.html">visul module</a></li>
 </ul>
 <p class="caption"><span class="caption-text">玄学时刻</span></p>
@@ -177,7 +179,7 @@
   <div class="section" id="id1">
 <span id="id2"></span><h1>数据增强<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <p>模型越复杂，所需的数据就越多。数据约少就越容易产生过拟合。在某些数据难以收集的问题上，可以采用 <code class="docutils literal"><span class="pre">数据增强</span></code> 的方法增广数据。<code class="docutils literal"><span class="pre">数据增强</span></code> 通过对有限的数据进行各种变换，从而产生更多的等价数据。比起人为收集更多数据，<code class="docutils literal"><span class="pre">数据增强</span></code> 完全免费，并且可以增强图像的多样性，从而提高模型的泛化能力。但 <code class="docutils literal"><span class="pre">数据增强</span></code> 并不能带来新的图像内容的，所以提升效果有限。</p>
-<div class="figure" id="id5">
+<div class="figure" id="id9">
 <img alt="Heavy augmentations" src="../_images/heavy.jpg" />
 <p class="caption"><span class="caption-text">单张图像的数据增强范例</span></p>
 </div>
@@ -193,8 +195,8 @@
 <em class="property">class </em><code class="descclassname">augment.</code><code class="descname">AugmentGenerator</code><span class="sig-paren">(</span><em>path</em>, <em>shape=None</em><span class="sig-paren">)</span><a class="headerlink" href="#augment.AugmentGenerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>数据增强生成器。</p>
-<p>AugmentGenerator 将从指定目录下的 <strong>origin</strong> 文件夹中读取所有数据，并创建 <strong>augment</strong> 文件夹来存放增强数据。需要目录的具体格式可以参见参照 <a class="reference internal" href="overview.html#id2"><span class="std std-ref">目录结构</span></a>。为了保证处理成功，请保证目录内不存在 <strong>Thumbs.db</strong> 等隐藏文件。</p>
-<p>当实例化 AugmentGenerator 时，您需要指出数据所在目录地址和图像的输出尺寸。尽管部分模型支持多尺度输入，但同一批训练数据必须保持相同维度。您可以分批产生多尺度数据，再分批训练。</p>
+<p><a class="reference internal" href="#augment.AugmentGenerator" title="augment.AugmentGenerator"><code class="xref py py-meth docutils literal"><span class="pre">AugmentGenerator()</span></code></a></p>
+<p>当实例化 <a class="reference internal" href="#augment.AugmentGenerator" title="augment.AugmentGenerator"><code class="xref py py-meth docutils literal"><span class="pre">AugmentGenerator()</span></code></a> 时，您需要指出数据所在目录地址和图像的输出尺寸。尽管部分模型支持多尺度输入，但同一批训练数据必须保持相同维度。您可以分批产生多尺度数据，再分批训练。</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -211,13 +213,21 @@
 <dt id="augment.AugmentGenerator.normol_augment">
 <code class="descname">normol_augment</code><span class="sig-paren">(</span><em>datagen_args</em>, <em>augment_amount=10</em><span class="sig-paren">)</span><a class="headerlink" href="#augment.AugmentGenerator.normol_augment" title="Permalink to this definition">¶</a></dt>
 <dd><p>非监督数据增强。</p>
-<p>XXXXXXXXXXXXX</p>
+<blockquote>
+<div><p><a class="reference internal" href="#augment.AugmentGenerator.normol_augment" title="augment.AugmentGenerator.normol_augment"><code class="xref py py-meth docutils literal"><span class="pre">normol_augment()</span></code></a> 将从指定目录下的 <cite>origin</cite> 文件夹中读取所有数据，并创建 <cite>augment</cite> 文件夹来存放增强数据。需要目录的具体格式可以参见参照 <a class="reference internal" href="overview.html#id2"><span class="std std-ref">目录结构</span></a>。为了保证处理成功，请保证目录内不存在 <strong>Thumbs.db</strong> 等隐藏文件。</p>
+<p>函数将按照 <code class="docutils literal"><span class="pre">datagen_args</span></code> 中设定的方法对所给图像进行 <code class="docutils literal"><span class="pre">augment_amount</span></code> 次数据增强。</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><a class="reference internal" href="#augment.AugmentGenerator.normol_augment" title="augment.AugmentGenerator.normol_augment"><code class="xref py py-meth docutils literal"><span class="pre">normol_augment()</span></code></a> 实际是调用了 keras的 <a class="reference external" href="https://github.com/aleju/imgaug">ImageDataGenerator</a> 方法来增强数据。ImageDataGenerator在保存生成的增强数据时会在文件名后添加”_0_%4d”的随机数。当后续生成的随机数与前面的重复时，将会覆盖前一个生成的增强数据，导致实际增广倍数与设定不一。</p>
+<p class="last">这对于 <a class="reference internal" href="../API/dataset_io.html#dataset_io.Dataset.cross_split" title="dataset_io.Dataset.cross_split"><code class="xref py py-meth docutils literal"><span class="pre">dataset_io.Dataset.cross_split()</span></code></a>，数据集分割中只提取 <strong>训练集</strong> 部分的增强数据的函数，将会产生致命的错误。对此已经采取了一定缓解措施：另外添加了”%5d”的随机数，这样单个图像覆盖的概率为1e-7%。尽管如此，依旧强烈建议 <strong>手动检查 `augment` 文件夹中是否发生了覆盖现象</strong>。</p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>datagen_args</strong> (<code class="xref py py-obj docutils literal"><span class="pre">dict</span></code>) – 可选数据增强方法。选用的方法将依次叠加进行处理。所有支持方法的具体介绍可以参见参照 <span class="xref std std-ref">数据增强方法</span>。</li>
+<li><strong>datagen_args</strong> (<code class="xref py py-obj docutils literal"><span class="pre">dict</span></code>) – 可选数据增强方法。选用的方法将依次叠加进行处理。所有支持方法的具体介绍可以参见参照 <a class="reference internal" href="#id3"><span class="std std-ref">数据增强方法</span></a>。</li>
 <li><strong>augment_amount</strong> (<code class="xref py py-obj docutils literal"><span class="pre">int</span></code>, 可选) – 数据增广倍数，默认为`10`。</li>
 </ul>
 </td>
@@ -261,32 +271,25 @@
 
 </div>
 <div class="section" id="id3">
-<h2>数据增强方法<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<span id="id4"></span><h2>数据增强方法<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="#augment.AugmentGenerator.normol_augment" title="augment.AugmentGenerator.normol_augment"><code class="xref py py-meth docutils literal"><span class="pre">AugmentGenerator.normol_augment()</span></code></a> 目前支持以下数据增强方法。对于指定参数的方法，如果为 <cite>rotation_range=30</cite>，在实际运算时，具体参数将在0-30之间随机选取。</p>
 <blockquote>
-<div><ul>
-<li><p class="first"><strong>samplewise_center</strong>: 布尔值。将每个样本的均值设置为 0。</p>
-</li>
-<li><p class="first"><strong>samplewise_std_normalization</strong>: 布尔值。将每个输入除以其标准差。</p>
-</li>
-<li><p class="first"><strong>zca_epsilon</strong>: ZCA 白化的 epsilon 值，默认为 1e-6。</p>
-</li>
-<li><p class="first"><strong>zca_whitening</strong>: 布尔值。应用 ZCA 白化。</p>
-</li>
-<li><p class="first"><strong>rotation_range</strong>: 整形数。随机旋转的度数范围。</p>
-</li>
-<li><p class="first"><strong>width_shift_range</strong>: 浮点数（总宽度的比例）。随机水平移动的范围。</p>
-</li>
-<li><p class="first"><strong>height_shift_range</strong>: 浮点数（总高度的比例）。随机垂直移动的范围。</p>
-</li>
-<li><p class="first"><strong>shear_range</strong>: 浮点数。剪切强度（以弧度逆时针方向剪切角度）。</p>
-</li>
-<li><p class="first"><strong>zoom_range</strong>: 浮点数或[lower, upper]。随机缩放范围。如果是浮点数，<cite>[lower, upper] = [1-zoom_range, 1+zoom_range]</cite>。</p>
-</li>
-<li><p class="first"><strong>channel_shift_range</strong>: 浮点数。随机通道转换的范围。</p>
-</li>
-<li><dl class="first docutils">
-<dt><strong>fill_mode</strong>: {“constant”, “nearest”, “reflect” or “wrap”} 之一。输入边界以外的点根据给定的模式填充：</dt>
+<div><ul class="simple">
+<li><strong>samplewise_center</strong>: 布尔值。将每个样本的均值设置为 0。</li>
+<li><strong>samplewise_std_normalization</strong>: 布尔值。将每个输入除以其标准差。</li>
+<li><strong>zca_epsilon</strong>: ZCA 白化的 epsilon 值，默认为 1e-6。</li>
+<li><strong>zca_whitening</strong>: 布尔值。应用 ZCA 白化。</li>
+<li><strong>rotation_range</strong>: 整形数。随机旋转的度数范围。</li>
+<li><strong>width_shift_range</strong>: 浮点数（总宽度的比例）。随机水平移动的范围。</li>
+<li><strong>height_shift_range</strong>: 浮点数（总高度的比例）。随机垂直移动的范围。</li>
+<li><strong>shear_range</strong>: 浮点数。剪切强度（以弧度逆时针方向剪切角度）。</li>
+<li><strong>zoom_range</strong>: 浮点数或[lower, upper]。随机缩放范围。如果是浮点数，<cite>[lower, upper] = [1-zoom_range, 1+zoom_range]</cite>。</li>
+<li><strong>channel_shift_range</strong>: 浮点数。随机通道转换的范围。</li>
+<li><strong>fill_mode</strong>:</li>
+</ul>
+<p>{“constant”, “nearest”, “reflect” or “wrap”} 之一。</p>
+<dl class="docutils">
+<dt>输入边界以外的点根据给定的模式填充</dt>
 <dd><ul class="first last simple">
 <li>“constant”: <cite>kkkkkkkk|abcd|kkkkkkkk</cite> (<cite>cval=k</cite>)</li>
 <li>“nearest”: <cite>aaaaaaaa|abcd|dddddddd</cite></li>
@@ -295,16 +298,18 @@
 </ul>
 </dd>
 </dl>
-</li>
-<li><p class="first"><strong>cval</strong>: 浮点数或整数。用于边界之外的点的值，当 <cite>fill_mode = “constant”</cite> 时。</p>
-</li>
-<li><p class="first"><strong>horizontal_flip</strong>: 布尔值。随机水平翻转。</p>
-</li>
-<li><p class="first"><strong>vertical_flip</strong>: 布尔值。随机垂直翻转。</p>
-</li>
-<li><p class="first"><strong>rescale</strong>: 重缩放因子。默认为 None。如果是 None 或 0，不进行缩放，否则将数据乘以所提供的值（在应用任何其他转换之前）。</p>
-</li>
-<li><p class="first"><strong>preprocessing_function</strong>: 应用于每个输入的函数。这个函数会在任何其他改变之前运行。这个函数需要一个参数：一张图像（秩为 3 的 Numpy 张量），并且应该输出一个同尺寸的 Numpy 张量。例如</p>
+<ul class="simple">
+<li><strong>cval</strong>: 浮点数或整数。用于边界之外的点的值，当 <cite>fill_mode = “constant”</cite> 时。</li>
+<li><strong>horizontal_flip</strong>: 布尔值。随机水平翻转。</li>
+<li><strong>vertical_flip</strong>: 布尔值。随机垂直翻转。</li>
+<li><strong>rescale</strong>: 重缩放因子。默认为 None。如果是 None 或 0，不进行缩放，否则将数据乘以所提供的值（在应用任何其他转换之前）。</li>
+<li><strong>preprocessing_function</strong>: 自定义数据增强算法的接口。具体介绍可以参见参照 <a class="reference internal" href="#id5"><span class="std std-ref">自定义方法</span></a>。</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="id5">
+<span id="id6"></span><h2>自定义方法<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>应用于每个输入的函数。这个函数会在任何其他改变之前运行。这个函数需要一个参数：一张图像（秩为 3 的 Numpy 张量），并且应该输出一个同尺寸的 Numpy 张量。例如</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">noise</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
     <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">0.0005</span><span class="o">*</span><span class="n">height</span><span class="o">*</span><span class="n">width</span><span class="p">)):</span>
@@ -314,12 +319,38 @@
     <span class="k">return</span> <span class="n">image</span>
 </pre></div>
 </div>
-</li>
-</ul>
-</div></blockquote>
-<div class="section" id="id4">
-<h3>组合1<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 </div>
+<div class="section" id="module-preprocess">
+<span id="api2"></span><h2>API2<a class="headerlink" href="#module-preprocess" title="Permalink to this headline">¶</a></h2>
+<p>该模块:<a href="#id7"><span class="problematic" id="id8">`</span></a>dataset_io`包含读取数据集以及数据集分割的类和函数。</p>
+<dl class="class">
+<dt id="preprocess.BaseCrop">
+<em class="property">class </em><code class="descclassname">preprocess.</code><code class="descname">BaseCrop</code><span class="sig-paren">(</span><em>mode='center_crop'</em>, <em>crop_size=(100</em>, <em>100)</em>, <em>seed=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#preprocess.BaseCrop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="preprocess.BaseCrop.center_crop">
+<code class="descname">center_crop</code><span class="sig-paren">(</span><em>img</em>, <em>crop_size</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#preprocess.BaseCrop.center_crop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="preprocess.BaseCrop.random_crop">
+<code class="descname">random_crop</code><span class="sig-paren">(</span><em>img</em>, <em>crop_size</em>, <em>seed=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#preprocess.BaseCrop.random_crop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="preprocess.Imgaug">
+<em class="property">class </em><code class="descclassname">preprocess.</code><code class="descname">Imgaug</code><span class="sig-paren">(</span><em>Sequential</em><span class="sig-paren">)</span><a class="headerlink" href="#preprocess.Imgaug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="preprocess.RandomNoise">
+<em class="property">class </em><code class="descclassname">preprocess.</code><code class="descname">RandomNoise</code><span class="sig-paren">(</span><em>mode='gaussian'</em>, <em>seed=None</em>, <em>clip=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#preprocess.RandomNoise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
 </div>
 </div>
 
@@ -330,6 +361,8 @@
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../models/models.html" class="btn btn-neutral float-right" title="内置模型" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="overview.html" class="btn btn-neutral" title="总览" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

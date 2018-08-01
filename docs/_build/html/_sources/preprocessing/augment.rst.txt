@@ -29,6 +29,8 @@ API
     :undoc-members:
     :show-inheritance:
 
+.. _数据增强方法:
+    
 数据增强方法
 --------------------
     
@@ -44,7 +46,10 @@ API
     - **shear_range**: 浮点数。剪切强度（以弧度逆时针方向剪切角度）。
     - **zoom_range**: 浮点数或[lower, upper]。随机缩放范围。如果是浮点数，`[lower, upper] = [1-zoom_range, 1+zoom_range]`。
     - **channel_shift_range**: 浮点数。随机通道转换的范围。
-    - **fill_mode**: {"constant", "nearest", "reflect" or "wrap"} 之一。输入边界以外的点根据给定的模式填充：
+    - **fill_mode**: 
+    {"constant", "nearest", "reflect" or "wrap"} 之一。
+    
+    输入边界以外的点根据给定的模式填充
         - "constant": `kkkkkkkk|abcd|kkkkkkkk` (`cval=k`)
         - "nearest": `aaaaaaaa|abcd|dddddddd`
         - "reflect": `abcddcba|abcd|dcbaabcd`
@@ -53,7 +58,15 @@ API
     - **horizontal_flip**: 布尔值。随机水平翻转。
     - **vertical_flip**: 布尔值。随机垂直翻转。
     - **rescale**: 重缩放因子。默认为 None。如果是 None 或 0，不进行缩放，否则将数据乘以所提供的值（在应用任何其他转换之前）。
-    - **preprocessing_function**: 应用于每个输入的函数。这个函数会在任何其他改变之前运行。这个函数需要一个参数：一张图像（秩为 3 的 Numpy 张量），并且应该输出一个同尺寸的 Numpy 张量。例如 ::
+    - **preprocessing_function**: 自定义数据增强算法的接口。具体介绍可以参见参照 :ref:`自定义方法`。
+    
+.. _自定义方法:
+    
+自定义方法
+--------------------
+
+
+应用于每个输入的函数。这个函数会在任何其他改变之前运行。这个函数需要一个参数：一张图像（秩为 3 的 Numpy 张量），并且应该输出一个同尺寸的 Numpy 张量。例如 ::
 
         def noise(image):
             height, width = image.shape[:2]
@@ -63,6 +76,18 @@ API
                 image[x, y, :] = 255
             return image
     
-组合1
-````````````````````
+
+
+API2
+--------------------
+
+.. automodule:: preprocess
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+
+
+
     

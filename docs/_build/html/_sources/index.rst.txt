@@ -46,6 +46,19 @@ IDIPLAB_CV说明文档
 :doc:`preprocessing/augment`
     数据增强。
 
+    
+模型与训练
+--------------------
+    
+.. toctree::
+    :caption: 模型与训练
+    :hidden:
+
+    models/models
+
+:doc:`models/models`
+    数据预处理模块功能一览。
+    
 API
 --------------------
 
@@ -53,17 +66,10 @@ API
     :caption: API
     :hidden:
 
-    API/augment
-    API/builtInModels
     API/dataset_io
     API/manifold
     API/metrics
-    API/preprocess
     API/visul
-    
-:doc:`API/augment`
-    数据增强。
-    
     
 玄学时刻
 --------------------

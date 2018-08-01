@@ -22,9 +22,9 @@ import visul
 class AugmentGenerator(object):
     """数据增强生成器。
 
-    AugmentGenerator 将从指定目录下的 **origin** 文件夹中读取所有数据，并创建 **augment** 文件夹来存放增强数据。需要目录的具体格式可以参见参照 :ref:`目录结构`。为了保证处理成功，请保证目录内不存在 **Thumbs.db** 等隐藏文件。
+    :meth:`AugmentGenerator`
 
-    当实例化 AugmentGenerator 时，您需要指出数据所在目录地址和图像的输出尺寸。尽管部分模型支持多尺度输入，但同一批训练数据必须保持相同维度。您可以分批产生多尺度数据，再分批训练。
+    当实例化 :meth:`AugmentGenerator` 时，您需要指出数据所在目录地址和图像的输出尺寸。尽管部分模型支持多尺度输入，但同一批训练数据必须保持相同维度。您可以分批产生多尺度数据，再分批训练。
 
     Args:
         path (:obj:`str`): 数据所在目录地址。目录结构请参照 :ref:`目录结构`。
@@ -40,7 +40,16 @@ class AugmentGenerator(object):
     def normol_augment(self, datagen_args, augment_amount=10):
         """非监督数据增强。
 
-        XXXXXXXXXXXXX
+         :meth:`normol_augment` 将从指定目录下的 `origin` 文件夹中读取所有数据，并创建 `augment` 文件夹来存放增强数据。需要目录的具体格式可以参见参照 :ref:`目录结构`。为了保证处理成功，请保证目录内不存在 **Thumbs.db** 等隐藏文件。
+
+         函数将按照 ``datagen_args`` 中设定的方法对所给图像进行 ``augment_amount`` 次数据增强。
+
+        Note:
+            :meth:`normol_augment` 实际是调用了 keras的 ImageDataGenerator_ 方法来增强数据。ImageDataGenerator在保存生成的增强数据时会在文件名后添加"_0_%4d"的随机数。当后续生成的随机数与前面的重复时，将会覆盖前一个生成的增强数据，导致实际增广倍数与设定不一。
+
+            这对于 :meth:`dataset_io.Dataset.cross_split`，数据集分割中只提取 **训练集** 部分的增强数据的函数，将会产生致命的错误。对此已经采取了一定缓解措施：另外添加了"%5d"的随机数，这样单个图像覆盖的概率为1e-7%。尽管如此，依旧强烈建议 **手动检查 `augment` 文件夹中是否发生了覆盖现象**。
+
+            .. _ImageDataGenerator: https://github.com/aleju/imgaug
 
         Args:
             datagen_args (:obj:`dict`): 可选数据增强方法。选用的方法将依次叠加进行处理。所有支持方法的具体介绍可以参见参照 :ref:`数据增强方法`。
@@ -60,8 +69,6 @@ class AugmentGenerator(object):
             -->Processing for C3 [=============================>] 100.00%
             [=============================>] 100.00%
             Cost time: 30.498 s
-
-
 
         """
         print("--->Start augmentation")

@@ -18,7 +18,7 @@ IDIPLAB_CV是一个由IDIPLAB开发的用于机器视觉的顶层工具包，涵
 
 - [anaconda](https://www.anaconda.com/download/): 一个开源的包、环境管理器，可以用于在同一个机器上安装不同版本的软件包及其依赖，并能够在不同的环境之间切换。
 
-- **第三方库**: 运行IDIPLAB_CV所需要的基本库。
+- **第三方库**: 运行**idiplab_cv**所需要的基本库。
 
   ```powershell
   pip install -r requirements.txt
@@ -46,9 +46,15 @@ IDIPLAB_CV是一个由IDIPLAB开发的用于机器视觉的顶层工具包，涵
 
     - [imgaug](https://github.com/aleju/imgaug): 强大的数据增强算法库。
 
+        ```powershell
+        pip install imgaug
+        ```
+
+        ​
+
 ## 如何使用
 
-- 将名为**idiplab_cv**的文件夹放置到工程根目录内，导入相关函数即可使用。
+- 将名为`idiplab_cv`的文件夹放置到工程根目录内，导入相关函数即可使用。
 
   ```python
   import idiplab_cv
@@ -70,6 +76,6 @@ IDIPLAB_CV是一个由IDIPLAB开发的用于机器视觉的顶层工具包，涵
 
 
 
-- 详细使用方法请阅读说明文档：[**GitHub Wiki（20%）**](https://github.com/Sandiagal/IDIPLAB_CV/wiki)、[**Read the Docs（25%）**](https://idiplab-cv.readthedocs.io/zh/latest/)。
+- 详细使用方法请阅读说明文档：[**GitHub Wiki（20%）**](https://github.com/Sandiagal/IDIPLAB_CV/wiki)、[**Read the Docs（30%）**](https://idiplab-cv.readthedocs.io/zh/latest/)。
 - 遇见还没写入文档又急着利用的功能时，可以从工程的`test`文件夹中获得项目的测试范例，自行理解使用。
 
