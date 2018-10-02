@@ -19,9 +19,9 @@
 
 ``数据增强`` 可以大致分为2种：非监督数据增强、监督数据增强。
 
-该模块将完成通用的数据增强方法。
+:meth:`augment`将完成通用的非监督数据增强方法。
 
-API
+idiplab_cv.augment API
 --------------------
 
 .. automodule:: augment
@@ -34,51 +34,73 @@ API
 数据增强方法
 --------------------
     
-:meth:`AugmentGenerator.normol_augment` 目前支持以下数据增强方法。对于指定参数的方法，如果为 `rotation_range=30`，在实际运算时，具体参数将在0-30之间随机选取。
+:meth:`AugmentGenerator.normol_augment` 目前支持以下 ``数据增强`` 方法。对于指定参数的方法，如果为 `rotation_range=30`，在实际运算时，具体参数将在0-30之间随机选取。
     
+    - **featurewise_center**: 布尔值。将输入数据的均值设置为 0，逐特征进行。
     - **samplewise_center**: 布尔值。将每个样本的均值设置为 0。
+    - **featurewise_std_normalization**: 布尔值。将输入除以数据标准差，逐特征进行。
     - **samplewise_std_normalization**: 布尔值。将每个输入除以其标准差。
     - **zca_epsilon**: ZCA 白化的 epsilon 值，默认为 1e-6。
     - **zca_whitening**: 布尔值。应用 ZCA 白化。
     - **rotation_range**: 整形数。随机旋转的度数范围。
-    - **width_shift_range**: 浮点数（总宽度的比例）。随机水平移动的范围。
-    - **height_shift_range**: 浮点数（总高度的比例）。随机垂直移动的范围。
+    - **width_shift_range**: 浮点数、一维数组或整数。随机水平移动的范围。
+        - float: 如果 <1，则是除以总宽度的值，或者如果 >=1，则为像素值。
+        - 1-D 数组: 数组中的随机元素。
+        - int: 来自间隔 `(-width_shift_range, +width_shift_range)` 之间的整数个像素。
+        - `width_shift_range=2` 时，可能值是整数 `[-1, 0, +1]`，与 `width_shift_range=[-1, 0, +1]` 相同；而 `width_shift_range=1.0` 时，可能值是 `[-1.0, +1.0)` 之间的浮点数。
+    - **height_shift_range**: 浮点数、一维数组或整数。随机垂直移动的范围。参数使用同 **width_shift_range**。
     - **shear_range**: 浮点数。剪切强度（以弧度逆时针方向剪切角度）。
     - **zoom_range**: 浮点数或[lower, upper]。随机缩放范围。如果是浮点数，`[lower, upper] = [1-zoom_range, 1+zoom_range]`。
     - **channel_shift_range**: 浮点数。随机通道转换的范围。
-    - **fill_mode**: 
-    {"constant", "nearest", "reflect" or "wrap"} 之一。
-    
-    输入边界以外的点根据给定的模式填充
-        - "constant": `kkkkkkkk|abcd|kkkkkkkk` (`cval=k`)
-        - "nearest": `aaaaaaaa|abcd|dddddddd`
-        - "reflect": `abcddcba|abcd|dcbaabcd`
-        - "wrap": `abcdabcd|abcd|abcdabcd`
+    - **fill_mode**: {"constant", "nearest", "reflect" or "wrap"} 之一。默认为'nearest'。输入边界以外的点根据给定的模式填充：
+        - 'constant': kkkkkkkk|abcd|kkkkkkkk (cval=k)
+        - 'nearest': aaaaaaaa|abcd|dddddddd
+        - 'reflect': abcddcba|abcd|dcbaabcd
+        - 'wrap': abcdabcd|abcd|abcdabcd
     - **cval**: 浮点数或整数。用于边界之外的点的值，当 `fill_mode = "constant"` 时。
     - **horizontal_flip**: 布尔值。随机水平翻转。
     - **vertical_flip**: 布尔值。随机垂直翻转。
     - **rescale**: 重缩放因子。默认为 None。如果是 None 或 0，不进行缩放，否则将数据乘以所提供的值（在应用任何其他转换之前）。
-    - **preprocessing_function**: 自定义数据增强算法的接口。具体介绍可以参见参照 :ref:`自定义方法`。
+    - **preprocessing_function**: 自定义 ``数据增强`` 算法的接口。具体介绍可以参见参照 :ref:`自定义方法`。
+    - **data_format**: 图像数据格式，{"channels_first", "channels_last"} 之一。"channels_last" 模式表示图像输入尺寸应该为 `(samples, height, width, channels)`，"channels_first" 模式表示输入尺寸应该为 `(samples, channels, height, width)`。默认为 在 Keras 配置文件 `~/.keras/keras.json` 中的 `image_data_format` 值。如果你从未设置它，那它就是 "channels_last"。
     
 .. _自定义方法:
     
 自定义方法
 --------------------
 
+除了在 :ref:`自定义方法` 提到的各种方法，该模块还提供了自定义 ``数据增强`` 方法的接口。将编写的函数作为参数传入 **preprocessing_function** 中，这个函数会在任何其他改变 *之前* 运行。这个函数需要一个参数：一张图像（秩为 3 的 Numpy 张量），并且应该输出一个同尺寸的 Numpy 张量。例如 ::
 
-应用于每个输入的函数。这个函数会在任何其他改变之前运行。这个函数需要一个参数：一张图像（秩为 3 的 Numpy 张量），并且应该输出一个同尺寸的 Numpy 张量。例如 ::
+    def noise(image):
+        height, width = image.shape[:2]
+        for i in range(int(0.0005*height*width)):
+            x = np.random.randint(0, height)
+            y = np.random.randint(0, width)
+            image[x, y, :] = 255
+        return image
 
-        def noise(image):
+    preprocessing_function = noise
+    
+注意到上述方法无法控制内部参数，适合简单的 ``数据增强`` 方法。对于多变而复杂的方法，推荐使用 :obj:`class` 的方式编写方法。例如 ::
+
+    class noise(object):
+
+        def __init__(self, amount):
+            self.amount = amount
+
+        def __call__(self, img):
             height, width = image.shape[:2]
-            for i in range(int(0.0005*height*width)):
+            for i in range(int(self.amount*height*width)):
                 x = np.random.randint(0, height)
                 y = np.random.randint(0, width)
                 image[x, y, :] = 255
-            return image
-    
+            return img
 
+    preprocessing_function = noise(0.0005)
 
-API2
+当然 :ref:`idiplab_cv.preprocess API`。
+
+idiplab_cv.preprocess API
 --------------------
 
 .. automodule:: preprocess
