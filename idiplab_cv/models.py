@@ -3,9 +3,7 @@
 该模块 :meth:`models` 包含内置模型的类和函数。
 
 Note:
-        请注意 :meth:`models` 中的 `input_shape` 与其他模块中的不同。
-
-        其他模块的格式为 `(width, height, channel)`，这里的为 `(height, width, channel)`。
+        请注意 :meth:`models` 中的 `input_shape` 的格式为 `(height, width, channel)`。
 """
 
 # Author: Sandiagal <sandiagal2525@gmail.com>,
@@ -78,7 +76,7 @@ def YannLeCun(input_shape):
     return model
 
 
-def xceptionGAP(input_shape, classes):
+def xceptionGAP(input_shape, classes, dropout=1e-3, include_top=True):
     """
     feature_layer = "block14_sepconv2_act"
 
@@ -91,13 +89,16 @@ def xceptionGAP(input_shape, classes):
         input_shape=input_shape,
         pooling="avg")
     x = base_model.output
-    x = Dense(classes, activation='softmax', name='predictions')(x)
+
+    if include_top is True:
+        x = Dropout(dropout, name='dropout')(x)
+        x = Dense(classes, activation='softmax', name='predictions')(x)
 
     model = Model(inputs=base_model.input, outputs=x)
     return model
 
 
-def VGGGAP(input_shape, classes, depth):
+def VGGGAP(input_shape, classes, depth, dropout=1e-3, include_top=True):
     """
     feature_layer = "block5_pool"
 
@@ -126,7 +127,7 @@ def VGGGAP(input_shape, classes, depth):
     return model
 
 
-def resnet50GAP(input_shape, classes):
+def resnet50GAP(input_shape, classes, dropout=1e-3, include_top=True):
     """
     feature_layer = "activation_49"
 
@@ -138,13 +139,16 @@ def resnet50GAP(input_shape, classes):
         input_shape=input_shape,
         pooling="avg")
     x = base_model.output
-    x = Dense(classes, activation='softmax', name='fc1000')(x)
+
+    if include_top is True:
+        x = Dropout(dropout, name='dropout')(x)
+        x = Dense(classes, activation='softmax', name='predictions')(x)
 
     model = Model(inputs=base_model.input, outputs=x)
     return model
 
 
-def inceptionV3GAP(input_shape, classes):
+def inceptionV3GAP(input_shape, classes, dropout=1e-3, include_top=True):
     """
     feature_layer = "mixed10"
 
@@ -156,13 +160,16 @@ def inceptionV3GAP(input_shape, classes):
         input_shape=input_shape,
         pooling="avg")
     x = base_model.output
-    x = Dense(classes, activation='softmax', name='predictions')(x)
+
+    if include_top is True:
+        x = Dropout(dropout, name='dropout')(x)
+        x = Dense(classes, activation='softmax', name='predictions')(x)
 
     model = Model(inputs=base_model.input, outputs=x)
     return model
 
 
-def inceptionResnetV2GAP(input_shape, classes):
+def inceptionResnetV2GAP(input_shape, classes, dropout=1e-3, include_top=True):
     """
     feature_layer = "conv_7b_ac"
 
@@ -174,13 +181,16 @@ def inceptionResnetV2GAP(input_shape, classes):
         input_shape=input_shape,
         pooling="avg")
     x = base_model.output
-    x = Dense(classes, activation='softmax', name='predictions')(x)
+
+    if include_top is True:
+        x = Dropout(dropout, name='dropout')(x)
+        x = Dense(classes, activation='softmax', name='predictions')(x)
 
     model = Model(inputs=base_model.input, outputs=x)
     return model
 
 
-def mobilenetGAP(input_shape, classes, dropout=1e-3, include_top=True):
+def mobilenetGAP(input_shape, classes, dropout=1e-3, include_top=True, finalAct="softmax"):
     """在 ImageNet 上预训练的 MobileNet 模型。
 
     Args:
@@ -198,7 +208,7 @@ def mobilenetGAP(input_shape, classes, dropout=1e-3, include_top=True):
 
     feature_layer = "conv_pw_13_relu"
 
-    weight_layer = "conv_preds"
+    weight_layer = "predictions"
 
 
     """
@@ -218,19 +228,19 @@ def mobilenetGAP(input_shape, classes, dropout=1e-3, include_top=True):
     x = base_model.output
 
     if include_top is True:
-    #    x = Reshape((1, 1, 1024), name='reshape_1')(x)
+        #    x = Reshape((1, 1, 1024), name='reshape_1')(x)
         x = Dropout(dropout, name='dropout')(x)
     #    x = Conv2D(classes, (1, 1),
     #               padding='same', name='conv_preds')(x)
     #    x = Activation('softmax', name='act_softmax')(x)
     #    x = Reshape((classes,), name='reshape')(x)
-        x = Dense(classes, activation='softmax', name='predictions')(x)
+        x = Dense(classes, activation=finalAct, name='predictions')(x)
 
     model = Model(inputs=base_model.input, outputs=x)
     return model
 
 
-def denseNetGAP(input_shape, classes, depth):
+def denseNetGAP(input_shape, classes, depth, dropout=1e-3, include_top=True):
     """
     feature_layer = "conv5_block16_concat"
 
@@ -261,13 +271,16 @@ def denseNetGAP(input_shape, classes, depth):
             pooling="avg")
 
     x = base_model.output
-    x = Dense(classes, activation='softmax', name='predictions')(x)
+
+    if include_top is True:
+        x = Dropout(dropout, name='dropout')(x)
+        x = Dense(classes, activation='softmax', name='predictions')(x)
 
     model = Model(inputs=base_model.input, outputs=x)
     return model
 
 
-def NASNetGAP(input_shape, classes, MorL):
+def NASNetGAP(input_shape, classes, MorL, dropout=1e-3, include_top=True):
     """
     feature_layer = "activation_376"
 
@@ -300,13 +313,16 @@ def NASNetGAP(input_shape, classes, MorL):
         new_layer.set_weights(layer.get_weights())
 
     x = base_model.output
-    x = Dense(classes, activation='softmax', name='predictions')(x)
+
+    if include_top is True:
+        x = Dropout(dropout, name='dropout')(x)
+        x = Dense(classes, activation='softmax', name='predictions')(x)
 
     model = Model(inputs=base_model.input, outputs=x)
     return model
 
 
-def top(input_shape, classes, dropout=1e-3):
+def top(input_shape, classes, dropout=1e-3, finalAct="softmax"):
     """通用top层。
 
     如果模型去掉了顶层的全连接层，可以用 :meth:`top` 来衔接得到分类结果。
@@ -321,22 +337,21 @@ def top(input_shape, classes, dropout=1e-3):
 
     model.add(Dropout(dropout, input_shape=input_shape, name='dropout'))
     model.add(Dense(
-            units=classes,
-            activation='softmax',
-            name='predictions'))
+        units=classes,
+        activation=finalAct,
+        name='predictions'))
 
     return model
 
 # %%
 
 
-# input_shape = (324, 224, 3)  # 32的倍数
-#lenn = 11
-#model = denseNetGAP(input_shape, lenn, 201)
-# model.compile(optimizer="adam", loss='categorical_crossentropy',
-#              metrics=['accuracy'])
-# plot_model(model, to_file='5.4.png', show_shapes=True)
-# model.summary()
+input_shape = (224, 224, 3)  # 32的倍数
+classes=11
+model = mobilenetGAP(input_shape, classes, dropout=1e-3, include_top=True, finalAct="softmax")
+model.compile(optimizer="adam", loss='categorical_crossentropy',
+              metrics=['accuracy'])
+model.summary()
 #
 #
 #from PIL import Image

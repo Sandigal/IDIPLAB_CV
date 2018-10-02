@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 该模块:`dataset_io`包含读取数据集以及数据集分割的类和函数。
+
+Note:
+        请注意 :meth:`models` 中的 `input_shape` 的格式为 `(height, width, channel)`。
 """
 
 # Author: Sandiagal <sandiagal2525@gmail.com>,
@@ -17,13 +20,25 @@ class RandomNoise(object):
                  seed=None,
                  clip=True,
                  **kwargs):
-        """
+        """随机噪声。
+
+        调用 ``skimage.util.random_noise`` 来产生随机噪声。
+
         Args:
-            param1 (int): The first parameter.
-            param2 (:obj:`str`, optional): The second parameter. Defaults to None.
-                Second line of description should be indented.
-            *args: Variable length argument list.
-            **kwargs: Arbitrary keyword arguments.
+            mode (:obj:`str`): 只能接受以下代表噪声方法的字符串之一。
+            ‘gaussian’ Gaussian-distributed additive noise.
+            ‘localvar’ Gaussian-distributed additive noise, with specified local variance at each point of image
+            ‘poisson’ Poisson-distributed noise generated from the data.
+            ‘salt’ Replaces random pixels with 1.
+            ‘pepper’ Replaces random pixels with 0 (for unsigned images) or -1 (for signed images).
+            ‘s&p’ Replaces random pixels with either 1 or low_val, where low_val is 0 for unsigned images or -1 for signed images.
+            ‘speckle’ Multiplicative noise using out = image + n*image, where n is uniform noise with specified mean & variance.
+            seed (:obj:`int`, 可选): 随机数种子。默认为 ``None``。
+            clip (:obj:`bool`, 可选): 加入噪声后，像素值若超过图像数据范围，将其限制在范围内。默认为 ``True``。
+            **kwargs (:obj:`args`, 可选): 其他参数，可以参照 skimage.util.random_noise_。
+
+            .. _skimage.util.random_noise: http://scikit-image.org/docs/dev/api/skimage.util.html#skimage.util.random_noise
+
         """
         self.mode = mode
         self.seed = seed
@@ -31,6 +46,8 @@ class RandomNoise(object):
         self.kwargs = kwargs
 
     def __call__(self, img):
+        print(type(img))
+        print(img.shape)
         img = img/255
         img = random_noise(img,
                            mode=self.mode,

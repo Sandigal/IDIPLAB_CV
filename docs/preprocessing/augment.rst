@@ -19,9 +19,9 @@
 
 ``数据增强`` 可以大致分为2种：非监督数据增强、监督数据增强。
 
-:meth:`augment`将完成通用的非监督数据增强方法。
+:ref:`augment` 将完成通用的非监督数据增强方法。
 
-idiplab_cv.augment API
+augment
 --------------------
 
 .. automodule:: augment
@@ -36,12 +36,12 @@ idiplab_cv.augment API
     
 :meth:`AugmentGenerator.normol_augment` 目前支持以下 ``数据增强`` 方法。对于指定参数的方法，如果为 `rotation_range=30`，在实际运算时，具体参数将在0-30之间随机选取。
     
-    - **featurewise_center**: 布尔值。将输入数据的均值设置为 0，逐特征进行。
-    - **samplewise_center**: 布尔值。将每个样本的均值设置为 0。
+    - **featurewise_center**: :obj:`bool`。将输入数据的均值设置为 0，逐特征进行。
+    - **samplewise_center**: :obj:`bool`。将每个样本的均值设置为 0。
     - **featurewise_std_normalization**: 布尔值。将输入除以数据标准差，逐特征进行。
     - **samplewise_std_normalization**: 布尔值。将每个输入除以其标准差。
     - **zca_epsilon**: ZCA 白化的 epsilon 值，默认为 1e-6。
-    - **zca_whitening**: 布尔值。应用 ZCA 白化。
+    - **zca_whitening**: :obj:`bool`。应用 ZCA 白化。
     - **rotation_range**: 整形数。随机旋转的度数范围。
     - **width_shift_range**: 浮点数、一维数组或整数。随机水平移动的范围。
         - float: 如果 <1，则是除以总宽度的值，或者如果 >=1，则为像素值。
@@ -98,9 +98,9 @@ idiplab_cv.augment API
 
     preprocessing_function = noise(0.0005)
 
-当然 :ref:`idiplab_cv.preprocess API`。
+``python`` 本身就包含了很多图像处理工具包，而 **preprocessing_function** 的设置可以将这些工具包用到 ``数据增强`` 中。为此 :ref:`preprocess` 已经提供了一些常用工具包的使用接口。
 
-idiplab_cv.preprocess API
+preprocess
 --------------------
 
 .. automodule:: preprocess

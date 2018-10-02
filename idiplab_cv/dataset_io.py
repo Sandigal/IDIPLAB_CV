@@ -103,7 +103,7 @@ def reverse_dict(dic):
     return dic2
 
 
-def label_smooth(labels, section):
+def label_smooth(labels, section=None):
     """标签平滑
 
     Retrieves rows pertaining to the given keys from the Table instance
@@ -130,16 +130,18 @@ def label_smooth(labels, section):
             that are relevant to the interface.
         ValueError: If `param2` is equal to `param1`.
     """
+
     labels = np.copy(labels)
+    labels = labels*1.0
     eps = 0.1
-    for i, _ in enumerate(labels):
-        for j in range(1, len(section)):
-            if np.argmax(labels[i]) < section[j]:
-                smooth_num = section[j]-section[j-1]
-                labels_reference = labels[i][section[j-1]:section[j]]
-                labels_reference = labels_reference * (1 - eps) + \
-                    (1-labels_reference) * eps / (smooth_num)
-                break
+    for i in range(1, len(section)):
+        smooth_num = section[i]-section[i-1]
+        labels_reference = labels[:, section[i-1]:section[i]]
+        labels_validd = np.sum(labels_reference, axis=1)
+        labels_minuend = labels_reference * (1 - eps)
+        labels_added = np.tile(
+            (eps * labels_validd / smooth_num).reshape(len(labels_validd), 1), (1, smooth_num))
+        labels[:, section[i-1]:section[i]] = labels_minuend+labels_added
     return labels
 
 # %%
@@ -151,6 +153,9 @@ class Dataset(object):
     The __init__ method may be documented in either the class level
     docstring, or as a docstring on the __init__ method itself.
 
+    Args:
+        augment (:obj:`bool`, 可选): 是否读取增强数据。
+
     Attributes:
         imgs_origin (str): Description of `attr1`.
         labels_origin (:obj:`int`, optional): Description of `attr2`.
@@ -159,7 +164,8 @@ class Dataset(object):
 
     """
 
-    def __init__(self):
+    def __init__(self, augment=False):
+        self.augment = augment
         self.imgs_origin = []
         self.labels_origin = []
         self.names_origin = []
@@ -173,32 +179,32 @@ class Dataset(object):
         self.augment_index = []
         self.augment_cross_index = []
 
-    def _load_file(self, path, shape=None, augment=False, step=1):
+    def _load_file(self, path, shape=None, step=1):
 
         if step == 1:
             self.imgs_origin, self.labels_origin, self.names_origin = _read_imgs_in_dirs(
                 path, "/origin/", shape)
 
-            if augment:
+            if self.augment:
                 self.imgs_augment, self.labels_augment, self.names_augment = _read_imgs_in_dirs(
                     path, "/augment/", shape)
         else:
             self.imgs_origin, self.labels_origin, self.names_origin = _read_imgs_in_dirs(
                 path, "/crop_AB/", shape)
 
-            if augment:
+            if self.augment:
                 self.imgs_augment, self.labels_augment, self.names_augment = _read_imgs_in_dirs(
                     path, "/crop_SC_augment/", shape)
 
         sub_dir_list = os.listdir(path+"/origin")
         self.class_to_index = dict(zip(sub_dir_list, range(len(sub_dir_list))))
 
-    def _load_h5(self, path, augment=False):
+    def _load_h5(self, path):
         file = open(path, "rb")
         contact = load(file)
         self.imgs_origin = contact["imgs_origin"]
         self.labels_origin = contact["labels_origin"]
-        if augment is True:
+        if self.augment is True:
             self.imgs_augment = contact["imgs_augment"]
             self.labels_augment = contact["labels_augment"]
             self.names_augment = contact["names_augment"]
@@ -207,14 +213,15 @@ class Dataset(object):
         self.sample_per_class = contact["sample_per_class"]
         file.close()
 
-    def load_data(self, path, shape=(336, 224), augment=False):
+    def load_data(self, path, shape=None):
         """读取图像
 
         支持两种读取模式，函数会自动从 ``path`` 中进行判断。
             1. 从文件夹中读取所有jpg、png等图片格式的文件。目录结构请参照 :ref:`目录结构`。
             2. 从打包的 :obj:`h5` 文件中读取数据。您需要先使用方法1进行读取
 
-        .. note:: 运行方法2的前提是已经有一个打包的:obj:`h5` 文件。为此，需要先用方法1读取数据，再用 :meth:`create_h5` 打包。
+        Note:
+            运行方法2的前提是已经有一个打包的:obj:`h5` 文件。为此，需要先用方法1读取数据，再用 :meth:`create_h5` 打包。
 
         Args:
             path (:obj:`str`): 数据所在目录地址，或 :obj:`h5` 文件地址。
@@ -227,28 +234,27 @@ class Dataset(object):
 
         Examples:
 
-            >>> dataset = io.Dataset()
+            >>> dataset = io.Dataset(augment=False)
             >>> class_to_index, sample_per_class = dataset.load_data(
             ...         path="../data/dataset 336x224",
-            ...         shape=(336, 224),
-            ...         augment=True)
+            ...         shape=(336, 224))
             --->Start loading data
             -->Processing for C3 [=============================>] 100.00%
             Cost time: 2.702s
             Image shape (hight, width, channel): (224, 336, 3)
-            Read 400 samples with  800 augmentated
+            Read 400 samples
             Class index: {'C1': 0, 'C2': 1, 'C3': 2}
             Sample per class: {'C3': 120, 'C2': 60, 'C1': 220}
 
+            >>> dataset = io.Dataset(augment=True)
             >>> class_to_index, sample_per_class = dataset.load_data(
-            ...         path="dataset_test.h5",
-            ...         augment=True)
+            ...         path="dataset_test.h5")
             --->Start loading data
             Cost time: 1.132s
             Image shape (hight, width, channel): (224, 336, 3)
             Read 400 samples with  800 augmentated
             Class index: {'C1': 0, 'C2': 1, 'C3': 2}
-            Sample per class: {'C3': 120, 'C2': 60, 'C1': 220}
+            Sample per class: {'C3': 360, 'C2': 180, 'C1': 660}
 
         """
 
@@ -256,22 +262,26 @@ class Dataset(object):
         start = time.clock()
 
         if path.endswith("h5") is False:
-            self._load_file(path, shape, augment)
+            self._load_file(path, shape)
             print("")
         else:
-            self._load_h5(path, augment)
+            self._load_h5(path)
 
         classes = set(self.labels_origin)
         for classe in classes:
             self.sample_per_class[classe] = self.labels_origin.count(classe)
+        if self.augment is True:
+            self.sample_per_class[classe] += self.labels_augment.count(classe)
 
         end = time.clock()
         print("Cost time: %.3fs" % (end-start))
         print("Image shape (hight, width, channel):",
               self.imgs_origin[0].shape)
-        print("Read", len(self.labels_origin), "samples", end="")
-        if augment:
-            print(" with ", len(self.labels_augment), "augmentated", end="")
+        print("Read", len(self.labels_origin), "samples (%.2fMB)" %
+              (np.array(self.imgs_origin).nbytes / (1024 * 1000.0)), end="")
+        if self.augment:
+            print(" with", len(self.labels_augment), "augmentated (%.2fMB)" %
+                  (np.array(self.imgs_augment).nbytes / (1024 * 1000.0)), end="")
         print("")
         print("Class index: "+str(self.class_to_index))
         print("Sample per class: "+str(self.sample_per_class))
@@ -330,27 +340,29 @@ class Dataset(object):
 
         self.train_index, test_index = _get_split_index(
             self.labels_origin, n_splits, 0)
-        imgs_train = np.array(self.imgs_origin)[self.train_index]
-        labels_train = np.array(self.labels_origin)[self.train_index]
-        imgs_test = np.array(self.imgs_origin)[test_index]
+        imgs_train = np.array(self.imgs_origin, dtype="float32")[
+            self.train_index]
+        labels_train = np.array(self.labels_origin)[
+            self.train_index]
+        imgs_test = np.array(self.imgs_origin, dtype="float32")[test_index]
         labels_test = np.array(self.labels_origin)[test_index]
 
-        if self.augment:
+        if self.augment is True and len(self.labels_augment) > 0:
             augment_amount = int(
                 len(self.labels_augment)/len(self.labels_origin))
             self.augment_index = [a+b
                                   for a in self.train_index * augment_amount
                                   for b in range(augment_amount)]
             imgs_train = np.append(imgs_train, np.array(
-                self.imgs_augment)[self.augment_index], axis=0)
+                self.imgs_augment, dtype="float32")[self.augment_index], axis=0)
             labels_train = np.append(labels_train, np.array(
                 self.labels_augment)[self.augment_index], axis=0)
 
         end = time.clock()
         print("Cost time: %.3fs" % (end-start))
         print("In fact the first %d%% of data are test set" % (100/n_splits))
-        print("Train set size", len(labels_train),
-              "with Test set size", len(labels_test))
+        print("Train set size", len(labels_train), "(%.2fMB)" % (imgs_train.nbytes / (1024 * 1000.0)),
+              "with Test set size", len(labels_test), "(%.2fMB)" % (imgs_test.nbytes / (1024 * 1000.0)))
         print("")
 
         return imgs_train, labels_train, imgs_test, labels_test
@@ -359,21 +371,22 @@ class Dataset(object):
         print("--->Start spliting trainset to subtrainset and validset")
         start = time.clock()
 
-        labels_train = np.array(self.labels_origin)[self.train_index].tolist()
+        labels_train = np.array(self.labels_origin)[
+            self.train_index].tolist()
         self.train_cross_index, valid_index = _get_split_index(
             labels_train, total_splits, valid_split)
-        imgs_train = np.array(self.imgs_origin)[
+        imgs_train = np.array(self.imgs_origin, dtype="float32")[
             self.train_index][self.train_cross_index]
         labels_train = np.array(self.labels_origin)[
             self.train_index][self.train_cross_index]
-        imgs_valid = np.array(self.imgs_origin)[
+        imgs_valid = np.array(self.imgs_origin, dtype="float32")[
             self.train_index][valid_index]
         labels_valid = np.array(self.labels_origin)[
             self.train_index][valid_index]
         names_valid = np.array(self.names_origin)[
             self.train_index][valid_index]
 
-        if self.augment:
+        if self.augment is True and len(self.labels_augment) > 0:
             augment_amount = int(
                 len(self.labels_augment)/len(self.labels_origin))
             self.augment_cross_index = [
@@ -382,7 +395,7 @@ class Dataset(object):
                 for b in range(augment_amount)]
             imgs_train = np.append(
                 imgs_train,
-                np.array(self.imgs_augment)[
+                np.array(self.imgs_augment, dtype="float32")[
                     self.augment_index][self.augment_cross_index],
                 axis=0)
             labels_train = np.append(
@@ -395,7 +408,7 @@ class Dataset(object):
         print("Cost time: %.3fs" % (end-start))
         print("The", valid_split, "th split in",
               total_splits, "splits is validset")
-        print("Trainset size", len(labels_train),
-              "with validset size", len(labels_valid))
+        print("Trainset size", len(labels_train), "(%.2fMB)" % (imgs_train.nbytes / (1024 * 1000.0)),
+              "with validset size", len(labels_valid), "(%.2fMB)" % (imgs_valid.nbytes / (1024 * 1000.0)))
         print("")
         return imgs_train, labels_train, imgs_valid, labels_valid, names_valid

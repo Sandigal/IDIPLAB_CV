@@ -20,141 +20,7 @@ from dataset_io import reverse_dict
 # %%
 
 
-def show_history(path, title="Learning curves"):
 
-    f = open(path, "rb")
-    contact = load(f)
-    history = contact["history"]
-    f.close()
-
-    plt.figure()
-    plt.plot(history["loss"], "o-",
-             label="Train loss (%.2f)" % history["loss"][-1])
-    plt.plot(history["val_loss"], "o-",
-             label="Valid loss (%.2f)" % history["val_loss"][-1])
-    plt.grid()
-    plt.legend(loc="best", shadow=1)
-    plt.title(title+" loss")
-    plt.xlabel("epoch")
-    plt.ylabel("loss")
-    plt.ylim((-0.05, 5.))
-    plt.savefig(title+" loss.jpg")
-
-    plt.figure()
-    plt.plot(history["acc"], "o-",
-             label="Train accuracy (%.2f%%)" % (history["acc"][-1]*100))
-    plt.plot(history["val_acc"], "o-",
-             label="Valid accuracy (%.2f%%)" % (history["val_acc"][-1]*100))
-    plt.grid()
-    plt.legend(loc="best", shadow=1)
-    plt.title(title+" accuracy")
-    plt.xlabel("epoch")
-    plt.ylabel("accuracy")
-    plt.ylim((-0.05, 1.05))
-    plt.savefig(title+" accuracy.jpg")
-
-    return plt
-
-
-def show_cross_history(path, title="Learning curves"):
-
-    accs = []
-    val_accs = []
-    for i in range(3):
-        f = open(path+"20180711_validSplit."+str(i)+"_result.h5", "rb")
-        contact = load(f)
-        accs.append(contact["history"]["acc"])
-        val_accs.append(contact["history"]["val_acc"])
-        f.close()
-
-    plt.figure()
-    len_acc = np.max([len(acc) for acc in accs])
-    for i in range(len(accs)):
-        accs[i] = accs[i]+(len_acc-len(accs[i]))*[accs[i][-1]]
-        val_accs[i] += (len_acc-len(val_accs[i]))*[val_accs[i][-1]]
-        plt.plot(val_accs[i], lw=1, alpha=0.3,
-                 label="Accuracy for %s fold (%.2f%%)" % (i, val_accs[i][-1]*100))
-
-    accs_mean = np.mean(accs, axis=0)
-    accs_std = np.std(accs, axis=0)
-    val_accs_mean = np.mean(val_accs, axis=0)
-    val_accs_std = np.std(val_accs, axis=0)
-
-    plt.fill_between(range(len_acc),
-                     accs_mean - accs_std,
-                     accs_mean + accs_std,
-                     alpha=0.2, color="r")
-    plt.fill_between(range(len_acc),
-                     val_accs_mean - val_accs_std,
-                     val_accs_mean + val_accs_std,
-                     alpha=0.2, color="g",
-                     label=r"$\pm$ 1 std. dev.")
-    plt.plot(accs_mean, "o-", alpha=0.8, color="r",
-             label=r"Training score (%.2f $\pm$ %.2f%%)" % (
-                 accs_mean[-1]*100, accs_std[-1]*100))
-    plt.plot(val_accs_mean, "o-", alpha=0.8, color="g",
-             label=r"Cross-validation score (%.2f $\pm$ %.2f%%)" % (
-                 val_accs_mean[-1]*100, val_accs_std[-1]*100))
-
-    plt.grid()
-    plt.title(title)
-    plt.ylim(-0.05, 1.05)
-    plt.xlabel("epoch")
-    plt.ylabel("accuracy")
-    plt.legend(loc="best", fontsize=10, shadow=1)
-    plt.savefig(title+".jpg")
-
-    return plt
-
-
-def show_cross_historys(paths, title="Learning curves", subtitles=None):
-
-    if subtitles is None:
-        subtitles = []
-        for i in range(len(paths)):
-            subtitles.append("Curves"+str(i))
-
-    val_accss = []
-    for path in paths:
-        val_accs = []
-        for i in range(3):
-            f = open(path+"20180709_validSplit."+str(i)+"_result.h5", "rb")
-            contact = load(f)
-            val_accs.append(contact["history"]["val_acc"])
-            f.close()
-        val_accss.append(val_accs)
-
-    plt.figure()
-    len_acc = np.max([len(val_acc)
-                      for val_acc in val_accs for val_accs in val_accss])
-
-    colors = ["g", "r", "b", "c", "m", "y", "k", "w"]
-    for i in range(len(paths)):
-        for j in range(len(val_accss[i])):
-            val_accss[i][j] += (len_acc-len(val_accss[i][j])
-                                )*[val_accss[i][j][-1]]
-
-        val_accs_mean = np.mean(val_accss[i], axis=0)
-        val_accs_std = np.std(val_accss[i], axis=0)
-
-        plt.fill_between(range(len_acc),
-                         val_accs_mean - val_accs_std,
-                         val_accs_mean + val_accs_std,
-                         alpha=0.2, color=colors[i],)
-        plt.plot(val_accs_mean, "o-", alpha=0.8, color=colors[i],
-                 label=subtitles[i]+r" (%.2f $\pm$ %.2f%%)" % (
-            val_accs_mean[-1]*100, val_accs_std[-1]*100))
-
-    plt.grid()
-    plt.title(title)
-    plt.ylim(0, 1.05)
-    plt.xlabel("epoch")
-    plt.ylabel("accuracy")
-    plt.legend(loc="best", fontsize=14, shadow=1)
-
-    plt.savefig(title+".jpg")
-
-    return plt
 
 
 def _drawline(img, pt1, pt2, color, thickness=1, style="dotted", gap=20):
@@ -200,13 +66,15 @@ def _drawrect(img, pt1, pt2, color, thickness=1, style="dotted"):
 
 
 def show_grid(imgs, title=None, suptitles=None):
+    plt.style.use("classic")
+
     imgs_num = len(imgs)
 
     if type(imgs[0]) == np.ndarray:
         #        imgsPIL=[]
         #        for i in range(len(imgs)):
         #            imgsPIL.append(Image.fromarray(imgs[i]))
-        imgs = [Image.fromarray(img) for img in imgs]
+        imgs = [Image.fromarray(img.astype('uint8')) for img in imgs]
 #    imgs=imgsPIL
 
 #    width, height = 0, 0
@@ -278,7 +146,7 @@ def CAM(img_white, model, feature_layer, weight_layer, idx_predic=None, display=
     weightLayer = model.get_layer(weight_layer)
     weightsClasses = weightLayer.get_weights()[0]
 
-    weightsClass = weightsClasses[0, 0, :, idx_predic]
+    weightsClass = weightsClasses[:, idx_predic]
 
     cam = np.matmul(avtiveMap, weightsClass)
 
@@ -286,11 +154,14 @@ def CAM(img_white, model, feature_layer, weight_layer, idx_predic=None, display=
     cam = 1-cam
     cam = cv2.resize(cam, (height, width))
     heatmap = cv2.applyColorMap(np.uint8(255*cam), cv2.COLORMAP_JET)
-    heatmap[np.where(cam > 0.95)] = 0
+    heatmap[np.where(cam > 0.90)] = 0
 
     if display:
         mix = cv2.addWeighted(src1=img_show, src2=heatmap,
                               alpha=0.8, beta=0.4, gamma=0)
+
+        Image.fromarray(img_show).save('img_origin.png')
+        Image.fromarray(mix).save('mix.png')
 
         index_to_class = reverse_dict(class_to_index)
         predic_class = index_to_class[idx_predic]
@@ -324,7 +195,7 @@ def CAM(img_white, model, feature_layer, weight_layer, idx_predic=None, display=
 
             idx_predic3 = class_to_index[label_show]
             predict_score3 = scores_predict[0, idx_predic3]
-            weightsClass3 = weightsClasses[0, 0, :, idx_predic3]
+            weightsClass3 = weightsClasses[:, idx_predic3]
             cam3 = np.matmul(avtiveMap, weightsClass3)
             cam3 = (cam3 - cam3.min()) / (cam3.max() - cam3.min())
             cam3 = 1-cam3
@@ -446,30 +317,31 @@ def cropMask(cam, img_show, display=False):
     if display:
         cv2.rectangle(img_show, (xSC, ySC), (xSC+wAB, ySC+hAB), (0, 255, 0), 5)
         _drawrect(img_show, (xSC, ySC), (ww, hh), (0, 255, 0), 5, "dotted")
-        text = "Supervised crop"
+        text = "Supervised crop (%dx%d)" % (ww, hh)
         cv2.putText(img_show, text, (xSC, ySC), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=0.5, color=(0, 255, 0), thickness=10, lineType=cv2.LINE_AA)
+                    fontScale=0.4, color=(0, 255, 0), thickness=10, lineType=cv2.LINE_AA)
         cv2.putText(img_show, text, (xSC, ySC), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=0.5, color=(255, 0, 255), thickness=1, lineType=cv2.LINE_AA)
+                    fontScale=0.4, color=(0, 0, 0), thickness=1, lineType=cv2.LINE_AA)
 
         cv2.rectangle(img_show, (xAB, yAB), (xAB+wAB, yAB+hAB), (0, 0, 255), 5)
         text = "Anchor Box (%dx%d)" % (wAB, hAB)
         cv2.putText(img_show, text, (xAB, yAB), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=0.5, color=(0, 0, 255), thickness=10, lineType=cv2.LINE_AA)
+                    fontScale=0.4, color=(0, 0, 255), thickness=10, lineType=cv2.LINE_AA)
         cv2.putText(img_show, text, (xAB, yAB), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=0.5, color=(255, 255, 0), thickness=1, lineType=cv2.LINE_AA)
+                    fontScale=0.4, color=(255, 255, 255), thickness=1, lineType=cv2.LINE_AA)
 
         cv2.rectangle(img_show, (xHRO, yHRO),
                       (xHRO+wHRO, yHRO+hHRO), (220, 20, 60), 5)
         text = "Highest respond area (%dx%d)" % (wHRO, hHRO)
         cv2.putText(img_show, text, (xHRO, yHRO), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=0.5, color=(220, 20, 60), thickness=10, lineType=cv2.LINE_AA)
+                    fontScale=0.4, color=(220, 20, 60), thickness=10, lineType=cv2.LINE_AA)
         cv2.putText(img_show, text, (xHRO, yHRO), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=0.5, color=(35, 235, 195), thickness=1, lineType=cv2.LINE_AA)
+                    fontScale=0.4, color=(0, 0, 0), thickness=1, lineType=cv2.LINE_AA)
 
-        plt.figure(figsize=(10, 8))
+#        plt.figure(figsize=(10, 8))
         plt.imshow(img_show)
         plt.axis("off")
-#        plt.savefig("crop.jpg")
+#        plt.savefig("crop.png")
+        Image.fromarray(img_show).save('img_show.png')
 
     return xAB, yAB, wAB, hAB, xSC, ySC, ww-wAB, hh-hAB

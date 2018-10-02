@@ -22,8 +22,6 @@ import visul
 class AugmentGenerator(object):
     """数据增强生成器。
 
-    :meth:`AugmentGenerator`
-
     当实例化 :meth:`AugmentGenerator` 时，您需要指出数据所在目录地址和图像的输出尺寸。尽管部分模型支持多尺度输入，但同一批训练数据必须保持相同维度。您可以分批产生多尺度数据，再分批训练。
 
     Args:
@@ -52,7 +50,7 @@ class AugmentGenerator(object):
             .. _ImageDataGenerator: https://github.com/aleju/imgaug
 
         Args:
-            datagen_args (:obj:`dict`): 可选数据增强方法。选用的方法将依次叠加进行处理。所有支持方法的具体介绍可以参见参照 :ref:`数据增强方法`。
+            datagen_args (:obj:`dict`): 可选数据增强方法。选用的方法将依次叠加进行处理。所有支持方法的具体介绍可以参照 :ref:`数据增强方法`。
             augment_amount (:obj:`int`, 可选): 数据增广倍数，默认为`10`。
 
         Examples:
