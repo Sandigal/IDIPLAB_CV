@@ -1,6 +1,6 @@
 .. _faq:
 
-Frequently Asked Questions
+FAQ: 常见问题解答
 ==========================
 
 

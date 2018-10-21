@@ -58,24 +58,36 @@ IDIPLAB_CV说明文档
 
 :doc:`models/models`
     数据预处理模块功能一览。
+
+
+流形学习
+--------------------
     
-API
+.. toctree::
+    :caption: 流形学习
+    :hidden:
+
+    manifold/manifold
+
+:doc:`manifold/manifold`
+    流形学习理模块功能一览。
+    
+未写文档的API
 --------------------
 
 .. toctree::
-    :caption: API
+    :caption: 未写文档的API
     :hidden:
 
     API/dataset_io
-    API/manifold
     API/metrics
     API/visul
     
-玄学时刻
+工程经验
 --------------------
 
 .. toctree::
-    :caption: 玄学时刻
+    :caption: 工程经验
     :hidden:
 
     magic/paradox
