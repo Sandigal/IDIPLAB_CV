@@ -1,66 +1,57 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu May  3 16:30:43 2018
+
+@author: Sandiagal
+"""
+
+from pickle import load
+
+from keras.applications.mobilenet import relu6
+from keras.models import load_model
+import matplotlib.pyplot as plt
+import PIL.Image as Image
 
 import dataset_io as io
 import visul
 
-import numpy as np
-import matplotlib.pyplot as plt
-import PIL.Image as Image
-from pickle import load
-import imgaug as ia
-from imgaug import augmenters as iaa
+# %%
 
-from keras.models import load_model, Model
-from keras.applications.mobilenet import relu6
-from keras.preprocessing.image import ImageDataGenerator
-from keras import backend as K
-from keras.utils.generic_utils import CustomObjectScope
+dataset = io.Dataset(augment=False)
+class_to_index, sample_per_class = dataset.load_data(
+        path="dataset_1_1_origin.h5",
+        shape=(336, 224))
+
+imgs_train, labels_train, imgs_valid, labels_valid = dataset.train_test_split(test_shape=0.5)
+
+labels_train = io.label_str2index(labels_train, class_to_index)
+labels_valid = io.label_str2index(labels_valid, class_to_index)
+
+f = open("20180925_result.h5", "rb")
+contact = load(f)
+mean = contact["mean"]
+std = contact["std"]
+f.close()
+imgs_white = (imgs_valid-mean)/std
 
 # %%
 
-path = "../data/dataset 336x224"
-shape = (336, 224)
-dataset = io.Dataset(path, shape=shape)
-class_to_index, sample_per_class = dataset.load_data()
-del path,shape
+visul.show_grid(imgs_train[0:25])
 
-#imgs_origin = np.array(dataset.imgs_origin)
-#labels_origin = dataset.labels_origin
-#names_origin = dataset.names_origin
-#del path, shape
+# %%
 
-test_shape=0.2
-_, _, imgs_test, labels_test = dataset.train_test_split(
-    test_shape=test_shape)
-del test_shape
-
-total_splits=3
-valid_split=0
-imgs_train, labels_train, imgs_valid, labels_valid = dataset.cross_split(
-    total_splits=total_splits, valid_split=valid_split)
-del total_splits,valid_split
-
-mean, std = load(open('mean-std.json', 'rb'))
-imgs_white = (imgs_valid-mean)/std
-del mean, std
-
-#%%
-
-visul.showGrid(imgs_train[0:25])
-
-#%%
-
-with CustomObjectScope({'relu6': relu6}):
-    model = load_model('2018-06-22 model.h5')
+model = load_model('20180925_model.h5', custom_objects={
+                'relu6': relu6})
 model.summary()
 
 # %%
 
-index = 0
+index = 206
 img_white = imgs_white[index]
-img_show = imgs_valid[index]
+img_show = imgs_valid[index].astype(np.uint8)
 label_show = labels_valid[index]
 feature_layer = 'conv_pw_13_relu'
-weight_layer = 'conv_preds'
+weight_layer = 'predictions'
 
 cam, mix = visul.CAM(
     img_white=img_white,
@@ -71,13 +62,14 @@ cam, mix = visul.CAM(
     img_show=img_show,
     label_show=label_show,
     class_to_index=class_to_index,
-    top2=True)
-#xAB, yAB, wAB, hAB, xSC, ySC, xxSC, yySC = visul.cropMask(
-#        cam=cam,
-#        img_show=mix,
-#        display=True)
+    top2=False)
 
-#%%
+xAB, yAB, wAB, hAB, xSC, ySC, xxSC, yySC = visul.cropMask(
+        cam=cam,
+        img_show=mix,
+        display=True)
+
+# %%
 
 plt.ioff()
 process_bar = io.ShowProcess(len(imgs_valid))
@@ -115,16 +107,16 @@ for i in range(0, len(labels_origin), len(labels_origin)//9):
     mix = Image.fromarray(mix)
     imgs.append(mix)
 
-grid = visul.showGrid(imgs)
+grid = visul.show_grid(imgs)
 # grid.save("25.jpg")
 plt.imshow(grid)
 
 
-#%%
+# %%
 
-path="../训练结果/7.3 第一步 宽图像 better/2018-07-03 history.json"
-visul.showHistory(path)
+path = "E:/Temporary/Deap Leraning/Medical AI/训练结果/7.19 xceptionGAP/20180719_result.h5"
+visul.show_history(path)
 
-#%%
+# %%
 
-visul.showHistorys()
+

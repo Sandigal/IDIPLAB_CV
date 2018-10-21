@@ -14,32 +14,32 @@ from skimage.util import random_noise
 
 
 class RandomNoise(object):
+    """随机噪声。
+
+    调用 ``skimage.util.random_noise`` 来产生随机噪声。
+
+    Args:
+        mode (:obj:`str`): 只能接受以下代表噪声方法的字符串之一。
+        ‘gaussian’ Gaussian-distributed additive noise.
+        ‘localvar’ Gaussian-distributed additive noise, with specified local variance at each point of image
+        ‘poisson’ Poisson-distributed noise generated from the data.
+        ‘salt’ Replaces random pixels with 1.
+        ‘pepper’ Replaces random pixels with 0 (for unsigned images) or -1 (for signed images).
+        ‘s&p’ Replaces random pixels with either 1 or low_val, where low_val is 0 for unsigned images or -1 for signed images.
+        ‘speckle’ Multiplicative noise using out = image + n*image, where n is uniform noise with specified mean & variance.
+        seed (:obj:`int`, 可选): 随机数种子。默认为 ``None``。
+        clip (:obj:`bool`, 可选): 加入噪声后，像素值若超过图像数据范围，将其限制在范围内。默认为 ``True``。
+        **kwargs (:obj:`args`, 可选): 其他参数，可以参照 skimage.util.random_noise_。
+
+        .. _skimage.util.random_noise: http://scikit-image.org/docs/dev/api/skimage.util.html#skimage.util.random_noise
+
+    """
 
     def __init__(self,
                  mode='gaussian',
                  seed=None,
                  clip=True,
                  **kwargs):
-        """随机噪声。
-
-        调用 ``skimage.util.random_noise`` 来产生随机噪声。
-
-        Args:
-            mode (:obj:`str`): 只能接受以下代表噪声方法的字符串之一。
-            ‘gaussian’ Gaussian-distributed additive noise.
-            ‘localvar’ Gaussian-distributed additive noise, with specified local variance at each point of image
-            ‘poisson’ Poisson-distributed noise generated from the data.
-            ‘salt’ Replaces random pixels with 1.
-            ‘pepper’ Replaces random pixels with 0 (for unsigned images) or -1 (for signed images).
-            ‘s&p’ Replaces random pixels with either 1 or low_val, where low_val is 0 for unsigned images or -1 for signed images.
-            ‘speckle’ Multiplicative noise using out = image + n*image, where n is uniform noise with specified mean & variance.
-            seed (:obj:`int`, 可选): 随机数种子。默认为 ``None``。
-            clip (:obj:`bool`, 可选): 加入噪声后，像素值若超过图像数据范围，将其限制在范围内。默认为 ``True``。
-            **kwargs (:obj:`args`, 可选): 其他参数，可以参照 skimage.util.random_noise_。
-
-            .. _skimage.util.random_noise: http://scikit-image.org/docs/dev/api/skimage.util.html#skimage.util.random_noise
-
-        """
         self.mode = mode
         self.seed = seed
         self.clip = clip

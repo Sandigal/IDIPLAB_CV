@@ -15,55 +15,55 @@ Created on Sun Apr  1 11:53:24 2018
 import augment as agmt
 import preprocess
 
-from imgaug import augmenters as iaa
+from imgaug import augmenters as ia
 
 # %%
 
 agmtgen = agmt.AugmentGenerator(path="../data/tmp")
 
-seq = iaa.Sequential([
+seq = ia.Sequential([
 
-    iaa.Fliplr(0.5),
+        ia.Fliplr(0.5),
 
-    iaa.CropAndPad(
-            percent=(0, 0.1),
+        ia.CropAndPad(
+            percent=(0, 0.2),
             pad_mode=["constant", "edge"],
             pad_cval=(0)
-            ),
+        ),
 
-    iaa.Sometimes(
-            0.2,
-            iaa.OneOf([
-                iaa.GaussianBlur((0, 3.0)),
-                iaa.AverageBlur(k=(2, 7)),
-                iaa.Sharpen(alpha=(0.0, 1.0), lightness=(0.75, 2.0))
-                ])
-            ),
+        ia.Sometimes(
+            1,
+            ia.OneOf([
+                ia.GaussianBlur((0, 5.0)),
+                ia.AverageBlur(k=(2, 11)),
+                ia.Sharpen(alpha=(0.0, 1.0), lightness=(0.75, 1.5))
+            ])
+        ),
 
-    iaa.OneOf([
-            iaa.AdditiveGaussianNoise(scale=(0.0, 0.05*255)),
-            iaa.CoarseDropout(0.05, size_percent=0.15)
-            ]),
+        ia.OneOf([
+            ia.AdditiveGaussianNoise(scale=(0.0, 0.1*255)),
+            ia.CoarseDropout(0.1, size_percent=0.2)
+        ]),
 
-    iaa.OneOf([
-            iaa.Add((-40, 0)),
-            iaa.Multiply((1, 1.2))
-            ]),
+        ia.OneOf([
+            ia.Add((-50, 0)),
+            ia.Multiply((1, 1.5))
+        ]),
 
-    iaa.Affine(
-        scale={"x": (0.9, 1.1), "y": (0.9, 1.1)},
-        translate_percent={"x": (-0.05, 0.05), "y": (-0.05, 0.05)},
-        rotate=(-10, 10),
-        shear=(-5, 5),
-        mode=["constant", "edge"],
-        cval=(0)
+        ia.Affine(
+            scale={"x": (0.8, 1.2), "y": (0.8, 1.2)},
+            translate_percent={"x": (-0.1, 0.1), "y": (-0.1, 0.1)},
+            rotate=(-20, 20),
+            shear=(-10, 10),
+            mode=["constant", "edge"],
+            cval=(0)
         )
 
-], random_order=True) # apply augmenters in random order
+], random_order=True)  # apply augmenters in random order
 
 #preprocessor = preprocess.RandomNoise(mode="salt",amount=0.005)
 #
-#datagen_args = dict(
+# datagen_args = dict(
 #    rotation_range=15.,
 #    width_shift_range=0.05,
 #    height_shift_range=0.05,
@@ -78,7 +78,7 @@ preprocessor = preprocess.Imgaug(seq)
 datagen_args = dict(
     preprocessing_function=preprocessor)
 
-agmtgen.normol_augment(datagen_args=datagen_args,augment_amount=30)
+agmtgen.normol_augment(datagen_args=datagen_args, augment_amount=10)
 
 
 # %%

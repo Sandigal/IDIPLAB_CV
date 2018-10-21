@@ -148,7 +148,7 @@ def resnet50GAP(input_shape, classes, dropout=1e-3, include_top=True):
     return model
 
 
-def inceptionV3GAP(input_shape, classes, dropout=1e-3, include_top=True):
+def inceptionV3GAP(input_shape, include_top=True, classes=1000, dropout=1e-3,):
     """
     feature_layer = "mixed10"
 
@@ -343,25 +343,4 @@ def top(input_shape, classes, dropout=1e-3, finalAct="softmax"):
 
     return model
 
-# %%
 
-
-input_shape = (224, 224, 3)  # 32的倍数
-classes=11
-model = mobilenetGAP(input_shape, classes, dropout=1e-3, include_top=True, finalAct="softmax")
-model.compile(optimizer="adam", loss='categorical_crossentropy',
-              metrics=['accuracy'])
-model.summary()
-#
-#
-#from PIL import Image
-#import numpy as np
-#import os
-#from keras.utils import to_categorical
-#
-# imgs = np.array([np.array(Image.open("../data/dataset 672x448/crop/P3/" + fname))
-#                 for fname in os.listdir("../data/dataset 672x448/crop/P3/")])
-#lable = [0, 0, 1, 1, 2, 2]
-#lable = to_categorical(lable, lenn)
-#model.fit(imgs, lable)
-#preResult = model.predict(imgs)
