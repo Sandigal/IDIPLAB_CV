@@ -81,3 +81,14 @@ IDIPLAB_CV是一个由IDIPLAB开发的用于机器视觉的顶层工具包，涵
 
 - 遇见还没写入文档又急着利用的功能时，可以从工程的`test`文件夹中获得项目的测试范例，自行理解使用。
 
+## 引用信息
+
+```
+misc{SandiagalIDIPLAB_CV,
+  title={IDIPLAB_CV},
+  author={Sandiagal},
+  year={2018},
+  publisher={GitHub},
+  howpublished={\url{https://github.com/Sandiagal/IDIPLAB_CV}},
+}
+```
