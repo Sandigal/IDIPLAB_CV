@@ -2,11 +2,11 @@
 
 ![AUR](https://img.shields.io/aur/license/yaourt.svg) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg) ![Documentation Status](https://readthedocs.org/projects/idiplab-cv/badge/?version=latest)
 
-IDIPLAB机器视觉工具包。
+IDIPLAB计算机视觉工具包。
 
 ## 概括
 
-IDIPLAB_CV是一个由IDIPLAB开发的用于机器视觉的顶层工具包，涵盖了基础的图形图像处理算法和集成化的深度学习框架接口。我们致力于将实验室的成功项目代码凝练成可以反复使用的工具包。
+IDIPLAB_CV是一个由IDIPLAB开发的用于计算机视觉的顶层工具包，涵盖了基础的图形图像处理算法和集成化的深度学习框架接口。我们致力于将实验室的成功项目代码凝练成可以反复使用的工具包。
 
 **注意**IDIPLAB_CV并不是一个某种学习框架，您需要自行学习[tensorflow](https://github.com/tensorflow/tensorflow)、[CNTK](https://github.com/Microsoft/cntk)或者[Theano](https://github.com/Theano/Theano)等框架来进行模型的构建以及训练。就像在处理图像时都要进行预处理一样，从实际工程中拿到的数据不可能直接导入到框架中使用，而我们注重的就是为您提供这一阶段的辅助。此外，在模型训练之后，我们也为您提供了封装完善的分析模块，使用尽可能少的代码获得丰富的评价报告。
 
