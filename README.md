@@ -1,6 +1,8 @@
 # IDIPLAB_CV 
 
-![AUR](https://img.shields.io/aur/license/yaourt.svg) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg) ![Documentation Status](https://readthedocs.org/projects/idiplab-cv/badge/?version=latest)
+[![LICENSE](https://img.shields.io/github/license/Sandiagal/IDIPLAB_CV.svg?style=flat-square)](https://github.com/Sandiagal/IDIPLAB_CV/blob/master/LICENSE)
+![Documentation Status](https://readthedocs.org/projects/idiplab-cv/badge/?version=latest)
+![90+% Python](https://img.shields.io/github/languages/top/Sandiagal/IDIPLAB_CV.svg?style=flat-square)
 
 IDIPLAB计算机视觉工具包。
 
