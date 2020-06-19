@@ -11,13 +11,10 @@ import models
 # %%
 
 
-# input_shape = (224, 336, 3)  # 32的倍数
-# classes=11
-#model = models.inceptionV3GAP(input_shape, include_top=False, classes=classes)
-# model.compile(optimizer="adam", loss='categorical_crossentropy',
-#              metrics=['accuracy'])
-# model.summary()
-#
+input_shape = (None, None, 3)  # 32的倍数
+model = models.xceptionGAP(input_shape,classes=2, include_top=False)
+model.summary()
+
 #
 # %%
 
@@ -35,10 +32,15 @@ imgs_origin = np.array(dataset.imgs_origin)
 
 # %%
 
-# scores_predict = model.predict(
-#        imgs_origin,
-#        verbose=1)
+scores_predict=[]
+for img in imgs:
+    img=np.expand_dims(img, axis=0)
+    score_predict = model.predict(
+            img,
+            verbose=1)
+    scores_predict.append(score_predict.flatten())
 
+imgs_f = np.array(scores_predict)
 # %%
 
 #from pickle import dump

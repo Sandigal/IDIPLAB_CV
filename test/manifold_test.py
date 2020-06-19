@@ -25,11 +25,11 @@ imgs = imgs_origin
 labels = labels_origin
 
 #%%
-
+import manifold
 manifold_args = dict(
 #    Random=True,
 #        RandomTrees=True,
-        MDS=True,
+#        MDS=True,
 #        PCA=True,
 #        LinearDiscriminant=True,
 #        Isomap=False,
@@ -38,7 +38,7 @@ manifold_args = dict(
 #        ModifiedLLE=False,
 #        HLLE=False,
 #        LTSA=False,
-#        TSNE=True,
+        TSNE=True,
     n_neighbors=30)
 
 manifold.manifold(imgs, labels, manifold_args,showLabels=False, showImages=False)

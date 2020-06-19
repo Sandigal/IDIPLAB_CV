@@ -15,8 +15,8 @@ from keras.preprocessing.image import ImageDataGenerator
 import numpy as np
 from PIL import Image
 
-import dataset_io as io
-import visul
+import idiplab_cv.dataset_io as io
+from idiplab_cv import visul
 
 
 class AugmentGenerator(object):
@@ -82,7 +82,7 @@ class AugmentGenerator(object):
 
         # dog or cat
         sub_dir_list = os.listdir(self.path+"/origin")
-        process_bar_dir = io._ShowProcess(len(sub_dir_list))
+        process_bar_dir = io.ShowProcess(len(sub_dir_list))
         for sub_dir in sub_dir_list:
             process_bar_dir.show_process(sub_dir)
 
@@ -97,7 +97,7 @@ class AugmentGenerator(object):
 
             # dog1 or dog2
             print("")
-            process_bar_pic = io._ShowProcess(len(names))
+            process_bar_pic = io.ShowProcess(len(names))
             for img, name in zip(imgs, names):
                 process_bar_pic.show_process()
                 img = np.expand_dims(img, axis=0)
@@ -134,7 +134,7 @@ class cropGenerator(object):
         self.names_origin = names_origin
         self.cams = None
 
-    def makedirs(self, path, supervised_crop=False):
+    def makedirs(self, path, SC_crop=False):
         is_exist = os.path.exists(
             path+"/crop_AB")
         if not is_exist:
@@ -147,7 +147,7 @@ class cropGenerator(object):
             if not is_exist:
                 os.makedirs(path+"/crop_AB/"+sub_dir)
 
-        if supervised_crop:
+        if SC_crop:
             is_exist = os.path.exists(
                 path+"/crop_SC")
             if not is_exist:
@@ -159,34 +159,37 @@ class cropGenerator(object):
                 if not is_exist:
                     os.makedirs(path+"/crop_SC/"+sub_dir)
 
-    def crop(self, path, model, active_layer, weight_layer, supervised_crop=False, augment_amount=None):
+    def AB_crop(self, path, model, feature_layer, weight_layer, SC_crop=False, augment_amount=None):
         print("--->Start cropping")
         start = time.clock()
 
-        self.makedirs(path, supervised_crop)
+        self.makedirs(path, SC_crop)
 
         if self.cams is None:
+            print("计算CAM中，请稍后")
             self.cams = visul.CAMs(
                 imgs_white=self.imgs_white,
                 model=model,
-                active_layer='conv_pw_13_relu',
-                weight_layer='conv_preds')
+                feature_layer=feature_layer,
+                weight_layer=weight_layer)
+        else:
+            print("已存在CAM，开始裁剪")
 
-        process_bar = io._ShowProcess(len(self.labels_origin))
+        process_bar = io.ShowProcess(len(self.labels_origin))
         for i in range(len(self.labels_origin)):
             process_bar.show_process()
 
             img_show = self.imgs_origin[i]
 
             xAB, yAB, wAB, hAB, xSC, ySC, xxSC, yySC = visul.cropMask(
-                self.cams[i], img_show)
+                self.cams[i], img_show, display=False)
 
             img_crop = img_show[yAB:yAB+hAB, xAB:xAB+wAB]
             img_crop = Image.fromarray(img_crop)
             img_crop.save(path+"/crop_AB/" +
                           self.labels_origin[i]+"/"+self.names_origin[i])
 
-            if supervised_crop:
+            if SC_crop:
                 for j in range(augment_amount):
                     xx = randint(xSC, xxSC)
                     yy = randint(ySC, yySC)

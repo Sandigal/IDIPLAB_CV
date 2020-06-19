@@ -18,7 +18,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.utils import shuffle
 
 
-class _ShowProcess():
+class ShowProcess():
     """
     显示处理进度的类
     调用该类相关函数即可实现处理进度的显示
@@ -67,11 +67,16 @@ def _get_split_index(labels, total_splits, valid_split):
 
 def _read_imgs_in_dir(path, shape=None):
     names = os.listdir(path)
+    imgs=[]
     if shape is None:
         imgs = [np.array(Image.open(path + "/"+name)) for name in names]
     else:
-        imgs = [np.array(Image.open(path + "/"+name).resize(
-                shape, Image.ANTIALIAS)) for name in names]
+#        try:
+        imgs = [np.array(Image.open(path + "/"+name).resize(shape, Image.ANTIALIAS)) for name in names]
+#        except:
+#            print("error")
+##            for i in range(143):
+##                Image.open(path + "/"+names[i])
     return imgs, names
 
 
@@ -81,7 +86,7 @@ def _read_imgs_in_dirs(path, dirs_name, shape=None):
     nameall = []
 
     sub_dir_list = os.listdir(path+"/origin")
-    process_bar = _ShowProcess(len(sub_dir_list))
+    process_bar = ShowProcess(len(sub_dir_list))
     for sub_dir in sub_dir_list:
         process_bar.show_process(sub_dir)
 
@@ -176,6 +181,8 @@ class Dataset(object):
         self.sample_per_class = {}
         self.train_index = []
         self.train_cross_index = []
+        self.test_index = []
+        self.valid_index = []
         self.augment_index = []
         self.augment_cross_index = []
 
@@ -225,12 +232,12 @@ class Dataset(object):
 
         Args:
             path (:obj:`str`): 数据所在目录地址，或 :obj:`h5` 文件地址。
-            shape (:obj:`turple` of :obj:`int`, 可选): 所有的图像都将以该尺寸读入内存。格式为 `(width, height, channel)`，默认为`(336, 224, 3)`。
+            shape (:obj:`turple` of :obj:`int`, 可选): 所有的图像都将以该尺寸读入内存。格式为 `(width, height)`，默认为`(336, 224)`。
             augment (:obj:`bool`, 可选): 是否读取增强数据。
 
         Returns:
-                class_to_index (:obj:`dict` of :obj:`str` to :obj:`int`): 各类对应的标签序号
-                sample_per_class (:obj:`dict` of :obj:`str` to :obj:`int`): 各类对应的样本数量
+                class_to_index (:obj:`dict` of :obj:`str` to :obj:`int`): 各类对应的标签序号。
+                sample_per_class (:obj:`dict` of :obj:`str` to :obj:`int`): 各类对应的样本数量。
 
         Examples:
 
@@ -332,20 +339,18 @@ class Dataset(object):
         dump(content, file, True)
         file.close()
 
-    def train_test_split(self, test_shape=0.25):
+    def train_test_split(self, total_splits=5, test_split=0):
         print("--->Start spliting dataset to trainset and testset")
         start = time.clock()
 
-        n_splits = int(1/test_shape)
-
-        self.train_index, test_index = _get_split_index(
-            self.labels_origin, n_splits, 0)
+        self.train_index, self.test_index = _get_split_index(
+            self.labels_origin, total_splits, test_split)
         imgs_train = np.array(self.imgs_origin, dtype="float32")[
             self.train_index]
         labels_train = np.array(self.labels_origin)[
             self.train_index]
-        imgs_test = np.array(self.imgs_origin, dtype="float32")[test_index]
-        labels_test = np.array(self.labels_origin)[test_index]
+        imgs_test = np.array(self.imgs_origin, dtype="float32")[self.test_index]
+        labels_test = np.array(self.labels_origin)[self.test_index]
 
         if self.augment is True and len(self.labels_augment) > 0:
             augment_amount = int(
@@ -360,7 +365,7 @@ class Dataset(object):
 
         end = time.clock()
         print("Cost time: %.3fs" % (end-start))
-        print("In fact the first %d%% of data are test set" % (100/n_splits))
+        print("The", test_split, "th split in", total_splits, "splits is testset")
         print("Train set size", len(labels_train), "(%.2fMB)" % (imgs_train.nbytes / (1024 * 1000.0)),
               "with Test set size", len(labels_test), "(%.2fMB)" % (imgs_test.nbytes / (1024 * 1000.0)))
         print("")
@@ -373,18 +378,18 @@ class Dataset(object):
 
         labels_train = np.array(self.labels_origin)[
             self.train_index].tolist()
-        self.train_cross_index, valid_index = _get_split_index(
+        self.train_cross_index, self.valid_index = _get_split_index(
             labels_train, total_splits, valid_split)
         imgs_train = np.array(self.imgs_origin, dtype="float32")[
             self.train_index][self.train_cross_index]
         labels_train = np.array(self.labels_origin)[
             self.train_index][self.train_cross_index]
         imgs_valid = np.array(self.imgs_origin, dtype="float32")[
-            self.train_index][valid_index]
+            self.train_index][self.valid_index]
         labels_valid = np.array(self.labels_origin)[
-            self.train_index][valid_index]
+            self.train_index][self.valid_index]
         names_valid = np.array(self.names_origin)[
-            self.train_index][valid_index]
+            self.train_index][self.valid_index]
 
         if self.augment is True and len(self.labels_augment) > 0:
             augment_amount = int(
@@ -406,9 +411,37 @@ class Dataset(object):
 
         end = time.clock()
         print("Cost time: %.3fs" % (end-start))
-        print("The", valid_split, "th split in",
-              total_splits, "splits is validset")
+        print("The", valid_split, "th split in", total_splits, "splits is validset")
         print("Trainset size", len(labels_train), "(%.2fMB)" % (imgs_train.nbytes / (1024 * 1000.0)),
               "with validset size", len(labels_valid), "(%.2fMB)" % (imgs_valid.nbytes / (1024 * 1000.0)))
         print("")
         return imgs_train, labels_train, imgs_valid, labels_valid, names_valid
+
+    def VOC_Indexes(self, category=""):
+        """产生VOC格式的文件索引
+
+        """
+        print("--->Start spliting trainset to subtrainset and validset")
+        start = time.clock()
+        file_prefix="" if category=="" else "_"
+
+        names_train = np.array(self.names_origin)[self.train_index]
+        f=open(category+file_prefix+"train.txt", "a+")
+        for name_train in names_train:
+            name_train = name_train[:name_train.rfind('.')]+ '\n'
+            f.write(name_train)
+        f.close()
+
+        names_test = np.array(self.names_origin)[self.test_index]
+        f=open(category+file_prefix+"test.txt", "a+")
+        for name_test in names_test:
+            name_test = name_test[:name_test.rfind('.')]+ '\n'
+            f.write(name_test)
+        f.close()
+
+        end = time.clock()
+        print("Cost time: %.3fs" % (end-start))
+        print("Creat", str(len(names_train)), "lines in", category+file_prefix+"trainval.txt at", os.path.curdir)
+        print("Creat", str(len(names_test)), "lines in", category+file_prefix+"test.txt in", os.path.curdir)
+        print("")
+

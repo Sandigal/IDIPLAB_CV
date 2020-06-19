@@ -15,10 +15,12 @@ from keras import regularizers
 from keras.layers import Activation
 from keras.layers import BatchNormalization
 from keras.layers import Conv2D
+from keras.layers import concatenate
 from keras.layers import Dropout
 from keras.layers import Dense
 from keras.layers import Flatten
 from keras.layers import GlobalAveragePooling2D
+from keras.layers import Input
 from keras.layers import MaxPooling2D
 from keras.layers import Reshape
 from keras.models import Model
@@ -98,7 +100,7 @@ def xceptionGAP(input_shape, classes, dropout=1e-3, include_top=True):
     return model
 
 
-def VGGGAP(input_shape, classes, depth, dropout=1e-3, include_top=True):
+def VGGGAP(input_shape, classes, depth=16, dropout=1e-3, include_top=True):
     """
     feature_layer = "block5_pool"
 
@@ -117,11 +119,11 @@ def VGGGAP(input_shape, classes, depth, dropout=1e-3, include_top=True):
             weights='imagenet',
             input_shape=input_shape,
             pooling="avg")
-
     x = base_model.output
-    x = Dense(4096, activation='relu', name='fc1')(x)
-    x = Dense(4096, activation='relu', name='fc2')(x)
-    x = Dense(classes, activation='softmax', name='predictions')(x)
+    if include_top is True:
+        x = Dense(4096, activation='relu', name='fc1')(x)
+        x = Dense(4096, activation='relu', name='fc2')(x)
+        x = Dense(classes, activation='softmax', name='predictions')(x)
 
     model = Model(inputs=base_model.input, outputs=x)
     return model
@@ -129,9 +131,9 @@ def VGGGAP(input_shape, classes, depth, dropout=1e-3, include_top=True):
 
 def resnet50GAP(input_shape, classes, dropout=1e-3, include_top=True):
     """
-    feature_layer = "activation_49"
+    feature_layer = "activation_98"
 
-    weight_layer = "fc1000"
+    weight_layer = "predictions"
     """
     base_model = applications.resnet50.ResNet50(
         include_top=False,
@@ -335,12 +337,39 @@ def top(input_shape, classes, dropout=1e-3, finalAct="softmax"):
     """
     model = Sequential()
 
-    model.add(Dropout(dropout, input_shape=input_shape, name='dropout'))
+    model.add(Dropout(dropout, input_shape=input_shape, name='dropout1'))
+#    model.add(Dense(4096, input_shape=input_shape, activation='relu', name='fc1'))
+#    model.add(Dense(4096, activation='relu', name='fc2'))
+
     model.add(Dense(
         units=classes,
         activation=finalAct,
         name='predictions'))
 
+
     return model
+
+def resnet50Triplet(input_shape, classes, dropout=0.5, finalAct="softmax"):
+    """用于三元组损失
+    """
+    base_model = resnet50GAP(
+    input_shape=input_shape,
+    classes=classes,
+    dropout=dropout)
+
+    anchor_input = Input(input_shape, name='anchor_input')
+    positive_input = Input(input_shape, name='positive_input')
+    negative_input = Input(input_shape, name='negative_input')
+    encoded_anchor = base_model(anchor_input)
+    encoded_positive = base_model(positive_input)
+    encoded_negative = base_model(negative_input)
+    merged_vector = concatenate([encoded_anchor, encoded_positive, encoded_negative], axis=-1, name='merged_layer')
+
+    pred_model = Model(input=anchor_input, output=encoded_anchor)
+    feature_model = Model(input=base_model.input, output=base_model.output)
+    class_triplet_model = Model(
+            input=[anchor_input, positive_input, negative_input],
+            output=[base_model.output, merged_vector])
+    return pred_model, feature_model, class_triplet_model
 
 

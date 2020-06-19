@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-该模块:`dataset_io`包含读取数据集以及数据集分割的类和函数。
-
-Note:
-        请注意 :meth:`models` 中的 `input_shape` 的格式为 `(height, width, channel)`。
+ImageDataGenerator的preprocessing_function函数接口
 """
 
 # Author: Sandiagal <sandiagal2525@gmail.com>,
@@ -11,6 +8,20 @@ Note:
 
 import numpy as np
 from skimage.util import random_noise
+from keras.applications.resnet50 import preprocess_input
+from itertools import permutations
+import random
+
+# %%
+
+
+class PreprocessInput(object):
+
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, img):
+        return preprocess_input(img)
 
 
 class RandomNoise(object):
@@ -64,6 +75,7 @@ class Imgaug(object):
 
     def __call__(self, img):
         img = np.expand_dims(img, axis=0)
+#        img = img.astype('float16')
         images_aug = self.Sequential.augment_images(img)
         return images_aug
 

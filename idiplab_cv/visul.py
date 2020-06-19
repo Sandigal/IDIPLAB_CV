@@ -7,6 +7,7 @@
 
 import math
 from pickle import load
+import os
 
 import cv2
 from keras import backend as K
@@ -15,12 +16,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import PIL.Image as Image
 
-from dataset_io import reverse_dict
+from idiplab_cv.dataset_io import reverse_dict
+from idiplab_cv.dataset_io import to_categorical
+
+if not os.path.exists("images"):
+    os.mkdir("images")
 
 # %%
-
-
-
 
 
 def _drawline(img, pt1, pt2, color, thickness=1, style="dotted", gap=20):
@@ -65,60 +67,41 @@ def _drawrect(img, pt1, pt2, color, thickness=1, style="dotted"):
 # %%
 
 
-def show_grid(imgs, title=None, suptitles=None):
+def show_grid(imgs, title=None, suptitles=None, rows=None, cols=None, colors=None):
+
     plt.style.use("classic")
 
     imgs_num = len(imgs)
 
+    imgs = np.array(imgs)
     if type(imgs[0]) == np.ndarray:
-        #        imgsPIL=[]
-        #        for i in range(len(imgs)):
-        #            imgsPIL.append(Image.fromarray(imgs[i]))
         imgs = [Image.fromarray(img.astype('uint8')) for img in imgs]
-#    imgs=imgsPIL
 
-#    width, height = 0, 0
-#    for i in range(len(imgs)):
-#        w, h = imgs[i].size
-#        if width < w:
-#            width = w
-#        if height < h:
-#            height = h
+    if not rows:
+        rows = math.ceil(np.sqrt(imgs_num))
+    if not cols:
+        cols = int(round(np.sqrt(imgs_num)))
 
-    rows = math.ceil(np.sqrt(imgs_num))
-    cols = int(round(np.sqrt(imgs_num)))
-#    space = 2*int(np.sqrt(width*height)/40)
-
-#    newSize = ((width+space) * cols, (height+space) * cols)
-#    emphImf = Image.new("RGB", (width+space, width+space), (225, 225, 0))
-#    grid = Image.new("RGB", newSize)
-
-#    plt.figure()
     f, axarr = plt.subplots(cols, rows,
-                            figsize=(10,10),
-                            gridspec_kw={"wspace": 0., "hspace": 0.5})
-    if title:
-        plt.suptitle(title)
-    else:
-        title="grid"
+                            figsize=(15, 20),
+                            gridspec_kw={"wspace": 0.03, "hspace": 0.05})
+#    if title:
+#        plt.suptitle(title, fontsize=20)
+
     for idx, ax in enumerate(f.axes):
         if idx < imgs_num:
             ax.imshow(imgs[idx])
             if suptitles:
-                ax.set_title(suptitles[idx])
+                if colors:
+                    ax.set_title(suptitles[idx], ha='center',
+                                 fontsize=14, color=colors[idx])
+                else:
+                    ax.set_title(suptitles[idx], fontsize=10)
         ax.axis("off")
-    plt.savefig(title+".jpg")
+    if not title:
+        title = "grid"
+    plt.savefig("images/"+title+".png", bbox_inches='tight', dpi=200)
 
-#    for y in range(rows):
-#        for x in range(cols):
-#            curImage = imgs[cols*y+x]
-#            grid.paste(curImage, (x * width + int((x+0.5) * space),
-#                                  y * height + int((y+0.5) * space)))
-#
-#    grid.resize((int(newSize[0]*1080/newSize[1]), 1080), Image.ANTIALIAS)
-
-#    plt.imshow(grid)
-#    plt.axis("off")
     return plt
 
 
@@ -131,43 +114,45 @@ def overall(imgs, number_to_show=20):
     return plt
 
 
-def CAM(img_white, model, feature_layer, weight_layer, idx_predic=None, display=False, img_show=None, label_show=None, class_to_index=None, top2=False):
-    width, height, _ = img_white.shape
+def CAM(img_white=None, model=None, feature_layer=None, weight_layer=None, feature_map=None, weights=None, scores_predict=None, idx_predic=None, display=False, img_show=None, label_show=None, class_to_index=None, extend=False):
 
-    getOutput = K.function([model.input], [model.get_layer(
-        feature_layer).output, model.output])
-    [avtiveMap, scores_predict] = getOutput(
-        [np.expand_dims(img_white, axis=0)])
+    width, height, _ = img_show.shape
+    omit = 1.75
+
+    if feature_map is None or weights is None or scores_predict is None:
+
+        getOutput = K.function([model.input], [model.get_layer(
+            feature_layer).output, model.output])
+        [feature_map, scores_predict] = getOutput(
+            [np.expand_dims(img_white, axis=0)])
+
+        weightLayer = model.get_layer(weight_layer)
+        weights = weightLayer.get_weights()[0]
+
     if idx_predic == None:
         idx_predic = np.argmax(scores_predict)
-
-    avtiveMap = avtiveMap[0]
-
-    weightLayer = model.get_layer(weight_layer)
-    weightsClasses = weightLayer.get_weights()[0]
-
-    weightsClass = weightsClasses[:, idx_predic]
-
-    cam = np.matmul(avtiveMap, weightsClass)
-
+    weight = weights[:, idx_predic]
+    feature_map = feature_map[0]
+    cam = np.matmul(feature_map, weight)
     cam = (cam - cam.min()) / (cam.max() - cam.min())
-    cam = 1-cam
+    if cam[0, 0]+cam[0, -1]+cam[-1, 0]+cam[-1, -1] < 3:
+        cam = 1-cam
     cam = cv2.resize(cam, (height, width))
     heatmap = cv2.applyColorMap(np.uint8(255*cam), cv2.COLORMAP_JET)
-    heatmap[np.where(cam > 0.90)] = 0
+    heatmap[np.where(cam > omit)] = 0
 
+    mix = cv2.addWeighted(src1=img_show.astype("uint8"), src2=heatmap,
+                          alpha=0.8, beta=0.4, gamma=0)
     if display:
-        mix = cv2.addWeighted(src1=img_show, src2=heatmap,
-                              alpha=0.8, beta=0.4, gamma=0)
 
-        Image.fromarray(img_show).save('img_origin.png')
-        Image.fromarray(mix).save('mix.png')
+        Image.fromarray(img_show).save('images/img_origin.png')
+        Image.fromarray(mix).save('images/CAM.png')
 
         index_to_class = reverse_dict(class_to_index)
         predic_class = index_to_class[idx_predic]
         predict_score = np.max(scores_predict)
 
-        if top2 is False:
+        if extend is False:
 
             plt.figure(figsize=(11, 8))
             plt.subplot(121)
@@ -185,7 +170,7 @@ def CAM(img_white, model, feature_layer, weight_layer, idx_predic=None, display=
             plt.figure()
             plt.subplot(221)
             plt.axis("off")
-            plt.title("Original image: %s" % (label_show))
+            plt.title("Original image: %s" % (index_to_class[label_show]))
             plt.imshow(img_show)
 
             plt.subplot(222)
@@ -193,34 +178,36 @@ def CAM(img_white, model, feature_layer, weight_layer, idx_predic=None, display=
             plt.title("Top 1: %s %.2f%%" % (predic_class, predict_score * 100))
             plt.imshow(mix)
 
-            idx_predic3 = class_to_index[label_show]
+            idx_predic3 = label_show
             predict_score3 = scores_predict[0, idx_predic3]
-            weightsClass3 = weightsClasses[:, idx_predic3]
-            cam3 = np.matmul(avtiveMap, weightsClass3)
+            weight3 = weights[:, idx_predic3]
+            cam3 = np.matmul(feature_map, weight3)
             cam3 = (cam3 - cam3.min()) / (cam3.max() - cam3.min())
-            cam3 = 1-cam3
+            if cam3[0, 0]+cam3[0, -1]+cam3[-1, 0]+cam3[-1, -1] < 2:
+                cam3 = 1-cam3
             cam3 = cv2.resize(cam3, (height, width))
             heatmap3 = cv2.applyColorMap(np.uint8(255*cam3), cv2.COLORMAP_JET)
-            heatmap3[np.where(cam3 > 0.95)] = 0
+            heatmap3[np.where(cam3 > omit)] = 0
             mix3 = cv2.addWeighted(src1=img_show, src2=heatmap3,
                                    alpha=0.8, beta=0.4, gamma=0)
 
             plt.subplot(223)
             plt.axis("off")
             plt.title("For ground truth: %s %.2f%%" %
-                      (label_show, predict_score3 * 100))
+                      (index_to_class[label_show], predict_score3 * 100))
             plt.imshow(mix3)
 
             idx_predic4 = np.argsort(scores_predict[0, :])[-2]
             predic_class4 = index_to_class[idx_predic4]
             predict_score4 = scores_predict[0, idx_predic4]
-            weightsClass4 = weightsClasses[0, 0, :, idx_predic4]
-            cam4 = np.matmul(avtiveMap, weightsClass4)
+            weight4 = weights[:, idx_predic4]
+            cam4 = np.matmul(feature_map, weight4)
             cam4 = (cam4 - cam4.min()) / (cam4.max() - cam4.min())
-            cam4 = 1-cam4
+            if cam4[0, 0]+cam4[0, -1]+cam4[-1, 0]+cam4[-1, -1] < 2:
+                cam4 = 1-cam4
             cam4 = cv2.resize(cam4, (height, width))
             heatmap4 = cv2.applyColorMap(np.uint8(255*cam4), cv2.COLORMAP_JET)
-            heatmap4[np.where(cam4 > 0.95)] = 0
+            heatmap4[np.where(cam4 > omit)] = 0
             mix4 = cv2.addWeighted(src1=img_show, src2=heatmap4,
                                    alpha=0.8, beta=0.4, gamma=0)
 
@@ -230,67 +217,94 @@ def CAM(img_white, model, feature_layer, weight_layer, idx_predic=None, display=
                       (predic_class4, predict_score4 * 100))
             plt.imshow(mix4)
 
-            plt.savefig("True.%s(%.1f%%) Top1.%s(%.1f%%) Top2.%s(%.1f%%).jpg" %
+            plt.savefig("images/"+"True.%s(%.1f%%) Top1.%s(%.1f%%) Top2.%s(%.1f%%).jpg" %
                         (
                             #                                label_show,
                             label_show, predict_score3 * 100,
                             predic_class, predict_score * 100,
-                            predic_class4, predict_score4 * 100))
+                            predic_class4, predict_score4 * 100),
+                        bbox_inches='tight',
+                        dpi=300
+                        )
 
-        return cam, mix
-    return cam
+    return cam, mix
 
 
-def CAMs(imgs_white, model, feature_layer, weight_layer, idxs_predic=None):
-    sample, width, height, _ = imgs_white.shape
+def CAMs(imgs_white, model, feature_layer, weight_layer, idxs_predic=None, display=False, img_show=None):
+    '''
+    一次性计算所有图像的CAM
+    '''
+    if not isinstance(imgs_white, dict):
+        sample, width, height, _ = imgs_white.shape
+
+        getFeatureMaps = Model(inputs=model.input, outputs=model.get_layer(
+            feature_layer).output)
+        feature_maps = getFeatureMaps.predict(
+            imgs_white, batch_size=32, verbose=1)
+
+        getScoresPredict = K.function([model.get_layer(index=model.layers.index(
+            model.get_layer(feature_layer))+1).input], [model.output])
+        [scores_predict] = getScoresPredict([feature_maps])
+
+        weightLayer = model.get_layer(weight_layer)
+        weights = weightLayer.get_weights()[0]
+
+    else:
+        sample = len(imgs_white["feature_maps"])
+        _, width, height, _ = model.input.shape.as_list()
+        feature_maps = imgs_white["feature_maps"]
+        weights = imgs_white["weights"]
+
+        getScoresPredict = K.function([model.get_layer(index=model.layers.index(
+            model.get_layer(feature_layer))+1).input], [model.output])
+        [scores_predict] = getScoresPredict([feature_maps])
+
     if idxs_predic == None:
         idxs_predic = [None]*sample
-
-    getFeatureMaps = Model(inputs=model.input, outputs=model.get_layer(
-        feature_layer).output)
-    feature_maps = getFeatureMaps.predict(imgs_white, batch_size=32, verbose=1)
-
-    getScoresPredict = K.function([model.get_layer(index=model.layers.index(
-        model.get_layer(feature_layer))+1).input], [model.output])
-    [scores_predict] = getScoresPredict([feature_maps])
-
-    weightLayer = model.get_layer(weight_layer)
-    weightsClasses = weightLayer.get_weights()[0]
 
     cams = []
     for i in range(sample):
 
         if idxs_predic[i] == None:
-            idxs_predic[i] = np.argmax(scores_predict[i], axis=1)
-        weightsClass = weightsClasses[0, 0, i, idxs_predic[i]]
-
-        cam = feature_maps[i]@ weightsClass[i]
+            idxs_predic[i] = np.argmax(scores_predict[i])
+        cam = feature_maps[i]@ weights[:, idxs_predic[i]]
         cam = (cam - cam.min()) / (cam.max() - cam.min())
-        cam = 1-cam
+        if cam[0, 0]+cam[0, -1]+cam[-1, 0]+cam[-1, -1] < 2:
+            cam = 1-cam
         cam = cv2.resize(cam, (height, width))
         cams.append(cam)
+
+        if display:
+            if i == 0:
+                heatmap = cv2.applyColorMap(
+                    np.uint8(255*cam), cv2.COLORMAP_JET)
+                heatmap[np.where(cam > 0.8)] = 0
+                mix = cv2.addWeighted(src1=img_show, src2=heatmap,
+                                      alpha=0.8, beta=0.4, gamma=0)
+                plt.figure(figsize=(11, 8))
+                plt.imshow(mix)
+
     return cams
 
 
 def cropMask(cam, img_show, display=False):
     img_show = np.copy(img_show)
+    cam = np.copy(cam)
     n, h,  = cam.shape
 
-    can = 255*(1-cam)
-    can = can.astype("uint8")
-    _, thresh = cv2.threshold(can, 0.7*255, 255, cv2.THRESH_BINARY)
-    _, contours, hierarchy = cv2.findContours(
+    cam = 255*(1-cam)
+    cam = cam.astype("uint8")
+    _, thresh = cv2.threshold(cam, 0.7*255, 255, cv2.THRESH_BINARY)
+    contours, hierarchy = cv2.findContours(
         thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     max_Index = 0
     for i in range(len(contours)):
         max_Index = i if contours[i].shape[0] > contours[max_Index].shape[0] else max_Index
     cnt = contours[max_Index]
     xHRO, yHRO, wHRO, hHRO = cv2.boundingRect(cnt)
-#    plt.figure()
-#    plt.imshow(thresh)
 
-    _, thresh = cv2.threshold(can, 0.4*255, 255, cv2.THRESH_BINARY)
-    _, contoursAB, hierarchy = cv2.findContours(
+    _, thresh = cv2.threshold(cam, 0.4*255, 255, cv2.THRESH_BINARY)
+    contoursAB, hierarchy = cv2.findContours(
         thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     for contour in contoursAB:
         if np.min(contour[:, 0, 0]) <= np.min(cnt[:, 0, 0]) and np.max(contour[:, 0, 0]) >= np.max(cnt[:, 0, 0]) and np.min(contour[:, 0, 1]) <= np.min(cnt[:, 0, 1]) and np.max(contour[:, 0, 1]) >= np.max(cnt[:, 0, 1]):
@@ -317,7 +331,7 @@ def cropMask(cam, img_show, display=False):
     if display:
         cv2.rectangle(img_show, (xSC, ySC), (xSC+wAB, ySC+hAB), (0, 255, 0), 5)
         _drawrect(img_show, (xSC, ySC), (ww, hh), (0, 255, 0), 5, "dotted")
-        text = "Supervised crop (%dx%d)" % (ww, hh)
+        text = "Supervised Crop Box (%dx%d)" % (wAB, hAB)
         cv2.putText(img_show, text, (xSC, ySC), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=0.4, color=(0, 255, 0), thickness=10, lineType=cv2.LINE_AA)
         cv2.putText(img_show, text, (xSC, ySC), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
@@ -332,16 +346,125 @@ def cropMask(cam, img_show, display=False):
 
         cv2.rectangle(img_show, (xHRO, yHRO),
                       (xHRO+wHRO, yHRO+hHRO), (220, 20, 60), 5)
-        text = "Highest respond area (%dx%d)" % (wHRO, hHRO)
+        text = "Highest Respond Box (%dx%d)" % (wHRO, hHRO)
         cv2.putText(img_show, text, (xHRO, yHRO), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=0.4, color=(220, 20, 60), thickness=10, lineType=cv2.LINE_AA)
         cv2.putText(img_show, text, (xHRO, yHRO), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=0.4, color=(0, 0, 0), thickness=1, lineType=cv2.LINE_AA)
 
-#        plt.figure(figsize=(10, 8))
+        plt.figure(figsize=(10, 8))
         plt.imshow(img_show)
         plt.axis("off")
-#        plt.savefig("crop.png")
-        Image.fromarray(img_show).save('img_show.png')
+        Image.fromarray(img_show).save('images/CAM_ABSC.png')
 
     return xAB, yAB, wAB, hAB, xSC, ySC, ww-wAB, hh-hAB
+
+def worst_samples(imgs_valid, labels_valid, score_predict, class_to_index, top=10, names_valid=None):
+    '''
+    栅格展示分类效果最差的样本
+    '''
+    index_to_class = reverse_dict(class_to_index)
+    labels_valid_onehot = to_categorical(labels_valid, len(class_to_index))
+    score_valid = np.max(np.array(score_predict)*labels_valid_onehot, axis=1)
+    labels_predict = np.argmax(score_predict, axis=1)
+    score_predict_max = np.max(score_predict, axis=1)
+    worst_index = np.argsort(-score_predict_max+score_valid)[:top]
+    asd = score_predict_max-score_valid
+
+    imgs = []
+    suptitles = []
+    for _, index in enumerate(worst_index):
+        imgs.append(imgs_valid[index])
+        suptitle = 'Predict: %s (%5.2f%%)\n True  : %s (%5.2f%%)' % (
+            index_to_class[labels_predict[index]],
+            score_predict_max[index]*100,
+            index_to_class[labels_valid[index]],
+            score_valid[index]*100)
+        suptitles.append(suptitle)
+        if names_valid is not None:
+            name = 'Predict %s True %s' % (
+                index_to_class[labels_predict[index]],
+                index_to_class[labels_valid[index]])
+            print('%5.2f' % (asd[index]*100))
+            print(name+'\n'+names_valid[index])
+            print()
+    plt = show_grid(imgs, 'Worst prediction samples', suptitles=suptitles)
+    return plt
+
+def best_worst_samples(imgs_valid, labels_valid, feature_maps, weights, scores_predict, class_to_index):
+    '''
+    模型分级结果和对应的CAM的示例。
+    同一行的示例具有相同的真实等级。
+    每一列中，前两副图表示最好的预测结果，而后两副图表示最差的结果。
+    在每一个示例中，我们首先展示了原始图像的真实等级和治疗对策，然后标出了预测等级和治疗建议，并标注了对应的预测概率和对应等级的CAM。
+    CAM中越红的位置表示其越有可能是病灶区域。
+    '''
+    index_to_class = reverse_dict(class_to_index)
+    labels_valid_onehot = to_categorical(labels_valid, len(class_to_index))
+    score_valid = np.max(np.array(scores_predict)*labels_valid_onehot, axis=1)
+    labels_predict = np.argmax(scores_predict, axis=1)
+    score_predict_max = np.max(scores_predict, axis=1)
+
+    imgs = []
+    suptitles = []
+    colors = []
+    for i in range(0, len(class_to_index)):
+        #    i=2
+        cur_class = labels_valid == i
+        cur_class = np.array([i for i, _ in enumerate(labels_valid)])[
+            cur_class]
+        cur_score_predict = score_predict_max[cur_class]
+        cur_score_valid = score_valid[cur_class]
+        worst_index = np.argsort(-cur_score_predict+cur_score_valid)[:1]
+        best_index = np.argsort(-cur_score_predict+cur_score_valid)[-1:]
+
+        for _, index in enumerate(cur_class[best_index]):
+            imgs.append(imgs_valid[index])
+            suptitle = "True = %s\n%s" % (
+                index_to_class[labels_valid[index]],
+                "Follow-up" if (labels_valid[index]) < 2 else "Surgery")
+            suptitles.append(suptitle)
+            colors.append("blue")
+
+            cam, mix = CAM(
+                feature_map=np.expand_dims(feature_maps[index], axis=0),
+                weights=weights,
+                scores_predict=scores_predict[index],
+                display=False,
+                img_show=imgs_valid[index],
+            )
+            imgs.append(mix)
+            suptitle = "Predict = %s (%4.1f%%)\n%s (%4.1f%%)" % (
+                index_to_class[labels_predict[index]],
+                score_predict_max[index]*100,
+                "Follow-up" if (labels_predict[index]) < 2 else "Surgery",
+                (sum(scores_predict[index, :2]) if (labels_predict[index]) < 2 else sum(scores_predict[index, 2:]))*100)
+            suptitles.append(suptitle)
+            colors.append("blue")
+
+        for _, index in enumerate(cur_class[worst_index]):
+            imgs.append(imgs_valid[index])
+            suptitle = "True = %s\n%s" % (
+                index_to_class[labels_valid[index]],
+                "Follow-up" if (labels_valid[index]) < 2 else "Surgery")
+            suptitles.append(suptitle)
+            colors.append("red")
+
+            cam, mix = CAM(
+                feature_map=np.expand_dims(feature_maps[index], axis=0),
+                weights=weights,
+                scores_predict=scores_predict[index],
+                display=False,
+                img_show=imgs_valid[index],
+            )
+            imgs.append(mix)
+            suptitle = "Predict = %s (%4.1f%%)\n%s (%4.1f%%)" % (
+                index_to_class[labels_predict[index]],
+                score_predict_max[index]*100,
+                "Follow-up" if (labels_predict[index]) < 2 else "Surgery",
+                (sum(scores_predict[index, :2]) if (labels_predict[index]) < 2 else sum(scores_predict[index, 2:]))*100)
+            suptitles.append(suptitle)
+            colors.append("red")
+
+    plt = show_grid(imgs, suptitles=suptitles, rows=4, cols=6, colors=colors, title="best_worst_samples")
+    return plt

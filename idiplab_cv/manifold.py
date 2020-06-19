@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-该模块:`dataset_io`包含读取数据集以及数据集分割的类和函数。
+流形学习
 """
 
 # Author: Sandiagal <sandiagal2525@gmail.com>,
 # License: GPL-3.0
 
-
+import os
 from time import time
+import shutil
 
+from PIL import Image
 import matplotlib.pyplot as plt
 from matplotlib import offsetbox
 import numpy as np
@@ -22,6 +24,62 @@ from sklearn.manifold import SpectralEmbedding
 from sklearn.manifold import TSNE
 from sklearn.random_projection import SparseRandomProjection
 
+import tensorflow as tf
+from tensorflow.contrib.tensorboard.plugins import projector
+
+# %%
+
+
+def tensorboard_embed(LOG_DIR, imgs_test, labels_test, scores_predict):
+    #    LOG_DIR = 'E:\Temporary\DeapLeraning\Medical\logs'  # FULL PATH HERE!!!
+
+    # build a metadata file with the real labels of the test set
+    metadata_file = os.path.join(LOG_DIR, 'metadata.tsv')
+    with open(metadata_file, 'w') as f:
+        for i in range(len(labels_test)):
+            f.write('{}\n'.format(labels_test[i]))
+
+    # get the sprite image mnist_10k_sprite.png as provided by the TensorFlow guys here, and place it in your LOG_DIR
+    max_x = int(336/2)
+    max_y = int(224/2)
+    x_test = np.array([np.array(Image.fromarray(np.uint8(row)).resize(
+        (max_x, max_y), Image.ANTIALIAS).crop(((max_x-max_y)/2, 0, (max_x-max_y)/2+max_y, max_y))) for row in imgs_test])
+    img_array = np.expand_dims(x_test, axis=1)
+    img_array = img_array.reshape((17, 5, max_y, max_y, 3))
+    # Image.fromarray(np.uint8(img_array[0][0])).show()
+    img_array_flat = np.concatenate(
+        [np.concatenate([x for x in row], axis=1) for row in img_array])
+    img = Image.fromarray(np.uint8(255-img_array_flat))
+    img.save(os.path.join(LOG_DIR, 'sprite_images.jpg'))
+
+    # write some Tensorflow code:
+    embedding_var = tf.Variable(scores_predict,  name='final_layer_embedding')
+    sess = tf.Session()
+    sess.run(embedding_var.initializer)
+    summary_writer = tf.summary.FileWriter(LOG_DIR)
+    config = projector.ProjectorConfig()
+    embedding = config.embeddings.add()
+    embedding.tensor_name = embedding_var.name
+
+    # Specify the metadata file:
+    embedding.metadata_path = os.path.join(LOG_DIR, 'metadata.tsv')
+
+    # Specify the sprite image:
+    embedding.sprite.image_path = os.path.join(LOG_DIR, 'sprite_images.jpg')
+    embedding.sprite.single_image_dim.extend(
+        [max_y, max_y])  # image size = 28x28
+
+    projector.visualize_embeddings(summary_writer, config)
+    saver = tf.train.Saver([embedding_var])
+    saver.save(sess, os.path.join(LOG_DIR, 'model2.ckpt'), 1)
+
+    is_exist = os.path.exists(LOG_DIR+'/logs')
+    if not is_exist:
+        os.makedirs(LOG_DIR+'/logs')
+    shutil.move(LOG_DIR+"/metadata.tsv", LOG_DIR+"/logs/metadata.tsv")
+    shutil.move(LOG_DIR+"/sprite_images.jpg",
+                LOG_DIR+"/logs/sprite_images.jpg")
+
 
 def plot_embedding(X, labels, imgs, title=None, **kwargs):
     # Scale and visualize the embedding vectors
@@ -31,7 +89,7 @@ def plot_embedding(X, labels, imgs, title=None, **kwargs):
     plt.figure(figsize=(16, 9))
     ax = plt.subplot(111)
 
-    curLabel=-1
+    curLabel = -1
     for i in range(X.shape[0]):
         if kwargs['showLabels'] is True:
             plt.text(X[i, 0], X[i, 1], str(kwargs['index_to_class'][labels[i]]),
@@ -39,10 +97,10 @@ def plot_embedding(X, labels, imgs, title=None, **kwargs):
                      fontdict={'weight': 'bold', 'size': kwargs['fontSize']})
         else:
             ps = plt.scatter(X[i, 0], X[i, 1],
-                        s=kwargs['area'],
-                        color=plt.cm.Set1(labels[i] / 4.))
+                             s=kwargs['area'],
+                             color=plt.cm.Set1(labels[i] / 6.))
             if curLabel != labels[i]:
-                curLabel=labels[i]
+                curLabel = labels[i]
                 ps.set_label(kwargs['index_to_class'][labels[i]])
 
     if kwargs['showImages'] is True:
@@ -249,7 +307,7 @@ def manifold(imgs, labels, manifold_args, featrue=None, **kwargs):
         featrue = featrue/255
 
     kwdefaults = {
-        'index_to_class':dict(zip(range(len(set(labels))),set(labels))),
+        'index_to_class': dict(zip(range(len(set(labels))), set(labels))),
         'showLabels': True,
         'fontSize': 50,
         'area': 100,
