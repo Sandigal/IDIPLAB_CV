@@ -5,4 +5,4 @@ numpy==1.16.0
 scikit_image
 scikit_learn
 scipy
-tensorflow==1.15.2
+tensorflow==1.12.0
