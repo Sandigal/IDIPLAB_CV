@@ -1,8 +1,8 @@
 Keras==2.1.6
 matplotlib
 Pillow
-numpy==1.16.0
+numpy
 scikit_image
 scikit_learn
 scipy
-tensorflow==1.12.0
+tensorflow==1.13.0
